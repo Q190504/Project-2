@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Player
+  - Enemy
+  - SlimeBullet
+  - Impassable
+  - PoisonCloud
+  - ExperienceOrb
+  - RadiantField
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Map
+    uniqueID: 3727646355
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: BackgroundEffect
+    uniqueID: 1620603811
+    locked: 0
+  - name: Enemy
+    uniqueID: 90088079
+    locked: 0
+  - name: ForegroundEffect
+    uniqueID: 999991303
+    locked: 0
+  - name: Player
+    uniqueID: 2176374955
+    locked: 0
+  - name: Foreground
+    uniqueID: 15444467
+    locked: 0
+  m_RenderingLayers:
+  - Default
