@@ -93,6 +93,9 @@ public class GamePlayUIManager : MonoBehaviour
 
     private Dictionary<PassiveType, Sprite> passiveIcons;
     private Dictionary<WeaponType, Sprite> weaponIcons;
+    private Dictionary<PlayerSkillID, Image> skillImages;
+    private Dictionary<PlayerSkillID, Image> skillCooldownImages;
+    private Dictionary<PlayerSkillID, TMP_Text> skillCooldownTexts;
 
     public static GamePlayUIManager Instance
     {
@@ -128,6 +131,24 @@ public class GamePlayUIManager : MonoBehaviour
             { WeaponType.SlimeBeamShooter, slimeBeamShooterIcon },
             { WeaponType.PawPrintPoisoner, pawPrintPoisonerIcon },
             { WeaponType.RadiantField, radiantFieldIcon }
+        };
+
+        skillImages = new Dictionary<PlayerSkillID, Image>
+        {
+            { PlayerSkillID.Frenzy, skill1Image },
+            { PlayerSkillID.Reclaim, skill2Image },
+        };
+
+        skillCooldownImages = new Dictionary<PlayerSkillID, Image>
+        {
+            { PlayerSkillID.Frenzy, skill1CoodownImage },
+            { PlayerSkillID.Reclaim, skill2CoodownImage },
+        };
+
+        skillCooldownTexts = new Dictionary<PlayerSkillID, TMP_Text>
+        {
+            { PlayerSkillID.Frenzy, skill1CoodownText },
+            { PlayerSkillID.Reclaim, skill2CoodownText },
         };
     }
 
@@ -186,6 +207,18 @@ public class GamePlayUIManager : MonoBehaviour
         image.color = color;
     }
 
+    public void SetSkillImageOpacity(PlayerSkillID skillID, bool status)
+    {
+        if (skillImages.TryGetValue(skillID, out Image image))
+        {
+            SetImageOpacity(image, status ? 1f : 0.5f);
+        }
+        else
+        {
+            Debug.LogWarning($"No image found for skill: {skillID}");
+        }
+    }
+
     public void SetSkill2ImageOpacity(bool status)
     {
         if (status)
@@ -202,6 +235,27 @@ public class GamePlayUIManager : MonoBehaviour
             SetImageOpacity(skill1Image, 0.5f);
     }
 
+    public void SetSkillCooldownUI(PlayerSkillID skillID, bool status)
+    {
+        if (skillCooldownImages.TryGetValue(skillID, out Image cooldownImage))
+        {
+            cooldownImage.gameObject.SetActive(status);
+        }
+        else
+        {
+            Debug.LogWarning($"No cooldown image found for skill: {skillID}");
+        }
+
+        if (skillCooldownTexts.TryGetValue(skillID, out TMP_Text cooldownText))
+        {
+            cooldownText.gameObject.SetActive(status);
+        }
+        else
+        {
+            Debug.LogWarning($"No cooldown text found for skill: {skillID}");
+        }
+    }
+
     public void SetSkill1CooldownUI(bool status)
     {
         skill1CoodownImage.gameObject.SetActive(status);
@@ -212,6 +266,27 @@ public class GamePlayUIManager : MonoBehaviour
     {
         skill2CoodownImage.gameObject.SetActive(status);
         skill2CoodownText.gameObject.SetActive(status);
+    }
+
+    public void UpdateSkillCooldownUI(PlayerSkillID skillID, float timeRemaining, float cooldownTime)
+    {
+        if (skillCooldownImages.TryGetValue(skillID, out Image cooldownImage))
+        {
+            cooldownImage.fillAmount = timeRemaining / cooldownTime;
+        }
+        else
+        {
+            Debug.LogWarning($"No cooldown image found for skill: {skillID}");
+        }
+
+        if (skillCooldownTexts.TryGetValue(skillID, out TMP_Text cooldownText))
+        {
+            cooldownText.text = ((int)timeRemaining).ToString();
+        }
+        else
+        {
+            Debug.LogWarning($"No cooldown text found for skill: {skillID}");
+        }        
     }
 
     public void UpdateSkill1CooldownUI(float timeRemaining, float cooldownTime)
