@@ -7,6 +7,8 @@ public class MaxHealth : BasePassive
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Initialize();
+
         playerHealth = GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
@@ -24,9 +26,9 @@ public class MaxHealth : BasePassive
     protected override void LevelUp()
     {
         base.LevelUp();
-        value = value * level;
+        value += increment;
         int bonusHealth = Mathf.FloorToInt(playerHealth.GetMaxHealth() * value);
         playerHealth.SetMaxHealth(playerHealth.GetMaxHealth() + bonusHealth);
-        playerHealth.SetCurrentHealth(playerHealth.GetCurrentHealth() + bonusHealth);
+        playerHealth.Heal(bonusHealth);
     }
 }

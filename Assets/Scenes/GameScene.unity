@@ -53694,6 +53694,11 @@ GameObject:
   - component: {fileID: 1688282002}
   - component: {fileID: 1688281999}
   - component: {fileID: 1688282001}
+  - component: {fileID: 1688282006}
+  - component: {fileID: 1688282005}
+  - component: {fileID: 1688282004}
+  - component: {fileID: 1688282007}
+  - component: {fileID: 1688282008}
   - component: {fileID: 1688281997}
   m_Layer: 0
   m_Name: Player
@@ -53865,7 +53870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseValue: 350
   increment: 0.2
-  passiveType: 0
+  passiveType: 1
   level: 0
   maxLevel: 5
   displayName: Max Health
@@ -53934,6 +53939,96 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxLevel: 34
   baseExperienceToNextLevel: 50
+--- !u!114 &1688282004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68a9837fdb5abe64abfea90acc4c9ba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseValue: 4
+  increment: 4
+  passiveType: 4
+  level: 0
+  maxLevel: 5
+  displayName: Health Regen
+  description: Increases health every 0.5 second.
+  regenInterval: 0.5
+--- !u!114 &1688282005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0336897f4846cf94c85acd853cdb460a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseValue: 0
+  increment: 10
+  passiveType: 7
+  level: 0
+  maxLevel: 5
+  displayName: Ability Haste
+  description: Reduces the cooldown of all Weapons and Abilities.
+--- !u!114 &1688282006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c1997f5b1f6a0448250b69eba8c11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseValue: 0
+  increment: 0.1
+  passiveType: 3
+  level: 0
+  maxLevel: 5
+  displayName: Damage
+  description: Increases the damage dealt by abilities and attacks.
+--- !u!114 &1688282007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4cdf22f9af5e449b12abb9304875a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pullForce: 5
+--- !u!114 &1688282008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23350893934925b40ae5d5bf07d6cb67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseValue: 2
+  increment: 0.5
+  passiveType: 5
+  level: 0
+  maxLevel: 5
+  displayName: Pickup Radius
+  description: Increases the radius that experience orbs can be drawn into.
 --- !u!1 &1707641450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
@@ -56255,5 +56350,5 @@ SceneRoots:
   - {fileID: 2089770993}
   - {fileID: 527219658}
   - {fileID: 893131588}
-  - {fileID: 1035922628}
   - {fileID: 1688281996}
+  - {fileID: 1035922628}

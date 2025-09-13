@@ -23,6 +23,10 @@ public class PlayerLevel : MonoBehaviour
 
     public void AddExperience(int experienceToAdd)
     {
+        // Game has ended
+        if (!GameManager.Instance.IsPlaying())
+            return;
+
         this.experience += experienceToAdd;
         if (experience >= experienceToNextLevel)
             LevelUp();
@@ -50,7 +54,7 @@ public class PlayerLevel : MonoBehaviour
     }
 
     public int GetCurrentLevel()
-    { 
+    {
         return currentLevel;
     }
 
@@ -63,5 +67,15 @@ public class PlayerLevel : MonoBehaviour
     public void UpdateXPBar(int currentLevel, int experience, int experienceToNextLevel)
     {
         GamePlayUIManager.Instance.UpdateXPBar(currentLevel, experience, experienceToNextLevel);
+    }
+
+    public void Initialized()
+    {
+        currentLevel = 1;
+        experience = 0;
+        experienceToNextLevel = baseExperienceToNextLevel;
+        UpdateXPBar(currentLevel, experience, experienceToNextLevel);
+
+        // TO DO: Update tracker
     }
 }

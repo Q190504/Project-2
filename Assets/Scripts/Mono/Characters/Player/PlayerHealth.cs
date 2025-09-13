@@ -58,6 +58,10 @@ public class PlayerHealth : MonoBehaviour
     public void SetCurrentHealth(int value)
     {
         currentHealth = value;
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+
+        UpdateHPBar();
     }
 
     public void SetMaxHealth(int value)

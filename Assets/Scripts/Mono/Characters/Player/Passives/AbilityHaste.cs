@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Armor : BasePassive
+public class AbilityHaste : BasePassive
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -14,9 +14,8 @@ public class Armor : BasePassive
         
     }
 
-    protected override void Initialize()
+    protected override void LevelUp()
     {
-        base.Initialize();
-        value += increment;
+        base.LevelUp();
     }
 }
