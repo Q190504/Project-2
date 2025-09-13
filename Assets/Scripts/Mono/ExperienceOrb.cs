@@ -1,11 +1,9 @@
-using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
 public class ExperienceOrb : MonoBehaviour
 {
-    [SerializeField] int experience;
+    int experience;
     float pullForce = 0;
     private Transform target;
     private bool isBeingPulled = false;
@@ -25,7 +23,7 @@ public class ExperienceOrb : MonoBehaviour
             Vector3 directionToTarget = math.normalize(target.transform.position - transform.position);
 
             // Move orb toward player
-            transform.position += directionToTarget * pullForce * Time.deltaTime;
+            transform.position += pullForce * Time.deltaTime * directionToTarget;
         }
     }
 
@@ -34,12 +32,16 @@ public class ExperienceOrb : MonoBehaviour
 
     public void Collect()
     {
+        ExperienceOrbManager.Instance.Return(this);
+    }
+
+    public void Initialize(int ex)
+    {
         hasBeenCollected = true;
         isBeingPulled = false;
         pullForce = 0;
-        experience = 0;
         target = null;
 
-        //ExperienceOrbManager.Instance.Return(this);
+        experience = ex;
     }
 }

@@ -53476,8 +53476,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee8a9d4e53f5e94c8c1a0e6dd19498b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseExperiencePerOrb: 0
   orbPrepare: 100
   spawnChance: 0.3
+  orbPrefab: {fileID: 0}
 --- !u!4 &1645822301
 Transform:
   m_ObjectHideFlags: 0
@@ -53887,7 +53889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d94949a8f8e77d34ea28b133c1d706be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseValue: 0
+  baseValue: 5
   increment: 0.09
   passiveType: 2
   level: 0

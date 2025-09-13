@@ -10,6 +10,7 @@ public class MoveSpeed : BasePassive
         Initialize();
 
         playerMovement = GetComponent<PlayerMovement>();
+        playerMovement.SetCurrentSpeed(value);
     }
 
     protected override void LevelUp()

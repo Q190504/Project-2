@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using Unity.Collections;
-using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -7,13 +7,13 @@ public class ExperienceOrbManager : MonoBehaviour
 {
     private static ExperienceOrbManager _instance;
 
+    [SerializeField] int baseExperiencePerOrb;
     [SerializeField] private int orbPrepare;
     [SerializeField] private float spawnChance; // <= 1  Chance to spawn an orb when an enemy is defeated
+    [SerializeField] private ExperienceOrb orbPrefab;
 
-    private EntityManager entityManager;
-    private Entity orbPrefab;
-
-    private NativeQueue<Entity> inactiveOrbs;
+    private Queue<ExperienceOrb> inactiveOrbs;
+    private Transform orbsPool;
     private int orbCount = 0;
 
     [Header("Spawing stats")]
@@ -37,37 +37,16 @@ public class ExperienceOrbManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-        inactiveOrbs = new NativeQueue<Entity>(Allocator.Persistent);
-    }
-
-    private void OnDestroy()
-    {
-        if (inactiveOrbs.IsCreated)
-            inactiveOrbs.Dispose();
+        inactiveOrbs = new Queue<ExperienceOrb>();
+        orbsPool = new GameObject("OrbsPool").transform;
+        orbsPool.SetParent(transform);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        // Get the baked entity prefab
-        EntityQuery orbPrefabQuery = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));
-        if (orbPrefabQuery.CalculateEntityCount() > 0)
-        {
-            orbPrefab = entityManager.GetComponentData<ExperienceOrbPrefabComponent>(orbPrefabQuery.GetSingletonEntity()).experienceOrbPrefab;
-        }
-        else
-        {
-            Debug.LogError("Experience Orb prefab not found! Make sure it's baked correctly.");
-        }
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         Initialize();
-        PrepareOrb(ecb);
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        PrepareOrb();
     }
 
     // Update is called once per frame
@@ -81,106 +60,57 @@ public class ExperienceOrbManager : MonoBehaviour
 
     }
 
-    private void PrepareOrb(EntityCommandBuffer ecb)
+    private void PrepareOrb()
     {
-        if (orbPrefab == Entity.Null) return;
+        if (orbPrefab == null) return;
 
         for (int i = 0; i < orbPrepare; i++)
         {
-            Entity orb = entityManager.Instantiate(orbPrefab);
-
-            SetOrbStatus(orb, false, ecb, entityManager);
+            ExperienceOrb orb = GameObject.Instantiate(orbPrefab, orbsPool);
+            orb.gameObject.SetActive(false);
             inactiveOrbs.Enqueue(orb);
             orbCount++;
         }
     }
 
-    public void TrySpawnExperienceOrb(Vector3 position, EntityCommandBuffer ecb)
+    public void TrySpawnExperienceOrb(Vector3 position)
     {
         if (Random.value < spawnChance)
         {
-            SpawnOrb(position, ecb);
+            SpawnOrb(position);
         }
     }
 
-    public void SpawnOrb(Vector3 position, EntityCommandBuffer ecb)
+    public void SpawnOrb(Vector3 position)
     {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        Entity orbInstance = Take(ecb);
+        ExperienceOrb orbInstance = Take();
 
-        // Set the orb position
-        ecb.SetComponent(orbInstance, new LocalTransform
-        {
-            Position = position,
-            Rotation = Quaternion.identity,
-            Scale = 1f
-        });
-
-        ExperienceOrbComponent experienceOrbComponent = entityManager.GetComponentData<ExperienceOrbComponent>(orbInstance);
-
+        orbInstance.transform.position = position;
         float experienceMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
-
-        // Set the orb position
-        ecb.SetComponent(orbInstance, new ExperienceOrbComponent
-        {
-            hasBeenCollected = false,
-            isBeingPulled = false,
-            experience = (int)(experienceOrbComponent.experience * experienceMultiplier),
-        });
+        int ex = Mathf.FloorToInt(baseExperiencePerOrb * experienceMultiplier);
+        orbInstance.Initialize(ex);
     }
 
-    public Entity Take(EntityCommandBuffer ecb)
+    public ExperienceOrb Take()
     {
-        if (inactiveOrbs.IsEmpty())
-            PrepareOrb(ecb);
+        if (inactiveOrbs.Count <= 0)
+            PrepareOrb();
 
-        Entity orb = inactiveOrbs.Dequeue();
+        ExperienceOrb orb = inactiveOrbs.Dequeue();
         orbCount--;
-        SetOrbStatus(orb, true, ecb, entityManager);
+        orb.gameObject.SetActive(true);
         return orb;
     }
 
-    public void Return(Entity orb, EntityCommandBuffer ecb)
+    public void Return(ExperienceOrb orb)
     {
-        if (!entityManager.Exists(orb)) return;
-
-        SetOrbStatus(orb, false, ecb, entityManager);
+        orb.Initialize(0);
+        orb.gameObject.SetActive(false);
         inactiveOrbs.Enqueue(orb);
         orbCount++;
-    }
-
-    private void SetOrbStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
-    {
-        DynamicBuffer<Child> children;
-
-        if (status)
-        {
-            ecb.RemoveComponent<Disabled>(root);
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.RemoveComponent<Disabled>(child.Value);
-                }
-            }
-
-        }
-        else
-        {
-            ecb.AddComponent<Disabled>(root);
-
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.AddComponent<Disabled>(child.Value);
-                }
-            }
-        }
     }
 
     public void SetTimeSinceStartPlaying(double time)

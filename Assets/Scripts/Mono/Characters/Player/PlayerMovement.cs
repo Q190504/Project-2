@@ -1,8 +1,9 @@
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] float smoothTime;
+
+    private MoveSpeed moveSpeed;
 
     float currentSpeed;
     //float boostedSpeed;
@@ -16,18 +17,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        if (rb == null)
-            rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        state = GetComponent<PlayerState>();
+        frenzySkill = GetComponent<FrenzySkill>();
+        moveSpeed = GetComponent<MoveSpeed>();
 
-        if (state == null)
-            state = GetComponent<PlayerState>();
-
-        if(frenzySkill == null)
-            frenzySkill = GetComponent<FrenzySkill>();
-
-        if (gameManager == null)
-            gameManager = GameManager.Instance;
-
+        gameManager = GameManager.Instance;
         transform.position = gameManager.GetPlayerInitialPosition();
     }
 
