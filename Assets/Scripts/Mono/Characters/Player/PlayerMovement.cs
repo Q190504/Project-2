@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private GameManager gameManager;
-    private PlayerState state;
+    private EffectManager effectManager;
     private FrenzySkill frenzySkill;
 
     private Vector2 moveInput;
@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        state = GetComponent<PlayerState>();
+        effectManager = GetComponent<EffectManager>();
         frenzySkill = GetComponent<FrenzySkill>();
         moveSpeed = GetComponent<MoveSpeed>();
 
@@ -40,14 +40,14 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (state.IsStunned)
+        if (effectManager.HasEffect(EffectType.Stun))
         {
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
         float targetSpeed = currentSpeed;
-        if (state.IsFrenzyActive)
+        if (effectManager.HasEffect(EffectType.Frenzy))
             targetSpeed += currentSpeed * frenzySkill.GetFrenzyBonusPercent();
 
         Vector2 targetVelocity = moveInput * targetSpeed;

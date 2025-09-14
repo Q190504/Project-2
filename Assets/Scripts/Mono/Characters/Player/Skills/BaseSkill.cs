@@ -16,10 +16,12 @@ public abstract class BaseSkill : MonoBehaviour
     protected float cooldownTime;
 
     protected bool isActive;
+    protected bool isCooldownActive; 
 
     protected virtual void Initialize()
     {
         isActive = false;
+        isCooldownActive = false;
         cooldownTimer = 0;
         cooldownTime = baseCooldownTime;
     }
@@ -38,6 +40,11 @@ public abstract class BaseSkill : MonoBehaviour
         {
             cooldownTimer -= deltaTime;
 
+            if (!isCooldownActive)
+            {
+                isCooldownActive = true;
+            }
+
             // Update UI
             GamePlayUIManager.Instance.SetSkillCooldownUI(skillID, true);
             GamePlayUIManager.Instance.SetSkillImageOpacity(skillID, false);
@@ -45,17 +52,21 @@ public abstract class BaseSkill : MonoBehaviour
         }
         else
         {
-            GamePlayUIManager.Instance.SetSkillCooldownUI(skillID, false);
-            GamePlayUIManager.Instance.SetSkillImageOpacity(skillID, !isActive);
+            if (isCooldownActive) 
+            {
+                isCooldownActive = false;
+                GamePlayUIManager.Instance.SetSkillCooldownUI(skillID, false);
+                GamePlayUIManager.Instance.SetSkillImageOpacity(skillID, !isActive);
+            }
         }
     }
 
-    protected bool IsOffCooldown()
+    public bool IsOffCooldown()
     {
         return cooldownTimer <= 0;
     }
 
-    protected void StartCooldown(float cooldownTime)
+    public void StartCooldown(float cooldownTime)
     {
         cooldownTimer = this.cooldownTime = cooldownTime;
     }

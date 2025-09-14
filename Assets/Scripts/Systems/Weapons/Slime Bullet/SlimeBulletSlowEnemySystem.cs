@@ -20,65 +20,65 @@ public partial struct SlimeBulletSlowEnemySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        //if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        //var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        // Temporarily track enemies that should remain slowed
-        int estimatedEnemyCount = SystemAPI.QueryBuilder().WithAll<EnemyTagComponent>().Build().CalculateEntityCount();
-        var stillSlowedEnemies = new NativeHashSet<Entity>(estimatedEnemyCount, Allocator.Temp);
+        //// Temporarily track enemies that should remain slowed
+        //int estimatedEnemyCount = SystemAPI.QueryBuilder().WithAll<EnemyTagComponent>().Build().CalculateEntityCount();
+        //var stillSlowedEnemies = new NativeHashSet<Entity>(estimatedEnemyCount, Allocator.Temp);
 
-        // First, check all bullets
-        foreach (var (bulletComponent, bulletTransform, bulletEntity) in
-            SystemAPI.Query<RefRO<SlimeBulletComponent>, RefRO<LocalTransform>>().WithEntityAccess())
-        {
-            if (bulletComponent.ValueRO.isAbleToMove || bulletComponent.ValueRO.isBeingSummoned)
-                continue;
+        //// First, check all bullets
+        //foreach (var (bulletComponent, bulletTransform, bulletEntity) in
+        //    SystemAPI.Query<RefRO<SlimeBulletComponent>, RefRO<LocalTransform>>().WithEntityAccess())
+        //{
+        //    if (bulletComponent.ValueRO.isAbleToMove || bulletComponent.ValueRO.isBeingSummoned)
+        //        continue;
 
-            float3 bulletPos = bulletTransform.ValueRO.Position;
-            float radius = bulletComponent.ValueRO.slowRadius;
-            float slowModifier = bulletComponent.ValueRO.slowModifier;
+        //    float3 bulletPos = bulletTransform.ValueRO.Position;
+        //    float radius = bulletComponent.ValueRO.slowRadius;
+        //    float slowModifier = bulletComponent.ValueRO.slowModifier;
 
-            if (slowModifier > 0)
-            {
-                //DebugDrawSphere(bulletPos, radius, Color.cyan);
+        //    if (slowModifier > 0)
+        //    {
+        //        //DebugDrawSphere(bulletPos, radius, Color.cyan);
 
-                foreach (var (transform, enemyComponent, velocity, entity) in
-                    SystemAPI.Query<RefRO<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
-                {
-                    if (!entityManager.HasComponent<EnemyTagComponent>(entity))
-                        continue;
+        //        foreach (var (transform, enemyComponent, velocity, entity) in
+        //            SystemAPI.Query<RefRO<LocalTransform>, RefRO<EnemyTagComponent>, RefRW<PhysicsVelocity>>().WithEntityAccess())
+        //        {
+        //            if (!entityManager.HasComponent<EnemyTagComponent>(entity))
+        //                continue;
 
-                    float3 toCenter = bulletPos - transform.ValueRO.Position;
-                    float dist = math.length(toCenter);
+        //            float3 toCenter = bulletPos - transform.ValueRO.Position;
+        //            float dist = math.length(toCenter);
 
-                    if (dist <= radius && dist > 0.01f)
-                    {
-                        if (!state.EntityManager.HasComponent<SlowedBySlimeBulletTag>(entity))
-                            ecb.AddComponent(entity, new SlowedBySlimeBulletTag());
+        //            if (dist <= radius && dist > 0.01f)
+        //            {
+        //                if (!state.EntityManager.HasComponent<SlowedBySlimeBulletTag>(entity))
+        //                    ecb.AddComponent(entity, new SlowedBySlimeBulletTag());
 
-                        if (math.lengthsq(velocity.ValueRO.Linear) > 0)
-                            velocity.ValueRW.Linear = velocity.ValueRO.Linear * (1 - slowModifier);
+        //                if (math.lengthsq(velocity.ValueRO.Linear) > 0)
+        //                    velocity.ValueRW.Linear = velocity.ValueRO.Linear * (1 - slowModifier);
 
-                        // Mark this enemy as still being affected
-                        if(!stillSlowedEnemies.Contains(entity))
-                            stillSlowedEnemies.Add(entity);
-                    }
-                }
-            }
-        }
+        //                // Mark this enemy as still being affected
+        //                if(!stillSlowedEnemies.Contains(entity))
+        //                    stillSlowedEnemies.Add(entity);
+        //            }
+        //        }
+        //    }
+        //}
 
-        // Remove the tag from enemies who are no longer in any radius
-        foreach (var (slowedBySlimeBulletTag, entity) in SystemAPI.Query<RefRO<SlowedBySlimeBulletTag>>().WithEntityAccess())
-        {
-            if (!stillSlowedEnemies.Contains(entity))
-            {
-                ecb.RemoveComponent<SlowedBySlimeBulletTag>(entity);
-            }
-        }
+        //// Remove the tag from enemies who are no longer in any radius
+        //foreach (var (slowedBySlimeBulletTag, entity) in SystemAPI.Query<RefRO<SlowedBySlimeBulletTag>>().WithEntityAccess())
+        //{
+        //    if (!stillSlowedEnemies.Contains(entity))
+        //    {
+        //        ecb.RemoveComponent<SlowedBySlimeBulletTag>(entity);
+        //    }
+        //}
 
-        ecb.Playback(state.EntityManager);
-        stillSlowedEnemies.Dispose();
+        //ecb.Playback(state.EntityManager);
+        //stillSlowedEnemies.Dispose();
     }
 
 

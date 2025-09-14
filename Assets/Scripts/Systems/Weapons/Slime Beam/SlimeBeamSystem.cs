@@ -15,22 +15,22 @@ public partial struct SlimeBeamSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        //if (!GameManager.Instance.IsPlaying()) return;
 
-        float deltaTime = SystemAPI.Time.DeltaTime;
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        //float deltaTime = SystemAPI.Time.DeltaTime;
+        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (slimeBeamComponent, beamEntity) in SystemAPI.Query<RefRW<SlimeBeamComponent>>().WithEntityAccess())
-        {
-            slimeBeamComponent.ValueRW.timer -= deltaTime;
-            // Destroy if out of lifetime
-            if (slimeBeamComponent.ValueRO.timer <= 0)
-            {
-                ProjectilesManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
-            }
-        }
+        //foreach (var (slimeBeamComponent, beamEntity) in SystemAPI.Query<RefRW<SlimeBeamComponent>>().WithEntityAccess())
+        //{
+        //    slimeBeamComponent.ValueRW.timer -= deltaTime;
+        //    // Destroy if out of lifetime
+        //    if (slimeBeamComponent.ValueRO.timer <= 0)
+        //    {
+        //        ProjectilesManager.Instance.ReturnSlimeBeam(beamEntity, ecb);
+        //    }
+        //}
 
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        //ecb.Playback(entityManager);
+        //ecb.Dispose();
     }
 }

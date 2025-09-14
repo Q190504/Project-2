@@ -15,22 +15,22 @@ public partial struct PawPrintPoisonCloudExistingSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        //if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        //var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        foreach (var (pawPrintPoisonCloudComponent, cloudEntity) in 
-            SystemAPI.Query<RefRW<PawPrintPoisonCloudComponent>>().WithEntityAccess())
-        {
-            pawPrintPoisonCloudComponent.ValueRW.existDurationTimer -= SystemAPI.Time.DeltaTime;
+        //foreach (var (pawPrintPoisonCloudComponent, cloudEntity) in 
+        //    SystemAPI.Query<RefRW<PawPrintPoisonCloudComponent>>().WithEntityAccess())
+        //{
+        //    pawPrintPoisonCloudComponent.ValueRW.existDurationTimer -= SystemAPI.Time.DeltaTime;
 
-            // Return this cloud if it's duration is over
-            if (pawPrintPoisonCloudComponent.ValueRO.existDurationTimer <= 0)
-            {
-                ProjectilesManager.Instance.ReturnPoisonCloud(cloudEntity, ecb);
-                continue;
-            }
-        }
+        //    // Return this cloud if it's duration is over
+        //    if (pawPrintPoisonCloudComponent.ValueRO.existDurationTimer <= 0)
+        //    {
+        //        ProjectilesManager.Instance.ReturnPoisonCloud(cloudEntity, ecb);
+        //        continue;
+        //    }
+        //}
     }
 }

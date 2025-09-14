@@ -1,31 +1,100 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseEffect : MonoBehaviour
+public enum EffectType
 {
-    private float effectDurationTimer;
-    private float effectDurationTime;
+    None,
+    Frenzy,
+    Slow,
+    Stun,
+    Poison,
+}
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+public interface IEffectListener
+{
+    EffectType EffectType { get; } // which effect this listener cares about
+    void OnEffectApplied(BaseEffect effect);
+    void OnEffectRefreshed(BaseEffect effect);
+    void OnEffectExpired(BaseEffect effect);
+}
+
+
+public class BaseEffect
+{
+    public EffectType Type { get; protected set; }
+    public float Timer { get; protected set; }
+    public float Duration { get; protected set; }
+    public float Value { get; protected set; }
+    public EffectSource Source { get; protected set; }
+
+    private readonly List<IEffectListener> listeners = new();
+
+    public bool IsActive => Timer > 0f;
+
+    public BaseEffect(EffectType type, float duration, float value, EffectSource source)
     {
-        
+        Type = type;
+        Timer = duration;
+        Duration = duration;
+        Value = value;
+        Source = source;
+
+        NotifyApplied();
     }
 
-    public void ReduceEffectDuration(EffectType effectType)
+    public void UpdateTimer(float deltaTime)
     {
-        effectDurationTimer -= Time.deltaTime;
-        // Update effect duration UI
-        GamePlayUIManager.Instance.UpdateEffectDurationUI(effectType,
-            effectDurationTimer, effectDurationTime);
+        if (Timer > 0f)
+        {
+            Timer -= deltaTime;
+            GamePlayUIManager.Instance.UpdateEffectDurationUI(Type, Timer, Duration);
+        }
     }
 
-    public void SetEffectDurationTime(float effectDuration)
+    public void Refresh(float duration, float value, EffectSource source)
     {
-        effectDurationTimer = effectDurationTime = effectDuration;
+        Timer = duration;
+        Duration = duration;
+        Value = Mathf.Max(Value, value);
+        Source = source;
+
+        NotifyRefreshed();
     }
 
-    public float GetEffectDurationTimer()
+    public virtual void Expire()
     {
-        return effectDurationTimer;
+        Type = EffectType.None;
+        Timer = 0;
+        Duration = 0;
+        Value = 0;
+        Source = null;
+
+        NotifyExpired();
+    }
+
+    public void AddListener(IEffectListener listener)
+    {
+        if (!listeners.Contains(listener))
+            listeners.Add(listener);
+    }
+
+    public void RemoveListener(IEffectListener listener)
+    {
+        listeners.Remove(listener);
+    }
+
+    private void NotifyApplied()
+    {
+        foreach (var l in listeners) l.OnEffectApplied(this);
+    }
+
+    private void NotifyRefreshed()
+    {
+        foreach (var l in listeners) l.OnEffectRefreshed(this);
+    }
+
+    private void NotifyExpired()
+    {
+        foreach (var l in listeners) l.OnEffectExpired(this);
     }
 }

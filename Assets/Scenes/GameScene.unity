@@ -10259,11 +10259,9 @@ MonoBehaviour:
   - {fileID: 1586550230}
   - {fileID: 629643526}
   effectImagePrefab: {fileID: 263688236135801908, guid: b7b3f65d59efc2045b5566794d759941, type: 3}
-  stunEffectIndex: -1
-  stunEffectSprite: {fileID: -3530069344316797834, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
-  frenzyEffectIndex: -1
-  frenzyEffectSprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   effectsLayout: {fileID: 1113382833}
+  stunEffectSprite: {fileID: -3530069344316797834, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
+  frenzyEffectSprite: {fileID: -5906687731359168616, guid: d832e36fff4c7cc4eaa22921c39320cc, type: 3}
   cardLayout: {fileID: 94418579}
   passiveCardPrefab: {fileID: -6564784702441057703, guid: ef668e35825f86b4d8f4c31f45e2c83e, type: 3}
   weaponCardPrefab: {fileID: 2220865243480083456, guid: 381f74dd998774b41b0718f71938fb63, type: 3}
@@ -53689,7 +53687,8 @@ GameObject:
   - component: {fileID: 1688281995}
   - component: {fileID: 1688281994}
   - component: {fileID: 1688281993}
-  - component: {fileID: 1688281998}
+  - component: {fileID: 1688282010}
+  - component: {fileID: 1688282011}
   - component: {fileID: 1688282003}
   - component: {fileID: 1688281992}
   - component: {fileID: 1688282000}
@@ -53845,20 +53844,6 @@ MonoBehaviour:
   bonusDamagePercent: 0.4
   bonusMovementSpeedPercent: 0.4
   hpCostPerShotPercentv: 2
---- !u!114 &1688281998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1688281991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27d3cbd3480e75e4e92e815e4f35b6b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStunned: 0
-  frenzyActive: 0
 --- !u!114 &1688281999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54049,6 +54034,54 @@ MonoBehaviour:
   increaseDamagePerLevel: 25
   hpHealPercentPerBullet: 1.25
   bulletSpeedWhenSummoned: 30
+--- !u!58 &1688282010
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
+--- !u!114 &1688282011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b6539c0fedbbdc448d6b965de8e3e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1707641450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
@@ -55798,7 +55831,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slimeBulletPrepare: 100
   slimeBeamPrepare: 4
-  poisionCloudPrepare: 24
+  poisonCloudPrepare: 24
+  slimeBulletPrefab: {fileID: 0}
+  slimeBeamPrefab: {fileID: 0}
+  poisonCloudPrefab: {fileID: 0}
 --- !u!1 &2052296027
 GameObject:
   m_ObjectHideFlags: 0

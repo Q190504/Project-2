@@ -1,27 +1,32 @@
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Transforms;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectilesManager : MonoBehaviour
 {
     private static ProjectilesManager _instance;
 
+    [Header("Prepare")]
     [SerializeField] private int slimeBulletPrepare = 100;
     [SerializeField] private int slimeBeamPrepare = 4;
-    [SerializeField] private int poisionCloudPrepare = 24;
+    [SerializeField] private int poisonCloudPrepare = 24;
 
-    private EntityManager entityManager;
-    private Entity slimeBulletPrefab;
-    private Entity slimeBeamPrefab;
-    private Entity poisionCloudPrefab;
+    [Header("Prefabs")]
+    [SerializeField] private SlimeBullet slimeBulletPrefab;
+    [SerializeField] private SlimeBeam slimeBeamPrefab;
+    [SerializeField] private PoisonCloud poisonCloudPrefab;
 
-    private NativeQueue<Entity> inactiveSlimeBullets;
-    private NativeQueue<Entity> inactiveSlimeBeams;
-    private NativeQueue<Entity> inactivePoisionClouds;
+    private Queue<SlimeBullet> inactiveSlimeBullets = new Queue<SlimeBullet>();
+    private readonly List<SlimeBullet> slimeBulletsToReclaim = new List<SlimeBullet>();
+    private Transform slimeBulletsPool;
     private int slimeBulletCount = 0;
+
+    private Queue<SlimeBeam> inactiveSlimeBeams = new Queue<SlimeBeam>();
+    private Transform slimeBeamsPool;
     private int slimeBeamCount = 0;
-    private int poisionCloudCount = 0;
+
+    private Queue<PoisonCloud> inactivePoisonClouds = new Queue<PoisonCloud>();
+    private Transform poisonCloudsPool;
+    private int poisonCloudCount = 0;
 
     public static ProjectilesManager Instance
     {
@@ -39,59 +44,17 @@ public class ProjectilesManager : MonoBehaviour
             _instance = this;
         else
             Destroy(this.gameObject);
-
-
-        inactiveSlimeBullets = new NativeQueue<Entity>(Allocator.Persistent);
-        inactiveSlimeBeams = new NativeQueue<Entity>(Allocator.Persistent);
-        inactivePoisionClouds = new NativeQueue<Entity>(Allocator.Persistent);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        // Get the baked entity prefab
-        EntityQuery query = entityManager.CreateEntityQuery(typeof(SlimeBulletPrefabComponent));
-        if (query.CalculateEntityCount() > 0)
-        {
-            slimeBulletPrefab = entityManager.GetComponentData<SlimeBulletPrefabComponent>(query.GetSingletonEntity()).slimeBulletPrefab;
-        }
-        else
-        {
-            Debug.LogError("Slime Bullet prefab not found! Make sure it's baked correctly.");
-        }
-
-        EntityQuery slimeBeamPrefabQuery = entityManager.CreateEntityQuery(typeof(SlimeBeamPrefabComponent));
-        if (slimeBeamPrefabQuery.CalculateEntityCount() > 0)
-        {
-            slimeBeamPrefab = entityManager.GetComponentData<SlimeBeamPrefabComponent>(slimeBeamPrefabQuery.GetSingletonEntity()).slimeBeamPrefab;
-        }
-        else
-        {
-            Debug.LogError("Slime Beam prefab not found! Make sure it's baked correctly.");
-        }
-
-        EntityQuery poisonCloudPrefabQuery = entityManager.CreateEntityQuery(typeof(PawPrintPoisonCloudPrefabComponent));
-        if (poisonCloudPrefabQuery.CalculateEntityCount() > 0)
-        {
-            poisionCloudPrefab = entityManager.GetComponentData<PawPrintPoisonCloudPrefabComponent>(poisonCloudPrefabQuery.GetSingletonEntity()).pawPrintPoisonCloudPrefab;
-        }
-        else
-        {
-            Debug.LogError("Paw Print Poison Cloud prefab not found! Make sure it's baked correctly.");
-        }
-
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        CreatePools();
 
         // Prepare the initial pool of entities
-        PreparePoisonCloud(ecb);
-        PrepareSlimeBeam(ecb);
-        PrepareSlimeBullet(ecb);
-
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        PreparePoisonCloud();
+        PrepareSlimeBeam();
+        PrepareSlimeBullet();
     }
 
     // Update is called once per frame
@@ -100,192 +63,166 @@ public class ProjectilesManager : MonoBehaviour
 
     }
 
-    private void OnDestroy()
+    public void CreatePools()
     {
-        if (inactiveSlimeBullets.IsCreated)
-            inactiveSlimeBullets.Dispose();
+        slimeBulletsPool = new GameObject("SlimeBulletsPool").transform;
+        slimeBulletsPool.SetParent(transform);
 
-        if (inactiveSlimeBeams.IsCreated)
-            inactiveSlimeBeams.Dispose();
+        slimeBeamsPool = new GameObject("SlimeBeamsPool").transform;
+        slimeBeamsPool.SetParent(transform);
 
-        if (inactivePoisionClouds.IsCreated)
-            inactivePoisionClouds.Dispose();
+        poisonCloudsPool = new GameObject("PoisionCloudsPool").transform;
+        poisonCloudsPool.SetParent(transform);
     }
 
-    private void PrepareSlimeBullet(EntityCommandBuffer ecb)
+    #region Slime Bullet
+
+    private void PrepareSlimeBullet()
     {
-        if (slimeBulletPrefab == Entity.Null) return;
+        if (slimeBulletPrefab == null) return;
 
         for (int i = 0; i < slimeBulletPrepare; i++)
         {
-            Entity slimeBulletInstance = entityManager.Instantiate(slimeBulletPrefab);
-            SetEntityStatus(slimeBulletInstance, false, ecb, entityManager);
+            SlimeBullet slimeBulletInstance = Instantiate(slimeBulletPrefab, slimeBulletsPool);
+            slimeBulletInstance.gameObject.SetActive(false);
             inactiveSlimeBullets.Enqueue(slimeBulletInstance);
             slimeBulletCount++;
         }
     }
 
-    private void PrepareSlimeBeam(EntityCommandBuffer ecb)
+    public SlimeBullet TakeSlimeBullet()
     {
-        if (slimeBeamPrefab == Entity.Null) return;
+        if (inactiveSlimeBullets.Count <= 0)
+            PrepareSlimeBullet();
 
-        for (int i = 0; i < slimeBeamPrepare; i++)
-        {
-            Entity slimeBeamInstance = entityManager.Instantiate(slimeBeamPrefab);
-            SetEntityStatus(slimeBeamInstance, false, ecb, entityManager);
-            inactiveSlimeBeams.Enqueue(slimeBeamInstance);
-            slimeBeamCount++;
-        }
-    }
-
-    private void PreparePoisonCloud(EntityCommandBuffer ecb)
-    {
-        if (poisionCloudPrefab == Entity.Null) return;
-
-        for (int i = 0; i < poisionCloudPrepare; i++)
-        {
-            Entity poisionCloudInstance = entityManager.Instantiate(poisionCloudPrefab);
-            SetEntityStatus(poisionCloudInstance, false, ecb, entityManager);
-            inactivePoisionClouds.Enqueue(poisionCloudInstance);
-            poisionCloudCount++;
-        }
-    }
-
-    public Entity TakeSlimeBullet(EntityCommandBuffer ecb)
-    {
-        if (inactiveSlimeBullets.IsEmpty())
-            PrepareSlimeBullet(ecb);
-
-        Entity slimeBulletInstance = inactiveSlimeBullets.Dequeue();
+        SlimeBullet bullet = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
-        SetEntityStatus(slimeBulletInstance, true, ecb, entityManager);
 
-        GameObject visual = AnimationManager.Instance.TakeSlimeBulletSlowZone();
-        ecb.AddComponent(slimeBulletInstance, new VisualReferenceComponent { gameObject = visual });
+        bullet.transform.SetParent(null, false);
+        bullet.gameObject.SetActive(true);
 
-        return slimeBulletInstance;
+        return bullet;
     }
 
-    public Entity TakeSlimeBeam(EntityCommandBuffer ecb)
+    public void ReturnSlimeBullet(SlimeBullet bullet)
     {
-        if (inactiveSlimeBeams.IsEmpty())
-            PrepareSlimeBeam(ecb);
-
-        Entity slimeBeamInstance = inactiveSlimeBeams.Dequeue();
-        slimeBeamCount--;
-        SetEntityStatus(slimeBeamInstance, true, ecb, entityManager);
-
-        GameObject visual = AnimationManager.Instance.TakeSlimeBeam();
-        ecb.AddComponent(slimeBeamInstance, new VisualReferenceComponent { gameObject = visual });
-
-
-        return slimeBeamInstance;
-    }
-
-    public Entity TakePoisonCloud(EntityCommandBuffer ecb)
-    {
-        if (inactivePoisionClouds.IsEmpty())
-            PreparePoisonCloud(ecb);
-
-        Entity poisionCloudInstance = inactivePoisionClouds.Dequeue();
-        poisionCloudCount--;
-        SetEntityStatus(poisionCloudInstance, true, ecb, entityManager);
-
-        GameObject visual = AnimationManager.Instance.TakePoisonCloud();
-        ecb.AddComponent(poisionCloudInstance, new VisualReferenceComponent { gameObject = visual });
-
-        return poisionCloudInstance;
-    }
-
-    public void ReturnSlimeBullet(Entity bullet, EntityCommandBuffer ecb)
-    {
-        if (!entityManager.Exists(bullet)) return;
-
-        SetEntityStatus(bullet, false, ecb, entityManager);
-
-        // Return the visual Slow Zone game object
-        if (entityManager.HasComponent<VisualReferenceComponent>(bullet))
-        {
-            VisualReferenceComponent visualReferenceComponent =
-                entityManager.GetComponentData<VisualReferenceComponent>(bullet);
-            AnimationManager.Instance.ReturnSlimeBulletSlowZone(visualReferenceComponent.gameObject);
-        }
-
+        UnregisterSlimeBulletsToReclaim(bullet);
+        bullet.gameObject.SetActive(false);
+        bullet.transform.SetParent(slimeBulletsPool.transform, false);
         inactiveSlimeBullets.Enqueue(bullet);
         slimeBulletCount++;
     }
 
-    public void ReturnSlimeBeam(Entity beam, EntityCommandBuffer ecb)
+    public void RegisterSlimeBulletsToReclaim(SlimeBullet bullet)
     {
-        if (!entityManager.Exists(beam)) return;
+        if (!slimeBulletsToReclaim.Contains(bullet))
+            slimeBulletsToReclaim.Add(bullet);
+    }
 
-        SetEntityStatus(beam, false, ecb, entityManager);
+    public void UnregisterSlimeBulletsToReclaim(SlimeBullet bullet)
+    {
+        if (slimeBulletsToReclaim.Contains(bullet))
+            slimeBulletsToReclaim.Remove(bullet);
+    }
 
-        // Return the visual game object
-        if (entityManager.HasComponent<VisualReferenceComponent>(beam))
+    public bool HasWaitingSlimeBullet()
+    {
+        return slimeBulletsToReclaim.Count > 0;
+    }
+
+    public List<SlimeBullet> GetActiveBullets()
+    {
+        return slimeBulletsToReclaim;
+    }
+
+    #endregion
+
+    #region SlimeBeam
+
+    private void PrepareSlimeBeam()
+    {
+        if (slimeBeamPrefab == null) return;
+
+        for (int i = 0; i < slimeBeamPrepare; i++)
         {
-            VisualReferenceComponent visualReferenceComponent =
-                entityManager.GetComponentData<VisualReferenceComponent>(beam);
-            AnimationManager.Instance.ReturnSlimeBeam(visualReferenceComponent.gameObject);
+            SlimeBeam beam = Instantiate(slimeBeamPrefab, slimeBeamsPool);
+            beam.gameObject.SetActive(false);
+            slimeBeamCount++;
+            inactiveSlimeBeams.Enqueue(beam);
         }
+    }
 
+    public SlimeBeam TakeSlimeBeam()
+    {
+        if (inactiveSlimeBeams.Count <= 0)
+            PrepareSlimeBeam();
+
+        SlimeBeam beam = inactiveSlimeBeams.Dequeue();
+
+        beam.transform.SetParent(null, false);
+        beam.gameObject.SetActive(true);
+        slimeBeamCount--;
+
+        return beam;
+    }
+
+    public void ReturnSlimeBeam(SlimeBeam beam)
+    {
+        if (beam == null) return;
+
+        beam.gameObject.SetActive(false);
+        beam.transform.SetParent(slimeBeamsPool, false);
         inactiveSlimeBeams.Enqueue(beam);
         slimeBeamCount++;
     }
 
-    public void ReturnPoisonCloud(Entity cloud, EntityCommandBuffer ecb)
+    #endregion
+
+    #region Poison Cloud
+
+    private void PreparePoisonCloud()
     {
-        if (!entityManager.Exists(cloud)) return;
+        if (poisonCloudPrefab == null) return;
 
-        SetEntityStatus(cloud, false, ecb, entityManager);
-
-        // Return the visual game object
-        if (entityManager.HasComponent<VisualReferenceComponent>(cloud))
+        for (int i = 0; i < poisonCloudPrepare; i++)
         {
-            VisualReferenceComponent visualReferenceComponent =
-                entityManager.GetComponentData<VisualReferenceComponent>(cloud);
-            AnimationManager.Instance.ReturnPoisonCloud(visualReferenceComponent.gameObject);
+            PoisonCloud cloud = Instantiate(poisonCloudPrefab, poisonCloudsPool);
+            cloud.gameObject.SetActive(false);
+            poisonCloudCount++;
+            inactivePoisonClouds.Enqueue(cloud);
         }
-
-        inactivePoisionClouds.Enqueue(cloud);
-        poisionCloudCount++;
     }
 
-    private void SetEntityStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
+    public PoisonCloud TakePoisonCloud()
     {
-        DynamicBuffer<Child> children;
+        if (inactivePoisonClouds.Count <= 0)
+            PreparePoisonCloud();
 
-        if (status)
-        {
-            ecb.RemoveComponent<Disabled>(root);
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.RemoveComponent<Disabled>(child.Value);
-                }
-            }
+        PoisonCloud cloud = inactivePoisonClouds.Dequeue();
 
-        }
-        else
-        {
-            ecb.AddComponent<Disabled>(root);
+        cloud.transform.SetParent(null, false);
+        cloud.gameObject.SetActive(true);
+        poisonCloudCount--;
 
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.AddComponent<Disabled>(child.Value);
-                }
-            }
-        }
+        return cloud;
     }
+
+    public void ReturnPoisonCloud(PoisonCloud cloud)
+    {
+        if (cloud == null) return;
+
+        cloud.gameObject.SetActive(false);
+        cloud.transform.SetParent(poisonCloudsPool, false);
+        inactivePoisonClouds.Enqueue(cloud);
+
+        poisonCloudCount++;
+    }
+
+    #endregion
 
     public int GetPoisionCloudPrepare()
     {
-        return poisionCloudPrepare;
+        return poisonCloudPrepare;
     }
 
     public int GetSlimeBeamPrepare()

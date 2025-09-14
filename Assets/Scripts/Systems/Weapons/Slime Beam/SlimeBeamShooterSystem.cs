@@ -134,8 +134,8 @@ public partial struct SlimeBeamShooterSystem : ISystem
         Quaternion rotation = GetRotation(beamCount);
 
         //spawn beam
-        Entity slimeBeamInstance = ProjectilesManager.Instance.TakeSlimeBeam(ecb);
-        SetStats(ecb, slimeBeamInstance, damage, position, rotation);
+        //Entity slimeBeamInstance = ProjectilesManager.Instance.TakeSlimeBeam(ecb);
+        //SetStats(ecb, slimeBeamInstance, damage, position, rotation);
 
 
         AudioManager.Instance.PlaySlimeBeamSoundSFX();

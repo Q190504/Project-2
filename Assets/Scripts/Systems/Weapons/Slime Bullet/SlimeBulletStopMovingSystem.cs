@@ -43,32 +43,32 @@ struct SlimeBulletStopJob : ICollisionEventsJob
 
     public void Execute(CollisionEvent collisionEvent)
     {
-        Entity entityA = collisionEvent.EntityA;
-        Entity entityB = collisionEvent.EntityB;
+        //Entity entityA = collisionEvent.EntityA;
+        //Entity entityB = collisionEvent.EntityB;
 
-        bool entityAIsWall = impassibleTagLookup.HasComponent(entityA);
-        bool entityBIsWall = impassibleTagLookup.HasComponent(entityB);
+        //bool entityAIsWall = impassibleTagLookup.HasComponent(entityA);
+        //bool entityBIsWall = impassibleTagLookup.HasComponent(entityB);
 
-        if ((!entityAIsWall && entityBIsWall) || (entityAIsWall && !entityBIsWall))
-        {
-            Entity bullet = entityAIsWall ? entityB : entityA;
+        //if ((!entityAIsWall && entityBIsWall) || (entityAIsWall && !entityBIsWall))
+        //{
+        //    Entity bullet = entityAIsWall ? entityB : entityA;
 
-            if (!slimeBulletLookup.HasComponent(bullet))
-                return;
+        //    if (!slimeBulletLookup.HasComponent(bullet))
+        //        return;
 
-            var bulletComponent = slimeBulletLookup[bullet];
+        //    var bulletComponent = slimeBulletLookup[bullet];
 
-            // Skip if already stopped moving
-            if (!bulletComponent.isAbleToMove)
-                return;
+        //    // Skip if already stopped moving
+        //    if (!bulletComponent.isAbleToMove)
+        //        return;
 
-            bulletComponent.isAbleToMove = false;
+        //    bulletComponent.isAbleToMove = false;
 
-            var physicsVelocity = physicsVelocityLookup[bullet];
-            physicsVelocity.Linear.xy = float2.zero;
+        //    var physicsVelocity = physicsVelocityLookup[bullet];
+        //    physicsVelocity.Linear.xy = float2.zero;
 
-            ecb.SetComponent(bullet, bulletComponent);
-            ecb.SetComponent(bullet, physicsVelocity);
-        }
+        //    ecb.SetComponent(bullet, bulletComponent);
+        //    ecb.SetComponent(bullet, physicsVelocity);
+        //}
     }
 }

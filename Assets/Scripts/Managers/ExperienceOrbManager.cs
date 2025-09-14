@@ -37,14 +37,15 @@ public class ExperienceOrbManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-        inactiveOrbs = new Queue<ExperienceOrb>();
-        orbsPool = new GameObject("OrbsPool").transform;
-        orbsPool.SetParent(transform);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        inactiveOrbs = new Queue<ExperienceOrb>();
+        orbsPool = new GameObject("OrbsPool").transform;
+        orbsPool.SetParent(transform);
+
         Initialize();
         PrepareOrb();
     }
@@ -109,6 +110,7 @@ public class ExperienceOrbManager : MonoBehaviour
     {
         orb.Initialize(0);
         orb.gameObject.SetActive(false);
+        orb.transform.SetParent(orbsPool.transform, false);
         inactiveOrbs.Enqueue(orb);
         orbCount++;
     }

@@ -129,15 +129,15 @@ public partial struct SlimeBulletShooterSystem : ISystem
 
         for (int i = 0; i < bulletRemaining; i++)
         {
-            // Spawn the bullet
-            Entity bullet = ProjectilesManager.Instance.TakeSlimeBullet(ecb);
+            //// Spawn the bullet
+            //Entity bullet = ProjectilesManager.Instance.TakeSlimeBullet(ecb);
 
-            float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / bulletRemaining;
+            //float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / bulletRemaining;
 
-            float distance = minimumDistance + i * bonusDistance;
+            //float distance = minimumDistance + i * bonusDistance;
 
-            SetBulletStats(ecb, bullet, damage, passthroughDamageModifier, cooldown,
-                distance, moveSpeed, existDuration, slowModifier, slowRadius);
+            //SetBulletStats(ecb, bullet, damage, passthroughDamageModifier, cooldown,
+            //    distance, moveSpeed, existDuration, slowModifier, slowRadius);
 
 
             ////Damages player
