@@ -9,19 +9,22 @@ public enum PlayerSkillID
 public abstract class BaseSkill : MonoBehaviour
 {
     [Header("Skill Settings")]
-    [SerializeField] protected float cooldownTime;
+    [SerializeField] protected float baseCooldownTime; // Cooldown time at the beginning of the game
     protected PlayerSkillID skillID;
 
     protected float cooldownTimer;
+    protected float cooldownTime;
+
     protected bool isActive;
 
     protected virtual void Initialize()
     {
         isActive = false;
         cooldownTimer = 0;
+        cooldownTime = baseCooldownTime;
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         if (!GameManager.Instance.IsPlaying())
             return;
@@ -52,10 +55,15 @@ public abstract class BaseSkill : MonoBehaviour
         return cooldownTimer <= 0;
     }
 
-    protected void StartCooldown(float finalCooldownTime)
+    protected void StartCooldown(float cooldownTime)
     {
-        cooldownTimer = finalCooldownTime;
+        cooldownTimer = this.cooldownTime = cooldownTime;
     }
 
-    public abstract void TryActivate();
+    public abstract bool Activate();
+
+    public virtual void Deactivate()
+    {
+        Initialize();
+    }
 }

@@ -10,44 +10,44 @@ public class GamePlayUIManager : MonoBehaviour
     private static GamePlayUIManager _instance;
 
     [Header("Panels")]
-    public GameObject titlePanel;
-    public GameObject upgradePanel;
-    public GameObject endGamePanel;
-    public GameObject settingPanel;
-    public GameObject creditPanel;
-    public GameObject comfirmExitPanel;
+    [SerializeField] private GameObject titlePanel;
+    [SerializeField] private GameObject upgradePanel;
+    [SerializeField] private GameObject endGamePanel;
+    [SerializeField] private GameObject settingPanel;
+    [SerializeField] private GameObject creditPanel;
+    [SerializeField] private GameObject comfirmExitPanel;
 
     [Header("Texts")]
-    public TMP_Text currentLevelText;
-    public TMP_Text countdownSelectionText;
-    public TMP_Text inGameTimeText;
-    public TMP_Text inGameEnemyKilledText;
-    public TMP_Text endGamePanelTitleText;
-    public TMP_Text endGameTimeText;
-    public TMP_Text endGameEnemyKilledText;
+    [SerializeField] private TMP_Text currentLevelText;
+    [SerializeField] private TMP_Text countdownSelectionText;
+    [SerializeField] private TMP_Text inGameTimeText;
+    [SerializeField] private TMP_Text inGameEnemyKilledText;
+    [SerializeField] private TMP_Text endGamePanelTitleText;
+    [SerializeField] private TMP_Text endGameTimeText;
+    [SerializeField] private TMP_Text endGameEnemyKilledText;
 
     [Header("Bars")]
-    public Slider hpBar;
-    public TMP_Text hpText;
-    public Slider xpBar;
-    public TMP_Text xpText;
+    [SerializeField] private Slider hpBar;
+    [SerializeField] private TMP_Text hpText;
+    [SerializeField] private Slider xpBar;
+    [SerializeField] private TMP_Text xpText;
 
-    public Slider leftCountdownBar;
-    public Slider rightCountdownBar;
+    [SerializeField] private Slider leftCountdownBar;
+    [SerializeField] private Slider rightCountdownBar;
 
     [Header("Audio Setting")]
     public Slider sfxVolumeBar;
-    public Slider bgmVolumeBar;
-    public FloatPublisherSO setSFXSO;
-    public FloatPublisherSO setBGMSO;
+    [SerializeField] private Slider bgmVolumeBar;
+    [SerializeField] private FloatPublisherSO setSFXSO;
+    [SerializeField] private FloatPublisherSO setBGMSO;
 
     [Header("Skills")]
     public Image skill1Image;
-    public Image skill1CoodownImage;
-    public TMP_Text skill1CoodownText;
-    public Image skill2Image;
-    public Image skill2CoodownImage;
-    public TMP_Text skill2CoodownText;
+    [SerializeField] private Image skill1CoodownImage;
+    [SerializeField] private TMP_Text skill1CoodownText;
+    [SerializeField] private Image skill2Image;
+    [SerializeField] private Image skill2CoodownImage;
+    [SerializeField] private TMP_Text skill2CoodownText;
 
     [Header("Weapons")]
     [SerializeField] private List<UpgradeSlot> weaponSlots;
@@ -58,34 +58,36 @@ public class GamePlayUIManager : MonoBehaviour
     private int currentEmptyPassiveSlotIndex;
 
     [Header("Effects")]
-    public GameObject effectImagePrefab;
-    public int stunEffectIndex = -1;
-    public Sprite stunEffectSprite;
-    public int frenzyEffectIndex = -1;
-    public Sprite frenzyEffectSprite;
-    public Transform effectsLayout;
+    [SerializeField] private GameObject effectImagePrefab;
+    [SerializeField] private Transform effectsLayout;
+    [SerializeField] private Sprite stunEffectSprite;
+    [SerializeField] private Sprite frenzyEffectSprite;
+
     private List<GameObject> effectImageList = new List<GameObject>();
 
+    private Dictionary<EffectType, Sprite> effectSprites;
+    private Dictionary<EffectType, int> effectIndexes;
+
     [Header("Cards")]
-    public Transform cardLayout;
-    public UpgradeCard passiveCardPrefab;
-    public UpgradeCard weaponCardPrefab;
-    public GameObjectPublisherSO addCardSO;
+    [SerializeField] private Transform cardLayout;
+    [SerializeField] private UpgradeCard passiveCardPrefab;
+    [SerializeField] private UpgradeCard weaponCardPrefab;
+    [SerializeField] private GameObjectPublisherSO addCardSO;
 
     [Header("Stats Icon")]
-    public Sprite damageIcon;
-    public Sprite maxHPIcon;
-    public Sprite moveSpeedIcon;
-    public Sprite healthRegenIcon;
-    public Sprite pickupRadiusIcon;
-    public Sprite armorIcon;
-    public Sprite abilityHasteIcon;
+    [SerializeField] private Sprite damageIcon;
+    [SerializeField] private Sprite maxHPIcon;
+    [SerializeField] private Sprite moveSpeedIcon;
+    [SerializeField] private Sprite healthRegenIcon;
+    [SerializeField] private Sprite pickupRadiusIcon;
+    [SerializeField] private Sprite armorIcon;
+    [SerializeField] private Sprite abilityHasteIcon;
 
     [Header("Weapon Icon")]
-    public Sprite slimeBulletShooterIcon;
-    public Sprite slimeBeamShooterIcon;
-    public Sprite pawPrintPoisonerIcon;
-    public Sprite radiantFieldIcon;
+    [SerializeField] private Sprite slimeBulletShooterIcon;
+    [SerializeField] private Sprite slimeBeamShooterIcon;
+    [SerializeField] private Sprite pawPrintPoisonerIcon;
+    [SerializeField] private Sprite radiantFieldIcon;
 
     private Entity player;
     private EntityManager entityManager;
@@ -149,6 +151,18 @@ public class GamePlayUIManager : MonoBehaviour
         {
             { PlayerSkillID.Frenzy, skill1CoodownText },
             { PlayerSkillID.Reclaim, skill2CoodownText },
+        };
+
+        effectSprites = new Dictionary<EffectType, Sprite>
+        {
+            { EffectType.Stun, stunEffectSprite },
+            { EffectType.Frenzy, frenzyEffectSprite }
+        };
+
+        effectIndexes = new Dictionary<EffectType, int>
+        {
+            { EffectType.Stun, -1 },
+            { EffectType.Frenzy, -1 }
         };
     }
 
@@ -219,22 +233,6 @@ public class GamePlayUIManager : MonoBehaviour
         }
     }
 
-    public void SetSkill2ImageOpacity(bool status)
-    {
-        if (status)
-            SetImageOpacity(skill2Image, 1);
-        else
-            SetImageOpacity(skill2Image, 0.5f);
-    }
-
-    public void SetSkill1ImageOpacity(bool status)
-    {
-        if (status)
-            SetImageOpacity(skill1Image, 1);
-        else
-            SetImageOpacity(skill1Image, 0.5f);
-    }
-
     public void SetSkillCooldownUI(PlayerSkillID skillID, bool status)
     {
         if (skillCooldownImages.TryGetValue(skillID, out Image cooldownImage))
@@ -256,18 +254,6 @@ public class GamePlayUIManager : MonoBehaviour
         }
     }
 
-    public void SetSkill1CooldownUI(bool status)
-    {
-        skill1CoodownImage.gameObject.SetActive(status);
-        skill1CoodownText.gameObject.SetActive(status);
-    }
-
-    public void SetSkill2CooldownUI(bool status)
-    {
-        skill2CoodownImage.gameObject.SetActive(status);
-        skill2CoodownText.gameObject.SetActive(status);
-    }
-
     public void UpdateSkillCooldownUI(PlayerSkillID skillID, float timeRemaining, float cooldownTime)
     {
         if (skillCooldownImages.TryGetValue(skillID, out Image cooldownImage))
@@ -286,58 +272,56 @@ public class GamePlayUIManager : MonoBehaviour
         else
         {
             Debug.LogWarning($"No cooldown text found for skill: {skillID}");
-        }        
+        }
     }
 
-    public void UpdateSkill1CooldownUI(float timeRemaining, float cooldownTime)
+    public int GetEffectIndexes(EffectType type)
     {
-        skill1CoodownImage.fillAmount = timeRemaining / cooldownTime;
-        skill1CoodownText.text = ((int)timeRemaining).ToString();
+        return effectIndexes[type];
     }
 
-    public void UpdateSkill2CooldownUI(float timeRemaining, float cooldownTime)
+    public void AddEffectImage(EffectType type)
     {
-        skill2CoodownImage.fillAmount = timeRemaining / cooldownTime;
-        skill2CoodownText.text = ((int)timeRemaining).ToString();
+        if (!effectSprites.ContainsKey(type)) return;
+
+        // Create effect image
+        GameObject effectImage = Instantiate(effectImagePrefab, effectsLayout);
+
+        // Set sprite
+        Image[] images = effectImage.GetComponentsInChildren<Image>();
+        if (images.Length > 0)
+            images[0].sprite = effectSprites[type];
+
+        // Track object
+        effectImageList.Add(effectImage);
+
+        // Assign index if not set
+        if (effectIndexes[type] == -1)
+            effectIndexes[type] = effectImageList.Count - 1;
     }
 
-    public void AddStunEffectImage()
+    public void UpdateEffectDurationUI(EffectType type, float timeRemaining, float initialTime)
     {
-        Image[] images = effectImagePrefab.GetComponentsInChildren<Image>();
+        if (!effectIndexes.ContainsKey(type)) return;
+
+        int index = effectIndexes[type];
+        if (index == -1 || index >= effectImageList.Count) return;
+
+        Image[] images = effectImageList[index].GetComponentsInChildren<Image>();
         if (images.Length > 1)
-            images[0].sprite = stunEffectSprite;
-
-        GameObject stunEffectImage = GameObject.Instantiate<GameObject>(effectImagePrefab, effectsLayout);
-        effectImageList.Add(stunEffectImage);
-
-        if (stunEffectIndex == -1)
-            stunEffectIndex = effectImageList.Count - 1;
+            images[1].fillAmount = timeRemaining / initialTime;
     }
 
-    public void AddFrenzyEffectImage()
+    public void RemoveEffectImage(EffectType type)
     {
-        Image[] images = effectImagePrefab.GetComponentsInChildren<Image>();
-        if (images.Length > 1)
-            images[0].sprite = frenzyEffectSprite;
+        if (!effectIndexes.ContainsKey(type)) return;
 
-        GameObject frenzyEffectImage = GameObject.Instantiate<GameObject>(effectImagePrefab, effectsLayout);
-        effectImageList.Add(frenzyEffectImage);
+        int index = effectIndexes[type];
+        if (index == -1 || index >= effectImageList.Count) return;
 
-        if (frenzyEffectIndex == -1)
-            frenzyEffectIndex = effectImageList.Count - 1;
-    }
-
-    public void UpdateEffectDurationUI(int imageIndex, float timeRemaining, float cooldownTime)
-    {
-        Image[] images = effectImageList[imageIndex].GetComponentsInChildren<Image>();
-        if (images.Length > 1)
-            images[1].fillAmount = timeRemaining / cooldownTime;
-    }
-
-    public void RemoveEffectImage(ref int imageIndex)
-    {
-        Destroy(effectImageList[imageIndex].gameObject);
-        imageIndex = -1;
+        Destroy(effectImageList[index].gameObject);
+        effectImageList[index] = null;
+        effectIndexes[type] = -1;
     }
 
     public void SetSettingPanel(bool status)
@@ -411,7 +395,7 @@ public class GamePlayUIManager : MonoBehaviour
         // Add cards
         foreach (var upgradeOption in upgradeOptions)
         {
-            AddCard(upgradeOption.CardType, upgradeOption.WeaponType, upgradeOption.PassiveType, 
+            AddCard(upgradeOption.CardType, upgradeOption.WeaponType, upgradeOption.PassiveType,
                 upgradeOption.ID, upgradeOption.CurrentLevel + 1, upgradeOption.DisplayName.ToString(),
                 upgradeOption.Description.ToString());
         }
@@ -551,13 +535,17 @@ public class GamePlayUIManager : MonoBehaviour
         SetConfirmExitPanel(false);
         CloseUpgradePanel();
         ClearSlots();
+
+        SetSkillCooldownUI(PlayerSkillID.Frenzy, false);
+        SetSkillCooldownUI(PlayerSkillID.Reclaim, false);
     }
 
     public void SetBGMSlider(float value)
     {
         bgmVolumeBar.value = value;
     }
-     public void SetSFXSlider(float value)
+
+    public void SetSFXSlider(float value)
     {
         sfxVolumeBar.value = value;
     }

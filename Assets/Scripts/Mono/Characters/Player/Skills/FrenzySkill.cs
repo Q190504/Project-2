@@ -16,16 +16,18 @@ public class FrenzySkill : BaseSkill
     [Range(1f, 5f)]
     [SerializeField] private float hpCostPerShotPercentv;
 
-    private float frenzyTimer;
-
     [Header("References")]
-    private PlayerHealth playerHealth;
+    private PlayerState playerState;
     private PlayerLevel playerLevel;
+    private AbilityHaste abilityHaste;
+
+    BaseEffect frenzyEffect;
 
     private void Start()
     {
-        if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
-        if (playerLevel == null) playerLevel = GetComponent<PlayerLevel>();
+        playerLevel = GetComponent<PlayerLevel>();
+        playerLevel = GetComponentInChildren<PlayerLevel>();
+        abilityHaste = GetComponentInChildren<AbilityHaste>();
     }
 
     protected override void Initialize()
@@ -34,48 +36,64 @@ public class FrenzySkill : BaseSkill
 
         skillID = PlayerSkillID.Frenzy;
         cooldownTime = 7f;
-        // set BaseDuration 
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
 
-        if (isActive)
+        if (isActive && frenzyEffect != null)
         {
-            frenzyTimer -= Time.deltaTime;
-            if (frenzyTimer <= 0)
+            frenzyEffect.ReduceEffectDuration(EffectType.Frenzy);
+
+            if (frenzyEffect.GetEffectDurationTimer() <= 0)
             {
                 // Frenzy ended
-                isActive = false;
-                StartCooldown(cooldownTime);
+                Deactivate();
+                float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(cooldownTime);
+                StartCooldown(finalCooldownTime);
             }
         }
+        else if (frenzyEffect == null)
+        {
+            Debug.LogError("frenzyEffect is not created");
+            return;
+        }
 
-        // Try activating every frame
-        TryActivate();
+        if (Input.GetKeyDown(KeyCode.E) && !isActive)
+            Activate();
     }
 
-    public override void TryActivate()
+    public override bool Activate()
     {
-        if (!IsOffCooldown()) return;
-        if (isActive) return;
-        if (!Input.GetKeyDown(KeyCode.E)) return;
-        if (!CheckPlayerHealth(playerHealth.GetCurrentHealth(), playerHealth.GetMaxHealth())) return;
+        if (!IsOffCooldown()) return false;
 
         float duration = Mathf.Min(
             maxIncreaseDuration,
             baseDuration + playerLevel.GetCurrentLevel() * increaseDurationPerLevel
         );
 
-        frenzyTimer = duration;
+        if (frenzyEffect == null)
+            frenzyEffect = gameObject.AddComponent<BaseEffect>();
+
+        frenzyEffect.SetEffectDurationTime(duration);
         isActive = true;
+        playerState.IsFrenzyActive = true;
+
+        //Add Frenzy Effect Image
+        if (GamePlayUIManager.Instance.GetEffectIndexes(EffectType.Frenzy) == -1)
+            GamePlayUIManager.Instance.AddEffectImage(EffectType.Frenzy);
+
+        return true;
     }
 
-    private bool CheckPlayerHealth(int currentHealth, int maxHealth)
+    public override void Deactivate()
     {
-        if (currentHealth <= 0) return false;
-        return true;
+        isActive = false;
+        playerState.IsFrenzyActive = false;
+        GamePlayUIManager.Instance.RemoveEffectImage(EffectType.Frenzy);
+
+        frenzyEffect?.SetEffectDurationTime(0);
     }
 
     public float GetFrenzyBonusPercent()

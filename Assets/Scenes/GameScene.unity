@@ -53476,10 +53476,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee8a9d4e53f5e94c8c1a0e6dd19498b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseExperiencePerOrb: 0
+  baseExperiencePerOrb: 10
   orbPrepare: 100
   spawnChance: 0.3
-  orbPrefab: {fileID: 0}
+  orbPrefab: {fileID: 7725353596967542670, guid: d82a795429ca66c498b70a3df2beac02, type: 3}
 --- !u!4 &1645822301
 Transform:
   m_ObjectHideFlags: 0
@@ -53702,9 +53702,10 @@ GameObject:
   - component: {fileID: 1688282007}
   - component: {fileID: 1688282008}
   - component: {fileID: 1688281997}
-  m_Layer: 0
+  - component: {fileID: 1688282009}
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -53835,7 +53836,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84dca64c7fe8643409ee7728a752b2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownTime: 7
+  baseCooldownTime: 7
   frenzyBonusPercent: 0.5
   baseDuration: 6
   maxIncreaseDuration: 2
@@ -54031,6 +54032,23 @@ MonoBehaviour:
   maxLevel: 5
   displayName: Pickup Radius
   description: Increases the radius that experience orbs can be drawn into.
+--- !u!114 &1688282009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e473c355b8f1f82449637dfd2b4048c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseCooldownTime: 14
+  baseDamagePerBullet: 225
+  increaseDamagePerLevel: 25
+  hpHealPercentPerBullet: 1.25
+  bulletSpeedWhenSummoned: 30
 --- !u!1 &1707641450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}

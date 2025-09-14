@@ -43,7 +43,7 @@ public partial struct CreepHealthSystem : ISystem
                     GameManager.Instance.AddEnemyKilled();
 
                     // Try to spawn XP orb
-                    //ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position, ecb);
+                    ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position);
                 }
 
                 ecb.RemoveComponent<DamageEventComponent>(enemyEntity);

@@ -11,11 +11,16 @@ public class AbilityHaste : BasePassive
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     protected override void LevelUp()
     {
         base.LevelUp();
+    }
+
+    public int GetCooldownTimeAfterReduction(float baseCooldownTime)
+    {
+        return Mathf.RoundToInt(baseCooldownTime * (100 / (100 + value)));
     }
 }

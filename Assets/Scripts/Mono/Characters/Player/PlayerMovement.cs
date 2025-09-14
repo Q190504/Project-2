@@ -40,14 +40,14 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (state.isStunned)
+        if (state.IsStunned)
         {
             rb.linearVelocity = Vector2.zero;
             return;
         }
 
         float targetSpeed = currentSpeed;
-        if (state.frenzyActive)
+        if (state.IsFrenzyActive)
             targetSpeed += currentSpeed * frenzySkill.GetFrenzyBonusPercent();
 
         Vector2 targetVelocity = moveInput * targetSpeed;
