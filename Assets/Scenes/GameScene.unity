@@ -51934,6 +51934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3d5821ebeab7a4885b02770ea15320, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerGO: {fileID: 0}
   playerInitalPosition: {fileID: 2010950037}
   enemiesKilledPublisher: {fileID: 11400000, guid: 6d7ceea69481604468b1421f7cdf4f08, type: 2}
   endGamePublisher: {fileID: 11400000, guid: 56428737d052c1f46bb975ea4ba8b5ba, type: 2}
@@ -55832,7 +55833,7 @@ MonoBehaviour:
   slimeBulletPrepare: 100
   slimeBeamPrepare: 4
   poisonCloudPrepare: 24
-  slimeBulletPrefab: {fileID: 0}
+  slimeBulletPrefab: {fileID: 3044557864586212971, guid: b341f66900d79c14994d6690bb9f5ca6, type: 3}
   slimeBeamPrefab: {fileID: 0}
   poisonCloudPrefab: {fileID: 0}
 --- !u!1 &2052296027

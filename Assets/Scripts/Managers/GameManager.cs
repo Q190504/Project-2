@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     private bool needToReset;
 
+    [SerializeField] private GameObject playerGO;
     [SerializeField] private GameObject playerInitalPosition;
 
     private int totalEnemiesKilled = 0;
@@ -170,5 +171,10 @@ public class GameManager : MonoBehaviour
             SetGameState(GameState.Playing);
             //Time.timeScale = 1f; // Resume the game
         }
+    }
+
+    public GameObject GetPlayerGO()
+    {
+        return playerGO;
     }
 }

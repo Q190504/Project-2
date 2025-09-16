@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SlimeReclaimSkill : BaseSkill
@@ -50,8 +52,7 @@ public class SlimeReclaimSkill : BaseSkill
 
     private void HandleSkillReady(float finalCooldownTime)
     {
-        bool hasWaitingSlimeBullet = true;
-        // bool hasWaitingSlimeBullet = SlimeBulletManager.Instance.HasWaitingSlimeBullet();
+        bool hasWaitingSlimeBullet = ProjectilesManager.Instance.HasWaitingSlimeBullet();
 
         if (playerHealth.GetCurrentHealth() > 0 && hasWaitingSlimeBullet)
         {
@@ -72,7 +73,12 @@ public class SlimeReclaimSkill : BaseSkill
     private void RecallBullets()
     {
         int damage = baseDamagePerBullet + increaseDamagePerLevel * playerLevel.GetCurrentLevel();
-        // SlimeBulletManager.Instance.RecallBullets(damage, hpHealPercentPerBullet);
+        List<SlimeBullet> activeBullets = ProjectilesManager.Instance.GetActiveBullets();
+
+        foreach (SlimeBullet bullet in activeBullets)
+        {
+            bullet.Summon();
+        }
     }
 
     public override bool Activate()
@@ -87,5 +93,10 @@ public class SlimeReclaimSkill : BaseSkill
     public override void Deactivate()
     {
         isActive = false;
+    }
+
+    public float GetBulletSpeedWhenSummoned()
+    { 
+        return GetBulletSpeedWhenSummoned(); 
     }
 }

@@ -1,6 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 public class SlimeBullet : MonoBehaviour
@@ -22,6 +22,7 @@ public class SlimeBullet : MonoBehaviour
     private float existDuration;
 
     private Rigidbody2D rb;
+    private GameObject player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,7 +41,7 @@ public class SlimeBullet : MonoBehaviour
             return;
         }
 
-        if (isAbleToMove)
+        if (isAbleToMove) // Moving
         {
             Vector2 targetVelocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, flySmoothTime);
@@ -51,7 +52,24 @@ public class SlimeBullet : MonoBehaviour
                 StopMoving();
             }
         }
-        else
+        else if (!isAbleToMove && isBeingSummoned) // Summoned
+        {
+            player = GameManager.Instance.GetPlayerGO();
+            Vector3 playerPos = GameManager.Instance.GetPlayerGO().transform.position;
+            Vector3 bulletPosition = transform.position;
+            if(player.TryGetComponent<SlimeReclaimSkill>(out SlimeReclaimSkill slimeReclaimSkill))
+            {
+                Vector3 directionToPlayer = playerPos - bulletPosition;
+                float distanceToPlayer = math.length(directionToPlayer);
+
+                if (distanceToPlayer > 0.0001f)
+                {
+                    Vector3 moveDirection = directionToPlayer / distanceToPlayer;
+                    transform.position += moveDirection * slimeReclaimSkill.GetBulletSpeedWhenSummoned() * Time.deltaTime;
+                }
+            }
+        }
+        else // Out of life time
         {
             //rb.linearVelocity = Vector2.zero;
 
@@ -91,7 +109,7 @@ public class SlimeBullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Impassible") && !isAbleToMove)
+        if (collision.gameObject.CompareTag("Impassible") && !isAbleToMove)
         {
             isAbleToMove = false;
             rb.linearVelocity = Vector2.zero;
