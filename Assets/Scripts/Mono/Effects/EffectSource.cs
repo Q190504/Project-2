@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Status Effects/Effect Source", fileName = "NewEffectSource")]
+[CreateAssetMenu(fileName = "New Effect Source", menuName = "Scriptable Objects/Effect Source")]
 public class EffectSource : ScriptableObject
 {
     [SerializeField] private string id;   // Unique identifier (must be unique across all sources)

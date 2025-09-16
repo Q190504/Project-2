@@ -22,27 +22,27 @@ public partial struct ResetWeaponSystem : ISystem
 
         if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) && !initializationTrackerComponent.weaponsInitialized)
         {
-            if (SystemAPI.TryGetSingletonEntity<SlimeBulletShooterComponent>(out var slimeBulletShooterEntity))
-            {
-                SlimeBulletShooterComponent slimeBulletShooterComponent
-                    = SystemAPI.GetComponent<SlimeBulletShooterComponent>(slimeBulletShooterEntity);
+            //if (SystemAPI.TryGetSingletonEntity<SlimeBulletShooterComponent>(out var slimeBulletShooterEntity))
+            //{
+            //    SlimeBulletShooterComponent slimeBulletShooterComponent
+            //        = SystemAPI.GetComponent<SlimeBulletShooterComponent>(slimeBulletShooterEntity);
 
-                WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(slimeBulletShooterEntity);
+            //    WeaponComponent weaponComponent = SystemAPI.GetComponent<WeaponComponent>(slimeBulletShooterEntity);
 
-                weaponComponent.Level = 0;
+            //    weaponComponent.Level = 0;
 
-                int levelIndex = weaponComponent.Level;
-                var blobData = slimeBulletShooterComponent.Data;
-                if (blobData.IsCreated && blobData.Value.Levels.Length > 0)
-                {
-                    ref var levelData = ref blobData.Value.Levels[levelIndex];
+            //    int levelIndex = weaponComponent.Level;
+            //    var blobData = slimeBulletShooterComponent.Data;
+            //    if (blobData.IsCreated && blobData.Value.Levels.Length > 0)
+            //    {
+            //        ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-                    slimeBulletShooterComponent.timer = levelData.cooldown;
-                }
+            //        slimeBulletShooterComponent.timer = levelData.cooldown;
+            //    }
 
-                state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
-                state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
-            }
+            //    state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
+            //    state.EntityManager.SetComponentData(slimeBulletShooterEntity, slimeBulletShooterComponent);
+            //}
 
             if (SystemAPI.TryGetSingletonEntity<SlimeBeamShooterComponent>(out var slimeBeamShooterEntity))
             {

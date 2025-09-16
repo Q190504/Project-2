@@ -56,7 +56,6 @@ public partial struct SlimeBulletShooterSystem : ISystem
         }
 
         // Get Generic Damage Modifier
-        ;
         float genericDamageModifier = 0;
         if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
         {
@@ -79,34 +78,34 @@ public partial struct SlimeBulletShooterSystem : ISystem
             shooter.timer -= deltaTime;
             if (shooter.timer > 0) continue;
 
-            var blobData = shooter.Data;
-            if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
+            //var blobData = shooter.Data;
+            //if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
-            ref var levelData = ref blobData.Value.Levels[levelIndex];
+            //ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-            int baseDamage = levelData.damage;
-            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
+            //int baseDamage = levelData.damage;
+            //int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 
-            float baseCooldownTime = levelData.cooldown;
-            float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+            //float baseCooldownTime = levelData.cooldown;
+            //float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
 
-            int bulletCount = levelData.bulletCount;
-            int bulletRemaining = bulletCount;
-            float minimumDistance = levelData.minimumDistance;
-            float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
-            float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
-            float passthroughDamageModifier = levelData.passthroughDamageModifier;
-            float moveSpeed = levelData.moveSpeed;
-            float existDuration = levelData.existDuration;
-            float slowModifier = levelData.slowModifier;
-            float slowRadius = levelData.slowRadius;
+            //int bulletCount = levelData.bulletCount;
+            //int bulletRemaining = bulletCount;
+            //float minimumDistance = levelData.minimumDistance;
+            //float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
+            //float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
+            //float passthroughDamageModifier = levelData.passthroughDamageModifier;
+            //float moveSpeed = levelData.moveSpeed;
+            //float existDuration = levelData.existDuration;
+            //float slowModifier = levelData.slowModifier;
+            //float slowRadius = levelData.slowRadius;
 
-            Shoot(ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
-                minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
-                passthroughDamageModifier, moveSpeed, existDuration,
-                slowModifier, slowRadius);
+            //Shoot(ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
+            //    minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
+            //    passthroughDamageModifier, moveSpeed, existDuration,
+            //    slowModifier, slowRadius);
 
-            shooter.timer = finalCooldownTime; // Reset timer
+            //shooter.timer = finalCooldownTime; // Reset timer
         }
     }
 

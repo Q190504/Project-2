@@ -53703,6 +53703,7 @@ GameObject:
   - component: {fileID: 1688282008}
   - component: {fileID: 1688281997}
   - component: {fileID: 1688282009}
+  - component: {fileID: 1688282012}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -54083,6 +54084,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b6539c0fedbbdc448d6b965de8e3e56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1688282012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129ecf3bd5269a6479b80fcbc4b337e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 1
+  maxLevel: 5
+  displayName: Slime Bullet Shooter
+  description: Fires slime bullet in the target direction.
+  levelDatas:
+  - {fileID: 11400000, guid: dc525c09a4e44ea40bbd6a5cd5ec7a65, type: 2}
+  - {fileID: 11400000, guid: 4fc1b336dbb72af4ea91fcde6cc6c3cb, type: 2}
+  - {fileID: 11400000, guid: 051fcea395dce4c4aa5db7571aa2e0fe, type: 2}
+  - {fileID: 11400000, guid: 26c507705051c1541a287ff5e2a771b3, type: 2}
+  - {fileID: 11400000, guid: 3824dae6e21806f48940493608e521bf, type: 2}
 --- !u!1 &1707641450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
