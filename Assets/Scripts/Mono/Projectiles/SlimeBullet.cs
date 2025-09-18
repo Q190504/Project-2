@@ -135,7 +135,7 @@ public class SlimeBullet : MonoBehaviour
         slowArea.gameObject.SetActive(false);
     }
 
-    public void Initialize(Vector2 moveDirection, float moveSpeed, int remainingDamage,
+    public void Initialize(Vector2 moveDirection, float moveSpeed, float maxDistance, int remainingDamage,
         float passthroughDamageModifier, int healPlayerAmount, float existDuration, float slowModifier, float slowRadius)
     {
         this.isAbleToMove = true;
