@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f25111da9d99ea4b9f403a0f5b4243f, type: 3}
   m_Name: SlimeBulletSource 1
   m_EditorClassIdentifier: 
-  id: 1
+  id: Slime Bullet

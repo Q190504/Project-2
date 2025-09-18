@@ -1,10 +1,7 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : BaseHealth
 {
-    private int currentHealth;
-    private int maxHealth;
-
     private Armor armor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -24,7 +21,7 @@ public class PlayerHealth : MonoBehaviour
             return;
     }
 
-    public void TakeDamage(int amount)
+    public override void TakeDamage(int amount)
     {
         int finalDamage = Mathf.FloorToInt(Mathf.Max(0, amount - armor.GetValue()));
 
@@ -36,18 +33,23 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Debug.Log("Player Died!");
-            GameManager.Instance.EndGame(false);
+            Die();
         }
     }
 
-    public void Heal(int amount)
+    public override void Heal(int amount)
     {
         currentHealth += amount;
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
 
         UpdateHPBar();
+    }
+
+    protected override void Die()
+    {
+        Debug.Log("Player Died!");
+        GameManager.Instance.EndGame(false);
     }
 
     private void UpdateHPBar()

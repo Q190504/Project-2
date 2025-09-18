@@ -51934,7 +51934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3d5821ebeab7a4885b02770ea15320, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerGO: {fileID: 0}
+  playerGO: {fileID: 1688281991}
   playerInitalPosition: {fileID: 2010950037}
   enemiesKilledPublisher: {fileID: 11400000, guid: 6d7ceea69481604468b1421f7cdf4f08, type: 2}
   endGamePublisher: {fileID: 11400000, guid: 56428737d052c1f46bb975ea4ba8b5ba, type: 2}
@@ -53704,6 +53704,7 @@ GameObject:
   - component: {fileID: 1688281997}
   - component: {fileID: 1688282009}
   - component: {fileID: 1688282012}
+  - component: {fileID: 1688282013}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -53915,6 +53916,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7412da8a049d17f4c8d4e579c8ced2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
 --- !u!114 &1688282003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54106,6 +54108,24 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 051fcea395dce4c4aa5db7571aa2e0fe, type: 2}
   - {fileID: 11400000, guid: 26c507705051c1541a287ff5e2a771b3, type: 2}
   - {fileID: 11400000, guid: 3824dae6e21806f48940493608e521bf, type: 2}
+  player: {fileID: 1688281991}
+--- !u!114 &1688282013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b47b032a930251d4bb597afcfc018eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 2
+  maxLevel: 5
+  displayName: Slime Beam Shooter
+  description: Fires slime beams in four directions.
+  levelDatas: []
   player: {fileID: 1688281991}
 --- !u!1 &1707641450 stripped
 GameObject:
@@ -55858,7 +55878,7 @@ MonoBehaviour:
   slimeBeamPrepare: 4
   poisonCloudPrepare: 24
   slimeBulletPrefab: {fileID: 3044557864586212971, guid: b341f66900d79c14994d6690bb9f5ca6, type: 3}
-  slimeBeamPrefab: {fileID: 0}
+  slimeBeamPrefab: {fileID: 5882936879872144874, guid: 2687fa3aecbe91f4088910fd576ead07, type: 3}
   poisonCloudPrefab: {fileID: 0}
 --- !u!1 &2052296027
 GameObject:

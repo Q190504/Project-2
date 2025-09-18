@@ -42,36 +42,36 @@ struct SlimeBeamDamageEnemyJob : ITriggerEventsJob
 
     public void Execute(TriggerEvent triggerEvent)
     {
-        Entity entityA = triggerEvent.EntityA;
-        Entity entityB = triggerEvent.EntityB;
+        //Entity entityA = triggerEvent.EntityA;
+        //Entity entityB = triggerEvent.EntityB;
 
-        bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
-        bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
+        //bool entityAIsEnemy = enemyLookup.HasComponent(entityA);
+        //bool entityBIsEnemy = enemyLookup.HasComponent(entityB);
 
-        if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
-        {
-            Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
-            Entity beamEntity = entityAIsEnemy ? entityB : entityA;
+        //if ((!entityAIsEnemy && entityBIsEnemy) || (entityAIsEnemy && !entityBIsEnemy))
+        //{
+        //    Entity enemyEntity = entityAIsEnemy ? entityA : entityB;
+        //    Entity beamEntity = entityAIsEnemy ? entityB : entityA;
 
-            if (!slimeBeamLookup.HasComponent(beamEntity) || !slimeBeamLookup.HasComponent(beamEntity))
-                return;
+        //    if (!slimeBeamLookup.HasComponent(beamEntity) || !slimeBeamLookup.HasComponent(beamEntity))
+        //        return;
 
-            var beamComponent = slimeBeamLookup[beamEntity];
+        //    var beamComponent = slimeBeamLookup[beamEntity];
 
-            // Skip if has deal damage to enemies in frame(s) before
-            if (beamComponent.hasDealDamageToEnemies)
-                return;
+        //    // Skip if has deal damage to enemies in frame(s) before
+        //    if (beamComponent.hasDealDamageToEnemies)
+        //        return;
 
-            // Deal damage
-            int damage = beamComponent.damage;
+        //    // Deal damage
+        //    int damage = beamComponent.damage;
 
-            if (damage <= 0)
-                return;
+        //    if (damage <= 0)
+        //        return;
 
-            ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
+        //    ecb.AddComponent(enemyEntity, new DamageEventComponent { damageAmount = damage });
 
-            beamComponent.hasDealDamageToEnemies = true;
-            ecb.SetComponent(beamEntity, beamComponent);
-        }
+        //    beamComponent.hasDealDamageToEnemies = true;
+        //    ecb.SetComponent(beamEntity, beamComponent);
+        //}
     }
 }

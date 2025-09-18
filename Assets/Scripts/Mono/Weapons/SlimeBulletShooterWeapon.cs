@@ -49,7 +49,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
             float baseCooldownTime = levelData.cooldown;
             float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(baseCooldownTime);
 
-            int bulletRemaining = levelData.bulletCount;
+            int bulletCount = levelData.bulletCount;
             float minimumDistance = levelData.minimumDistance;
             float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
             float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
@@ -60,19 +60,17 @@ public class SlimeBulletShooterWeapon : BaseWeapon
             float slowRadius = levelData.slowRadius;
             float delayBetweenBullet = levelData.delayBetweenBullet;
 
-            StartCoroutine(Shoot(finalDamage, finalCooldownTime, bulletRemaining,
+            StartCoroutine(Shoot(finalDamage, finalCooldownTime, bulletCount,
                 minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
                 passthroughDamageModifier, moveSpeed, existDuration,
-                slowModifier, slowRadius, delayBetweenBullet));
-
-            timer = finalCooldownTime; // Reset timer
+                slowModifier, slowRadius, delayBetweenBullet, finalCooldownTime));
         }
     }
 
     IEnumerator Shoot(
     int damage,
     float cooldown,
-    int bulletsRemaining,
+    int bulletCount,
     float minimumDistance,
     float minDistBetweenBullets,
     float maxDistBetweenBullets,
@@ -81,12 +79,13 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     float existDuration,
     float slowModifier,
     float slowRadius,
-    float delayBetweenBullet)
+    float delayBetweenBullet,
+    float finalCooldownTime)
     {
         // Precompute step size
-        float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / Mathf.Max(1, bulletsRemaining - 1);
+        float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / Mathf.Max(1, bulletCount - 1);
 
-        for (int i = 0; i < bulletsRemaining; i++)
+        for (int i = 0; i < bulletCount; i++)
         {
             // Spawn the bullet
             SlimeBullet bullet = ProjectilesManager.Instance.TakeSlimeBullet();
@@ -97,9 +96,11 @@ public class SlimeBulletShooterWeapon : BaseWeapon
                 distance, moveSpeed, existDuration, slowModifier, slowRadius);
 
             // Wait before spawning the next bullet
-            if (delayBetweenBullet > 0f)
+            if (delayBetweenBullet > 0f && i < bulletCount - 1)
                 yield return new WaitForSeconds(delayBetweenBullet);
         }
+
+        timer = finalCooldownTime; // Reset timer
     }
 
     private void SetBulletStats(SlimeBullet bullet, int damage, float passthroughDamageModifier,

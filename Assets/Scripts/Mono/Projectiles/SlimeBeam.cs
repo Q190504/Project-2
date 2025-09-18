@@ -2,15 +2,35 @@ using UnityEngine;
 
 public class SlimeBeam : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private int damage;
+    private bool canDamage;
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (canDamage && collision == null)
+        {
+            IDamageable damageable = collision.GetComponent<IDamageable>();
+            if (damageable != null && !collision.CompareTag("Player"))
+            {
+                damageable.TakeDamage(damage);
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Initialize(int damage)
     {
-        
+        this.damage = damage;
+        canDamage = false;
+    }
+
+    public void CanDamage()
+    {
+        this.canDamage = true;
+    }
+
+    public void Return()
+    {
+        canDamage = false;
+        ProjectilesManager.Instance.ReturnSlimeBeam(this);
     }
 }
