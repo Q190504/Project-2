@@ -3,7 +3,6 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float smoothTime;
 
-    private MoveSpeed moveSpeed;
 
     float currentSpeed;
     //float boostedSpeed;
@@ -20,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         effectManager = GetComponent<EffectManager>();
         frenzySkill = GetComponent<FrenzySkill>();
-        moveSpeed = GetComponent<MoveSpeed>();
 
         gameManager = GameManager.Instance;
         transform.position = gameManager.GetPlayerInitialPosition();

@@ -27,6 +27,8 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         frenzySkill = player.GetComponent<FrenzySkill>();
         abilityHaste = player.GetComponent<AbilityHaste>();
         genericDamageModifier = player.GetComponent<GenericDamageModifier>();
+
+        hasInitialized = false;
     }
 
     // Update is called once per frame
@@ -41,7 +43,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         SlimeBulletShooterLevelDataSO levelData = null;
         if (currentLevel < levelDatas.Count)
         {
-            levelData = levelDatas[currentLevel - 1];
+            levelData = GetCurrentLevelData();
 
             int baseDamage = levelData.damage;
             int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue() + frenzySkill.GetFrenzyBonusPercent()));
@@ -119,5 +121,11 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     {
         currentLevel = 1;
         timer = 0;
+        hasInitialized = true;
+    }
+
+    private SlimeBulletShooterLevelDataSO GetCurrentLevelData()
+    {
+        return levelDatas[math.min(currentLevel - 1, maxLevel - 1)];
     }
 }

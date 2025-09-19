@@ -32,6 +32,8 @@ public class SlimeBeamShooterWeapon : BaseWeapon
         abilityHaste = player.GetComponent<AbilityHaste>();
         genericDamageModifier = player.GetComponent<GenericDamageModifier>();
         frenzySkill = player.GetComponent<FrenzySkill>();
+
+        hasInitialized = false;
     }
 
     // Update is called once per frame
@@ -43,7 +45,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
         timer -= Time.deltaTime;
         if (timer > 0) return;
 
-        SlimeBeamShooterLevelDataSO levelData = levelDatas[currentLevel - 1];
+        SlimeBeamShooterLevelDataSO levelData = GetCurrentLevelData();
 
         int baseDamage = levelData.damage;
         int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue()
@@ -83,6 +85,13 @@ public class SlimeBeamShooterWeapon : BaseWeapon
     protected override void Initialize()
     {
         timer = 0f;
+        currentLevel = 0;
+        hasInitialized = true;
+    }
+
+    private SlimeBeamShooterLevelDataSO GetCurrentLevelData()
+    {
+        return levelDatas[math.min(currentLevel - 1, maxLevel - 1)];
     }
 
     private void SetStats(SlimeBeam beam, int damage, Vector2 originPosition, quaternion rotation)

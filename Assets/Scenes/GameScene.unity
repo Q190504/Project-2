@@ -53705,6 +53705,7 @@ GameObject:
   - component: {fileID: 1688282009}
   - component: {fileID: 1688282012}
   - component: {fileID: 1688282013}
+  - component: {fileID: 1688282014}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -54134,6 +54135,33 @@ MonoBehaviour:
   beamCount: 4
   timeBetween: 0.528
   spawnOffsetPositon: 2.5
+  player: {fileID: 1688281991}
+--- !u!114 &1688282014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d2dedacad56654bae7b2e86eec48b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 4
+  maxLevel: 5
+  displayName: Paw Print Poisoner
+  description: Leaves a damaging poison cloud behind while moving.
+  levelDatas:
+  - {fileID: 11400000, guid: cb10bd97075ab894faf634daa0a6cccf, type: 2}
+  - {fileID: 11400000, guid: 72b6af470803bfe4486a3aff942ccefe, type: 2}
+  - {fileID: 11400000, guid: 3b1328155acaabb4aa0ef14b72b39255, type: 2}
+  - {fileID: 11400000, guid: 2b06261f51d143e4da0df88ad7d81651, type: 2}
+  - {fileID: 11400000, guid: 7421a032ee9dfd743a66dd40ca06011d, type: 2}
+  tick: 0.25
+  cooldown: 0
+  maximumClouds: 24
+  distanceToCreateACloud: 1
   player: {fileID: 1688281991}
 --- !u!1 &1707641450 stripped
 GameObject:
@@ -55887,7 +55915,7 @@ MonoBehaviour:
   poisonCloudPrepare: 24
   slimeBulletPrefab: {fileID: 3044557864586212971, guid: b341f66900d79c14994d6690bb9f5ca6, type: 3}
   slimeBeamPrefab: {fileID: 5882936879872144874, guid: 2687fa3aecbe91f4088910fd576ead07, type: 3}
-  poisonCloudPrefab: {fileID: 0}
+  poisonCloudPrefab: {fileID: 1942575064161144900, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
 --- !u!1 &2052296027
 GameObject:
   m_ObjectHideFlags: 0
