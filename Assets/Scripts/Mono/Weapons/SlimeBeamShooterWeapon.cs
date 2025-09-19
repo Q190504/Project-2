@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class SlimeBeamShooterWeapon : BaseWeapon
 {
+    [Header("Slime Beam Shooter Settings")]
     [SerializeField] private List<SlimeBeamShooterLevelDataSO> levelDatas;
+    [SerializeField] int beamCount;
+    [SerializeField] float timeBetween;
     [SerializeField] float spawnOffsetPositon;
 
     private float timer;
@@ -34,27 +37,29 @@ public class SlimeBeamShooterWeapon : BaseWeapon
     // Update is called once per frame
     void Update()
     {
-        if (currentLevel <= 0) // is inactive
+        if (!IsActive)
             return;
 
         timer -= Time.deltaTime;
         if (timer > 0) return;
 
-        SlimeBeamShooterLevelDataSO levelData = levelDatas[currentLevel];
+        SlimeBeamShooterLevelDataSO levelData = levelDatas[currentLevel - 1];
 
         int baseDamage = levelData.damage;
-        int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue() 
+        int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue()
             + frenzySkill.GetFrenzyBonusPercent()));
 
         float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(levelData.cooldown);
 
-        float timeBetween = levelData.timeBetween;
-
-        StartCoroutine(ShootBeam(spawnOffsetPositon, finalDamage, levelData.beamCount, timeBetween, 
-            finalCooldownTime));
+        if (currentLevel < 5) // Shoot all beams with a delay  etween 2 beams
+            StartCoroutine(ShootBeam(spawnOffsetPositon, finalDamage, beamCount, timeBetween,
+                finalCooldownTime));
+        else // Shoot all beams at once
+            StartCoroutine(ShootBeam(spawnOffsetPositon, finalDamage, beamCount, 0,
+                finalCooldownTime));
     }
 
-    IEnumerator ShootBeam(float spawnOffsetPositon, int damage, int beamCount, float timeBetweenBeams, 
+    IEnumerator ShootBeam(float spawnOffsetPositon, int damage, int beamCount, float timeBetweenBeams,
         float finalCooldownTime)
     {
         for (int i = 0; i < beamCount; i++)

@@ -54125,7 +54125,15 @@ MonoBehaviour:
   maxLevel: 5
   displayName: Slime Beam Shooter
   description: Fires slime beams in four directions.
-  levelDatas: []
+  levelDatas:
+  - {fileID: 11400000, guid: 19f8c588ca7b27e4a94b9d8f3dba6ec8, type: 2}
+  - {fileID: 11400000, guid: ae1aff363d87692409a5dfe2285a94d0, type: 2}
+  - {fileID: 11400000, guid: f8a45d8855bc1d4489b160219dbc548b, type: 2}
+  - {fileID: 11400000, guid: 34656c3c7f91eb440adf886963e9cf98, type: 2}
+  - {fileID: 11400000, guid: 96e5894d580420740af370d028dcd59e, type: 2}
+  beamCount: 4
+  timeBetween: 0.528
+  spawnOffsetPositon: 2.5
   player: {fileID: 1688281991}
 --- !u!1 &1707641450 stripped
 GameObject:

@@ -32,7 +32,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     // Update is called once per frame
     void Update()
     {
-        if (currentLevel <= 0) //inactive
+        if (!IsActive)
             return;
 
         timer -= Time.deltaTime;
@@ -41,7 +41,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         SlimeBulletShooterLevelDataSO levelData = null;
         if (currentLevel < levelDatas.Count)
         {
-            levelData = levelDatas[currentLevel];
+            levelData = levelDatas[currentLevel - 1];
 
             int baseDamage = levelData.damage;
             int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue() + frenzySkill.GetFrenzyBonusPercent()));

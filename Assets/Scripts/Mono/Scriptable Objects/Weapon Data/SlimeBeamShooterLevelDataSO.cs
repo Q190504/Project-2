@@ -5,7 +5,4 @@ public class SlimeBeamShooterLevelDataSO : ScriptableObject
 {
     public int damage;
     public float cooldown;
-    public float range;
-    public int beamCount;
-    public float timeBetween;
 }

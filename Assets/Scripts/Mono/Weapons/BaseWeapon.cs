@@ -5,6 +5,7 @@ public abstract class BaseWeapon : MonoBehaviour
     [SerializeField] protected WeaponType weaponType;
     //[SerializeField] protected int iD;
     protected int currentLevel;
+    protected bool IsActive => currentLevel > 0;
     [SerializeField] protected int maxLevel;
     [SerializeField] protected string displayName;
     [SerializeField] protected string description;
