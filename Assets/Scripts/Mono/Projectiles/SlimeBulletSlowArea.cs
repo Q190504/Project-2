@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -7,12 +6,12 @@ public class SlimeBulletSlowArea : MonoBehaviour
     private float slowModifier;
     private float slowRadius;
 
-    private EffectSource effectSource;
+    private InGameObjectType inGameObjectType;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        effectSource = EffectSource.Get("SlimeBulletSource");
+        inGameObjectType = this.GetComponent<ObjectType>().InGameObjectType;
     }
 
     // Update is called once per frame
@@ -31,7 +30,7 @@ public class SlimeBulletSlowArea : MonoBehaviour
             return;
 
         // Ingore if the source matches
-        if (enemyEffectManager.HasEffectOfSource(EffectType.Slow, effectSource))
+        if (enemyEffectManager.HasEffectOfSource(EffectType.Slow, inGameObjectType))
             return;
 
         float3 toCenter = transform.position - collision.transform.position;
@@ -41,8 +40,13 @@ public class SlimeBulletSlowArea : MonoBehaviour
             return;
 
         // Apply slow effect
-        enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, effectSource);
-
+        if(collision.TryGetComponent<ObjectType>(out ObjectType objectType))
+            enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, inGameObjectType, objectType.InGameObjectType);
+        else
+        {
+            enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, inGameObjectType, InGameObjectType.Unknown);
+            Debug.LogWarning("Cant find ObjectType of enemy");
+        }
         // Apply velocity slow if Rigidbody2D exists
         if (collision.TryGetComponent(out Rigidbody2D enemyRb) && math.lengthsq(enemyRb.linearVelocity) > 0)
         {

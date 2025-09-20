@@ -28,7 +28,7 @@ public abstract class BaseWeapon : MonoBehaviour
 
     protected abstract void Initialize();
 
-    protected virtual void LevelUp()
+    public virtual void LevelUp()
     {
         currentLevel++;
         if (currentLevel > maxLevel)

@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f25111da9d99ea4b9f403a0f5b4243f, type: 3}
-  m_Name: SlimeBulletSource 1
+  m_Script: {fileID: 11500000, guid: f0c99376ccbea9a40b943e66b798f20e, type: 3}
+  m_Name: Radiant Field Level 2
   m_EditorClassIdentifier: 
-  id: Slime Bullet
+  damagePerTick: 15
+  cooldown: 0
+  radius: 4.6
+  slowModifier: 0

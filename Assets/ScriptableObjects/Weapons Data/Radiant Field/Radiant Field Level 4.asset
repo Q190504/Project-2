@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f25111da9d99ea4b9f403a0f5b4243f, type: 3}
-  m_Name: Player
+  m_Script: {fileID: 11500000, guid: f0c99376ccbea9a40b943e66b798f20e, type: 3}
+  m_Name: Radiant Field Level 4
   m_EditorClassIdentifier: 
-  id: Player
+  damagePerTick: 35
+  cooldown: 0
+  radius: 5.4
+  slowModifier: 0

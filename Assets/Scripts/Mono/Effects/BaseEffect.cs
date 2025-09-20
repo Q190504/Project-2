@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public enum EffectType
@@ -25,38 +26,41 @@ public class BaseEffect
     public float Timer { get; protected set; }
     public float Duration { get; protected set; }
     public float Value { get; protected set; }
-    public EffectSource Source { get; protected set; }
+    public InGameObjectType Source { get; protected set; }
+
+    protected InGameObjectType owner;
 
     private readonly List<IEffectListener> listeners = new();
 
     public bool IsActive => Timer > 0f;
 
-    public BaseEffect(EffectType type, float duration, float value, EffectSource source)
+    public BaseEffect(EffectType type, float duration, float value, InGameObjectType source, InGameObjectType owner)
     {
         Type = type;
         Timer = duration;
         Duration = duration;
         Value = value;
         Source = source;
+        this.owner = owner;
 
         NotifyApplied();
     }
 
     public void UpdateTimer(float deltaTime)
     {
-        if (Timer > 0f)
+        if (Timer > 0f && Timer != math.INFINITY)
         {
             Timer -= deltaTime;
-            GamePlayUIManager.Instance.UpdateEffectDurationUI(Type, Timer, Duration);
+            if (owner == InGameObjectType.Player)
+                GamePlayUIManager.Instance.UpdateEffectDurationUI(Type, Timer, Duration);
         }
     }
 
-    public void Refresh(float duration, float value, EffectSource source)
+    public void Refresh(float duration, float value)
     {
         Timer = duration;
         Duration = duration;
         Value = Mathf.Max(Value, value);
-        Source = source;
 
         NotifyRefreshed();
     }
@@ -67,7 +71,7 @@ public class BaseEffect
         Timer = 0;
         Duration = 0;
         Value = 0;
-        Source = null;
+        Source = InGameObjectType.Unknown;
 
         NotifyExpired();
     }

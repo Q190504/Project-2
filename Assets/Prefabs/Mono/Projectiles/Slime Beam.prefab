@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1158633503429428483}
   - component: {fileID: 4482513900093391973}
   - component: {fileID: 5882936879872144874}
+  - component: {fileID: 2197142282435781887}
   m_Layer: 0
   m_Name: Slime Beam
   m_TagString: Untagged
@@ -161,3 +162,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b799da12904b94283a83abbfa15eaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2197142282435781887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7745232805908517632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b12849956177e4f8448b1a86e9ce00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InGameObjectType: 7

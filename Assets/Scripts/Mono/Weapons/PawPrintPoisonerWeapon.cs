@@ -141,6 +141,6 @@ public class PawPrintPoisonerWeapon : BaseWeapon
 
     private PawPrintPoisonerLevelDataSO GetCurrentLevelData()
     {
-        return levelDatas[math.min(currentLevel - 1, maxLevel - 1)];
+        return levelDatas[math.min(currentLevel - 1, levelDatas.Count - 1)];
     }
 }

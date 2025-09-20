@@ -1,11 +1,12 @@
+using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
+
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float smoothTime;
 
-
     float currentSpeed;
-    //float boostedSpeed;
 
     private Rigidbody2D rb;
     private GameManager gameManager;
@@ -47,6 +48,19 @@ public class PlayerMovement : MonoBehaviour
         float targetSpeed = currentSpeed;
         if (effectManager.HasEffect(EffectType.Frenzy))
             targetSpeed += currentSpeed * frenzySkill.GetFrenzyBonusPercent();
+       
+        float multiplier = 1f;
+        if (effectManager.HasEffect(EffectType.Slow))
+        {
+            List<BaseEffect> slowEffects = effectManager.GetEffectOfType(EffectType.Slow);
+
+            foreach (var effect in slowEffects)
+            {
+                multiplier *= 1f - math.clamp(effect.Value, 0f, 1f);
+            }
+        }
+
+        targetSpeed *= multiplier;
 
         Vector2 targetVelocity = moveInput * targetSpeed;
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, smoothTime);
@@ -54,9 +68,6 @@ public class PlayerMovement : MonoBehaviour
 
     public float GetCurrentSpeed()
     { return currentSpeed; }
-
-    //public float GetBoostedSpeed()
-    //{ return boostedSpeed; }
 
     public float GetSmoothTime()
     { return smoothTime; }

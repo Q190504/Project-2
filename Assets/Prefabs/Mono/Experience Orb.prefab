@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 1680613861473308088}
   - component: {fileID: 6440707453702465655}
   - component: {fileID: 7725353596967542670}
+  - component: {fileID: 428525091652266986}
   m_Layer: 11
-  m_Name: Experience Orb Enitty
+  m_Name: Experience Orb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,6 +111,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28aa7dd275518694d86cf6b812a0e684, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &428525091652266986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745088848762782105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b12849956177e4f8448b1a86e9ce00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InGameObjectType: 8
 --- !u!1 &1390857274364576223
 GameObject:
   m_ObjectHideFlags: 0

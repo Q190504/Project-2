@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5249983501694867747}
   - component: {fileID: 144567331369178035}
   - component: {fileID: 3044557864586212971}
+  - component: {fileID: 238686373449035256}
   m_Layer: 8
   m_Name: Slime Bullet
   m_TagString: Untagged
@@ -205,6 +206,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flySmoothTime: 0.1
   slowArea: {fileID: 5698636998710471777}
+--- !u!114 &238686373449035256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206248307555317422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b12849956177e4f8448b1a86e9ce00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InGameObjectType: 4
 --- !u!1 &6607312099936967796
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,6 +232,7 @@ GameObject:
   - component: {fileID: 5331716204677207467}
   - component: {fileID: 8722546878300053703}
   - component: {fileID: 5698636998710471777}
+  - component: {fileID: 3060220553997302313}
   m_Layer: 0
   m_Name: Slime Bullet Slow Zone Visual
   m_TagString: Untagged
@@ -365,3 +380,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac51512a48d21b242b5dd7927a6f4550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3060220553997302313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6607312099936967796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b12849956177e4f8448b1a86e9ce00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InGameObjectType: 4

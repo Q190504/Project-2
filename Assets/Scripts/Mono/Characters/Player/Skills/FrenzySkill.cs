@@ -18,19 +18,23 @@ public class FrenzySkill : BaseSkill, IEffectListener
     [Range(1f, 5f)]
     [SerializeField] private float hpCostPerShotPercentv;
 
-    private EffectSource effectSource;
+    private InGameObjectType inGameObjectType = InGameObjectType.FrenzySkill;
 
+    [SerializeField] GameObject player;
     private PlayerLevel playerLevel;
     private AbilityHaste abilityHaste;
     private EffectManager effectManager;
 
     private void Start()
     {
-        playerLevel = GetComponent<PlayerLevel>();
-        abilityHaste = GetComponent<AbilityHaste>();
-        effectManager = GetComponent<EffectManager>();
-
-        effectSource = EffectSource.Get("Player");
+        if (player != null)
+        {
+            playerLevel = player.GetComponent<PlayerLevel>();
+            abilityHaste = player.GetComponent<AbilityHaste>();
+            effectManager = player.GetComponent<EffectManager>();
+        }
+        else
+            Debug.LogWarning("Cant find Player in FrenzySkill");
     }
 
     protected override void Initialize()
@@ -58,8 +62,13 @@ public class FrenzySkill : BaseSkill, IEffectListener
             baseDuration + playerLevel.GetCurrentLevel() * increaseDurationPerLevel
         );
 
-        if (!effectManager.HasEffect(EffectType.Frenzy) && effectSource != null)
-            effectManager.ApplyEffect(EffectType.Frenzy, duration, 0, effectSource);
+        if (!effectManager.HasEffect(EffectType.Frenzy) && player != null && player.TryGetComponent<ObjectType>(out ObjectType objectType))
+            effectManager.ApplyEffect(EffectType.Frenzy, duration, 0, inGameObjectType, objectType.InGameObjectType);
+        else
+        {
+            effectManager.ApplyEffect(EffectType.Frenzy, duration, 0, inGameObjectType, InGameObjectType.Unknown);
+            Debug.LogWarning("Cant find ObjectType of player");
+        }
 
         return true;
     }

@@ -40,33 +40,29 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         timer -= Time.deltaTime;
         if (timer > 0) return;
 
-        SlimeBulletShooterLevelDataSO levelData = null;
-        if (currentLevel < levelDatas.Count)
-        {
-            levelData = GetCurrentLevelData();
+        SlimeBulletShooterLevelDataSO levelData = GetCurrentLevelData();
 
-            int baseDamage = levelData.damage;
-            int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue() + frenzySkill.GetFrenzyBonusPercent()));
+        int baseDamage = levelData.damage;
+        int finalDamage = (int)(baseDamage * (1 + genericDamageModifier.GetValue() + frenzySkill.GetFrenzyBonusPercent()));
 
-            float baseCooldownTime = levelData.cooldown;
-            float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(baseCooldownTime);
+        float baseCooldownTime = levelData.cooldown;
+        float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(baseCooldownTime);
 
-            int bulletCount = levelData.bulletCount;
-            float minimumDistance = levelData.minimumDistance;
-            float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
-            float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
-            float passthroughDamageModifier = levelData.passthroughDamageModifier;
-            float moveSpeed = levelData.moveSpeed;
-            float existDuration = levelData.existDuration;
-            float slowModifier = levelData.slowModifier;
-            float slowRadius = levelData.slowRadius;
-            float delayBetweenBullet = levelData.delayBetweenBullet;
+        int bulletCount = levelData.bulletCount;
+        float minimumDistance = levelData.minimumDistance;
+        float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
+        float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
+        float passthroughDamageModifier = levelData.passthroughDamageModifier;
+        float moveSpeed = levelData.moveSpeed;
+        float existDuration = levelData.existDuration;
+        float slowModifier = levelData.slowModifier;
+        float slowRadius = levelData.slowRadius;
+        float delayBetweenBullet = levelData.delayBetweenBullet;
 
-            StartCoroutine(Shoot(finalDamage, finalCooldownTime, bulletCount,
-                minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
-                passthroughDamageModifier, moveSpeed, existDuration,
-                slowModifier, slowRadius, delayBetweenBullet, finalCooldownTime));
-        }
+        StartCoroutine(Shoot(finalDamage, finalCooldownTime, bulletCount,
+            minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
+            passthroughDamageModifier, moveSpeed, existDuration,
+            slowModifier, slowRadius, delayBetweenBullet, finalCooldownTime));
     }
 
     IEnumerator Shoot(
@@ -126,6 +122,6 @@ public class SlimeBulletShooterWeapon : BaseWeapon
 
     private SlimeBulletShooterLevelDataSO GetCurrentLevelData()
     {
-        return levelDatas[math.min(currentLevel - 1, maxLevel - 1)];
+        return levelDatas[math.min(currentLevel - 1, levelDatas.Count - 1)];
     }
 }
