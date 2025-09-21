@@ -1,11 +1,7 @@
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
-using Unity.Entities;
-using Unity.Entities.UniversalDelegates;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -16,16 +12,17 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private int creepPrepare;
     public List<GameObject> SpawnerList;
 
-    private Entity player;
-    private EntityManager entityManager;
-    private Entity creepPrefab;
+    [Header("Refs")]
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject creepPrefab;
 
-    private NativeQueue<Entity> inactiveEnemies;
-    private int enemyCount = 0;
+    private Queue<GameObject> inactiveCreeps;
+    private Transform creepPool;
+    private int creepCount = 0;
 
     Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
 
-    [Header("Spawing stats")]
+    [Header("Spawning stats")]
     [SerializeField] private int baseEnemiesPerWave;        // Base number of enemies per wave
     private int enemiesPerWave;                             // Number of enemies per wave
     private int enemiesToSpawnCounter;
@@ -59,45 +56,19 @@ public class EnemyManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-        inactiveEnemies = new NativeQueue<Entity>(Allocator.Persistent);
+        inactiveCreeps = new Queue<GameObject>();
     }
 
-    private void OnDestroy()
-    {
-        if (inactiveEnemies.IsCreated)
-            inactiveEnemies.Dispose();
-    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
-        if (playerQuery.CalculateEntityCount() > 0)
-            player = playerQuery.GetSingletonEntity();
-        else
-            Debug.LogError("Player entity not found in EnemyManager");
-
-        // Get the baked entity prefab
-        EntityQuery enemyPrefabQuery = entityManager.CreateEntityQuery(typeof(EnemyPrefabComponent));
-        if (enemyPrefabQuery.CalculateEntityCount() > 0)
-        {
-            creepPrefab = entityManager.GetComponentData<EnemyPrefabComponent>(enemyPrefabQuery.GetSingletonEntity()).enemyPrefab;
-        }
-        else
-        {
-            Debug.LogError("Enemy prefab not found! Make sure it's baked correctly.");
-        }
-
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        Initialize();
+        creepPool = new GameObject("CreepPool").transform;
+        creepPool.SetParent(transform);
 
         Initialize();
-        PrepareEnemy(ecb);
 
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        PrepareEnemy();
     }
 
     // Update is called once per frame
@@ -128,7 +99,7 @@ public class EnemyManager : MonoBehaviour
 
                 foreach (var spawner in SpawnerList)
                 {
-                    float3 playerPos = entityManager.GetComponentData<LocalTransform>(player).Position;
+                    float3 playerPos = player.transform.position;
                     float distance = Vector3.Distance(playerPos, spawner.transform.position);
                     float weight = 1f / (distance + 1f); // Closer = heavier
                     spawnerWeights[spawner] = weight;
@@ -167,12 +138,8 @@ public class EnemyManager : MonoBehaviour
                         continue;
                     }
 
-                    EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
                     Vector3 spawnPosition = spawner.transform.position;
-                    SpawnEnemy(spawnPosition, ecb);
-
-                    ecb.Playback(entityManager);
-                    ecb.Dispose();
+                    SpawnEnemy(spawnPosition);
 
                     spawnerQueue[spawner] = toSpawn - 1;
 
@@ -195,100 +162,53 @@ public class EnemyManager : MonoBehaviour
         #endregion
     }
 
-    public void SpawnEnemy(Vector3 position, EntityCommandBuffer ecb)
+    public void SpawnEnemy(Vector3 position)
     {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        Entity enemyInstance = Take(ecb);
-
-        // Set the enemy position
-        entityManager.SetComponentData(enemyInstance, new LocalTransform
-        {
-            Position = position,
-            Rotation = Quaternion.identity,
-            Scale = 1f
-        });
-
-        entityManager.SetComponentData(enemyInstance, new EnemyTargetComponent
-        {
-            targetEntity = player,
-        });
+        GameObject creep = TakeCreep();
+        Creep creepComponent = creep.GetComponent<Creep>();
 
         float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
-
-        CreepHealthComponent enemyHealthComponent = entityManager.GetComponentData<CreepHealthComponent>(enemyInstance);
-
-        int enemyHP = (int)(enemyHealthComponent.baseMaxHealth + difficultyMultiplier);
-        entityManager.SetComponentData(enemyInstance, new CreepHealthComponent
-        {
-            currentHealth = enemyHP,
-            maxHealth = enemyHealthComponent.maxHealth,
-            baseMaxHealth = enemyHealthComponent.baseMaxHealth,
-        });
-
-        CreepDamageComponent enemyDamageComponent = entityManager.GetComponentData<CreepDamageComponent>(enemyInstance);
-        int enemyDamage = (int)(enemyDamageComponent.baseDamage + difficultyMultiplier);
-        entityManager.SetComponentData(enemyInstance, new CreepDamageComponent
-        {
-            damage = enemyDamage,
-            baseDamage = enemyDamageComponent.baseDamage,
-        });
+        creepComponent.Initialize(position, player, difficultyMultiplier);
     }
 
-    private void PrepareEnemy(EntityCommandBuffer ecb)
+    private void PrepareEnemy()
     {
-        if (creepPrefab == Entity.Null) return;
+        if (creepPrefab == null) return;
 
         for (int i = 0; i < creepPrepare; i++)
         {
-            Entity enemy = entityManager.Instantiate(creepPrefab);
-            SetEnemyStatus(enemy, false, ecb, entityManager);
-            inactiveEnemies.Enqueue(enemy);
-            enemyCount++;
+            GameObject creep = Instantiate(creepPrefab, creepPool);
+            creep.gameObject.SetActive(false);
+            inactiveCreeps.Enqueue(creep);
+            creepCount++;
         }
     }
 
-    public Entity Take(EntityCommandBuffer ecb)
+    public GameObject TakeCreep()
     {
-        if (inactiveEnemies.IsEmpty())
-            PrepareEnemy(ecb);
+        if (inactiveCreeps.Count <= 0)
+            PrepareEnemy();
 
-        Entity enemy = inactiveEnemies.Dequeue();
-        enemyCount--;
-        SetEnemyStatus(enemy, true, ecb, entityManager);
+        GameObject creep = inactiveCreeps.Dequeue();
+        creepCount--;
 
-        GameObject visual = AnimationManager.Instance.TakeCreep();
-        ecb.AddComponent(enemy, new VisualReferenceComponent { gameObject = visual });
+        creep.gameObject.SetActive(true);
 
-        return enemy;
+        return creep;
     }
 
-    public void Return(Entity enemy, EntityCommandBuffer ecb)
+    public void ReturnCreep(GameObject creep)
     {
-        if (!entityManager.Exists(enemy)) return;
+        if (creep.TryGetComponent<EffectManager>(out EffectManager effectManager))
+            effectManager.ClearAllEffects();
 
-        if (entityManager.HasComponent<StunTimerComponent>(enemy))
-            ecb.RemoveComponent<StunTimerComponent>(enemy);
-        if (entityManager.HasComponent<SlowedByRadiantFieldTag>(enemy))
-            ecb.RemoveComponent<SlowedByRadiantFieldTag>(enemy);
-        if (entityManager.HasComponent<SlowedBySlimeBulletTag>(enemy))
-            ecb.RemoveComponent<SlowedBySlimeBulletTag>(enemy);
-        if (entityManager.HasComponent<DamageEventComponent>(enemy))
-            ecb.RemoveComponent<DamageEventComponent>(enemy);
+        creep.gameObject.SetActive(false);
 
-        // Return the visual game object
-        if (entityManager.HasComponent<VisualReferenceComponent>(enemy))
-        {
-            VisualReferenceComponent visualReferenceComponent =
-                entityManager.GetComponentData<VisualReferenceComponent>(enemy);
-            AnimationManager.Instance.ReturnCreep(visualReferenceComponent.gameObject);
-        }
-
-        SetEnemyStatus(enemy, false, ecb, entityManager);
-
-        inactiveEnemies.Enqueue(enemy);
-        enemyCount++;
+        inactiveCreeps.Enqueue(creep);
+        creepCount++;
     }
 
     public void Initialize()
@@ -298,38 +218,6 @@ public class EnemyManager : MonoBehaviour
         waveInterval = baseInterval;
         enemiesPerWave = baseEnemiesPerWave;
         enemiesToSpawnCounter = 0;
-    }
-
-    private void SetEnemyStatus(Entity root, bool status, EntityCommandBuffer ecb, EntityManager entityManager)
-    {
-        DynamicBuffer<Child> children;
-
-        if (status)
-        {
-            ecb.RemoveComponent<Disabled>(root);
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.RemoveComponent<Disabled>(child.Value);
-                }
-            }
-
-        }
-        else
-        {
-            ecb.AddComponent<Disabled>(root);
-
-            if (entityManager.HasComponent<Child>(root))
-            {
-                children = entityManager.GetBuffer<Child>(root);
-                foreach (var child in children)
-                {
-                    ecb.AddComponent<Disabled>(child.Value);
-                }
-            }
-        }
     }
 
     public int GetCreepPrepare()

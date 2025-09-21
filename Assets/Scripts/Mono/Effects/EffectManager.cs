@@ -23,6 +23,8 @@ public class EffectManager : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(!GameManager.Instance.IsPlaying()) return;
+
         List<(EffectType, InGameObjectType)> expireds = new List<(EffectType, InGameObjectType)>();
 
         foreach (var effectEntry in activeEffects)
@@ -73,6 +75,18 @@ public class EffectManager : MonoBehaviour
             effect.Expire();
             activeEffects.Remove(key);
         }
+    }
+
+    public void ClearAllEffects()
+    {
+        foreach (var effect in activeEffects)
+        {
+            effect.Value.Expire();
+            if (owner != null && owner.CompareTag("Player"))
+                GamePlayUIManager.Instance.RemoveEffectImage(effect.Key.Item1);
+        }
+
+        activeEffects.Clear();
     }
 
     public bool HasEffect(EffectType type)

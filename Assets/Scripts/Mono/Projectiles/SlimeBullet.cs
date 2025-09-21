@@ -82,7 +82,9 @@ public class SlimeBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.TryGetComponent<IDamageable>(out IDamageable damageable)
+            && collision.TryGetComponent<ObjectType>(out ObjectType objectType) 
+            && objectType.InGameObjectType != InGameObjectType.Player)
         {
             // Skip if (stopped moving and not being summoned)
             if ((!isAbleToMove && !isBeingSummoned) /*|| lastHitEnemy == collision.gameObject*/)
@@ -94,7 +96,7 @@ public class SlimeBullet : MonoBehaviour
             if (damage <= 0)
                 return;
 
-            // TO DO: Damage enemy
+            damageable.TakeDamage(damage);
 
             // Reduce damage for future hits if the bullet is not being summoned
             if (!isBeingSummoned)

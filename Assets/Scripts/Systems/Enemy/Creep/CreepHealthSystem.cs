@@ -17,45 +17,45 @@ public partial struct CreepHealthSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        //if (!GameManager.Instance.IsPlaying()) return;
 
-        var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        //var ecbSingleton = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>();
+        //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        var creepEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);
+        //var creepEntitiesToReturn = new NativeList<Entity>(Allocator.Temp);
 
-        foreach (var (health, localTransform, enemyEntity) in SystemAPI.Query<RefRW<CreepHealthComponent>, RefRO<LocalTransform>>().WithEntityAccess())
-        {
-            //Take Damage
-            if (state.EntityManager.HasComponent<DamageEventComponent>(enemyEntity))
-            {
-                // Create Hit effect
-                GameObject hitEffect = AnimationManager.Instance.TakeHitEffect();
-                hitEffect.transform.position = localTransform.ValueRO.Position;
+        //foreach (var (health, localTransform, enemyEntity) in SystemAPI.Query<RefRW<CreepHealthComponent>, RefRO<LocalTransform>>().WithEntityAccess())
+        //{
+        //    //Take Damage
+        //    if (state.EntityManager.HasComponent<DamageEventComponent>(enemyEntity))
+        //    {
+        //        // Create Hit effect
+        //        GameObject hitEffect = AnimationManager.Instance.TakeHitEffect();
+        //        hitEffect.transform.position = localTransform.ValueRO.Position;
 
-                var damage = state.EntityManager.GetComponentData<DamageEventComponent>(enemyEntity);
-                health.ValueRW.currentHealth -= damage.damageAmount;
+        //        var damage = state.EntityManager.GetComponentData<DamageEventComponent>(enemyEntity);
+        //        health.ValueRW.currentHealth -= damage.damageAmount;
 
-                if (health.ValueRO.currentHealth <= 0)
-                {
-                    // Collect the entity to return later.
-                    creepEntitiesToReturn.Add(enemyEntity);
-                    GameManager.Instance.AddEnemyKilled();
+        //        if (health.ValueRO.currentHealth <= 0)
+        //        {
+        //            // Collect the entity to return later.
+        //            creepEntitiesToReturn.Add(enemyEntity);
+        //            GameManager.Instance.AddEnemyKilled();
 
-                    // Try to spawn XP orb
-                    ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position);
-                }
+        //            // Try to spawn XP orb
+        //            ExperienceOrbManager.Instance.TrySpawnExperienceOrb(localTransform.ValueRO.Position);
+        //        }
 
-                ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
-            }
-        }
+        //        ecb.RemoveComponent<DamageEventComponent>(enemyEntity);
+        //    }
+        //}
 
-        for (int i = 0; i < creepEntitiesToReturn.Length; i++)
-        {
-            // Return the entity
-            EnemyManager.Instance.Return(creepEntitiesToReturn[i], ecb);
-        }
+        //for (int i = 0; i < creepEntitiesToReturn.Length; i++)
+        //{
+        //    // Return the entity
+        //    //EnemyManager.Instance.Return(creepEntitiesToReturn[i], ecb);
+        //}
 
-        creepEntitiesToReturn.Dispose();
+        //creepEntitiesToReturn.Dispose();
     }
 }

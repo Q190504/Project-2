@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
     float currentSpeed;
 
     private Rigidbody2D rb;
-    private GameManager gameManager;
     private EffectManager effectManager;
     private FrenzySkill frenzySkill;
 
@@ -20,9 +20,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         effectManager = GetComponent<EffectManager>();
         frenzySkill = GetComponent<FrenzySkill>();
-
-        gameManager = GameManager.Instance;
-        transform.position = gameManager.GetPlayerInitialPosition();
     }
 
     private void Update()
@@ -33,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!gameManager.IsPlaying())
+        if (!GameManager.Instance.IsPlaying())
         {
             rb.linearVelocity = Vector2.zero;
             return;
@@ -75,6 +72,11 @@ public class PlayerMovement : MonoBehaviour
     public void SetCurrentSpeed(float value)
     {
         currentSpeed = value;
+    }
+
+    public void Initialize()
+    {
+        transform.position = GameManager.Instance.GetPlayerInitialPosition();
     }
 }
 

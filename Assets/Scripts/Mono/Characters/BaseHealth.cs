@@ -2,14 +2,17 @@ using UnityEngine;
 
 public abstract class BaseHealth : MonoBehaviour, IDamageable
 {
-    [SerializeField] protected int maxHealth = 100;
+    [SerializeField] protected int baseMaxHealth;
+    protected int maxHealth;
     protected int currentHealth;
 
+    public int BaseMaxHealth => baseMaxHealth;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
 
     protected virtual void Awake()
     {
+        maxHealth = baseMaxHealth;
         currentHealth = maxHealth;
     }
 
@@ -28,4 +31,10 @@ public abstract class BaseHealth : MonoBehaviour, IDamageable
     }
 
     protected abstract void Die();
+
+    public void Initialize(int maxHealth)
+    {
+        this.maxHealth = maxHealth;
+        this.currentHealth = maxHealth;
+    }
 }
