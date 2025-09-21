@@ -16,15 +16,18 @@ public class ProjectilesManager : MonoBehaviour
     [SerializeField] private PoisonCloud poisonCloudPrefab;
 
     private Queue<SlimeBullet> inactiveSlimeBullets = new Queue<SlimeBullet>();
+    private List<SlimeBullet> activeSlimeBullets = new List<SlimeBullet>();
     private readonly List<SlimeBullet> slimeBulletsToReclaim = new List<SlimeBullet>();
     private Transform slimeBulletsPool;
     private int slimeBulletCount = 0;
 
     private Queue<SlimeBeam> inactiveSlimeBeams = new Queue<SlimeBeam>();
+    private List<SlimeBeam> activeSlimeBeams = new List<SlimeBeam>();
     private Transform slimeBeamsPool;
     private int slimeBeamCount = 0;
 
     private Queue<PoisonCloud> inactivePoisonClouds = new Queue<PoisonCloud>();
+    private List<PoisonCloud> activePoisonClouds = new List<PoisonCloud>();
     private Transform poisonCloudsPool;
     private int poisonCloudCount = 0;
 
@@ -98,6 +101,9 @@ public class ProjectilesManager : MonoBehaviour
         SlimeBullet bullet = inactiveSlimeBullets.Dequeue();
         slimeBulletCount--;
 
+        if (!activeSlimeBullets.Contains(bullet))
+            activeSlimeBullets.Add(bullet);
+
         bullet.transform.SetParent(null, false);
         bullet.gameObject.SetActive(true);
 
@@ -109,6 +115,10 @@ public class ProjectilesManager : MonoBehaviour
         UnregisterSlimeBulletsToReclaim(bullet);
         bullet.gameObject.SetActive(false);
         bullet.transform.SetParent(slimeBulletsPool.transform, false);
+
+        if (activeSlimeBullets.Contains(bullet))
+            activeSlimeBullets.Remove(bullet);
+
         inactiveSlimeBullets.Enqueue(bullet);
         slimeBulletCount++;
     }
@@ -158,6 +168,8 @@ public class ProjectilesManager : MonoBehaviour
             PrepareSlimeBeam();
 
         SlimeBeam beam = inactiveSlimeBeams.Dequeue();
+        if (!activeSlimeBeams.Contains(beam))
+            activeSlimeBeams.Add(beam);
 
         beam.transform.SetParent(null, false);
         beam.gameObject.SetActive(true);
@@ -172,6 +184,10 @@ public class ProjectilesManager : MonoBehaviour
 
         beam.gameObject.SetActive(false);
         beam.transform.SetParent(slimeBeamsPool, false);
+
+        if (activeSlimeBeams.Contains(beam))
+            activeSlimeBeams.Remove(beam);
+
         inactiveSlimeBeams.Enqueue(beam);
         slimeBeamCount++;
     }
@@ -200,6 +216,9 @@ public class ProjectilesManager : MonoBehaviour
 
         PoisonCloud cloud = inactivePoisonClouds.Dequeue();
 
+        if (!activePoisonClouds.Contains(cloud))
+            activePoisonClouds.Add(cloud);
+
         cloud.transform.SetParent(null, false);
         cloud.gameObject.SetActive(true);
         poisonCloudCount--;
@@ -213,6 +232,10 @@ public class ProjectilesManager : MonoBehaviour
 
         cloud.gameObject.SetActive(false);
         cloud.transform.SetParent(poisonCloudsPool, false);
+
+        if (activePoisonClouds.Contains(cloud))
+            activePoisonClouds.Remove(cloud);
+
         inactivePoisonClouds.Enqueue(cloud);
 
         poisonCloudCount++;
@@ -228,5 +251,53 @@ public class ProjectilesManager : MonoBehaviour
     public int GetSlimeBeamPrepare()
     {
         return slimeBeamPrepare;
+    }
+
+    public void Initialize()
+    {
+        ClearAllProjectiles();
+
+        GameInitializationManager.Instance.hasCleanProjectiles = true;
+    }
+
+    public void ClearAllProjectiles()
+    {
+        ClearAllSlimeBullets();
+        ClearAllSlimeBeams();
+        ClearAllPoisonClouds();
+    }
+
+    private void ClearAllSlimeBullets()
+    {
+        if (activeSlimeBullets != null && activeSlimeBullets.Count > 0)
+        {
+            foreach (var bullet in activeSlimeBullets)
+            {
+                ReturnSlimeBullet(bullet);
+                UnregisterSlimeBulletsToReclaim(bullet);
+            }
+        }
+    }
+
+    private void ClearAllSlimeBeams()
+    {
+        if (activeSlimeBeams != null && activeSlimeBeams.Count > 0)
+        {
+            foreach (var beam in activeSlimeBeams)
+            {
+                ReturnSlimeBeam(beam);
+            }
+        }
+    }
+
+    private void ClearAllPoisonClouds()
+    {
+        if (activePoisonClouds != null && activePoisonClouds.Count > 0)
+        {
+            foreach (var cloud in activePoisonClouds)
+            {
+                ReturnPoisonCloud(cloud);
+            }
+        }
     }
 }

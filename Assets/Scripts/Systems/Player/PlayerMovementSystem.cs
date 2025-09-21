@@ -29,102 +29,102 @@ public partial struct PlayerMovementSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        //entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        #region Checking
+        //#region Checking
 
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
-        {
-            Debug.Log($"Cant Found Player Entity in PlayerMovementSystem!");
-            return;
-        }
+        //if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        //{
+        //    Debug.Log($"Cant Found Player Entity in PlayerMovementSystem!");
+        //    return;
+        //}
 
-        if(!SystemAPI.HasComponent<StunComponent>(player))
-        {
-            Debug.Log($"Cant Found Stun Component in PlayerMovementSystem!");
-            return;
-        }
-        else
-        {
-            stunComponent = entityManager.GetComponentData<StunComponent>(player);
-        }
+        //if(!SystemAPI.HasComponent<StunComponent>(player))
+        //{
+        //    Debug.Log($"Cant Found Stun Component in PlayerMovementSystem!");
+        //    return;
+        //}
+        //else
+        //{
+        //    stunComponent = entityManager.GetComponentData<StunComponent>(player);
+        //}
 
-        if (!entityManager.HasComponent<PlayerInputComponent>(player))
-        {
-            Debug.Log($"Cant Found Player Input Component in PlayerMovementSystem!");
-            return;
-        }
-        else
-        {
-            playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
-        }
+        //if (!entityManager.HasComponent<PlayerInputComponent>(player))
+        //{
+        //    Debug.Log($"Cant Found Player Input Component in PlayerMovementSystem!");
+        //    return;
+        //}
+        //else
+        //{
+        //    playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
+        //}
 
-        if (!entityManager.HasComponent<PlayerMovementSpeedComponent>(player))
-        {
-            Debug.Log($"Cant Found Player Movement Component in PlayerMovementSystem!");
-            return;
-        }
-        else
-        {
-            playerMovement = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
-        }
+        //if (!entityManager.HasComponent<PlayerMovementSpeedComponent>(player))
+        //{
+        //    Debug.Log($"Cant Found Player Movement Component in PlayerMovementSystem!");
+        //    return;
+        //}
+        //else
+        //{
+        //    playerMovement = entityManager.GetComponentData<PlayerMovementSpeedComponent>(player);
+        //}
 
-        if (!entityManager.HasComponent<PhysicsVelocity>(player))
-        {
-            Debug.Log($"Cant Found Physics Velocity in PlayerMovementSystem!");
-            return;
-        }
-        else
-        {
-            physicsVelocity = entityManager.GetComponentData<PhysicsVelocity>(player);
-        }
+        //if (!entityManager.HasComponent<PhysicsVelocity>(player))
+        //{
+        //    Debug.Log($"Cant Found Physics Velocity in PlayerMovementSystem!");
+        //    return;
+        //}
+        //else
+        //{
+        //    physicsVelocity = entityManager.GetComponentData<PhysicsVelocity>(player);
+        //}
 
-        if (!entityManager.HasComponent<SlimeFrenzyComponent>(player))
-        {
-            Debug.Log($"Cant Found Slime Frenzy Component in PlayerMovementSystem!");
-            return;
-        }
-        else
-        {
-            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
-        }
+        //if (!entityManager.HasComponent<SlimeFrenzyComponent>(player))
+        //{
+        //    Debug.Log($"Cant Found Slime Frenzy Component in PlayerMovementSystem!");
+        //    return;
+        //}
+        //else
+        //{
+        //    slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+        //}
 
-        #endregion
+        //#endregion
 
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        //var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        // Track Initialization Progress
-        if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
-        {
-            if (!tracker.playerPositionInitialized)
-            {
-                LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
+        //// Track Initialization Progress
+        //if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var tracker))
+        //{
+        //    if (!tracker.playerPositionInitialized)
+        //    {
+        //        LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
 
-                playerTransform.Position = GameManager.Instance.GetPlayerInitialPosition();
+        //        playerTransform.Position = GameManager.Instance.GetPlayerInitialPosition();
 
-                ecb.SetComponent(player, playerTransform);
+        //        ecb.SetComponent(player, playerTransform);
 
-                // Update tracker
-                tracker.playerPositionInitialized = true;
-                ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
-            }
-        }
+        //        // Update tracker
+        //        tracker.playerPositionInitialized = true;
+        //        ecb.SetComponent(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), tracker);
+        //    }
+        //}
 
-        float3 targetVelocity;
+        //float3 targetVelocity;
 
-        if (!GameManager.Instance.IsPlaying())
-            targetVelocity = float3.zero; 
-        else if(stunComponent.isStunned)
-            targetVelocity = float3.zero;
-        else if (slimeFrenzyComponent.isActive)
-            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
-                * (playerMovement.totalSpeed + playerMovement.totalSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
-        else
-            targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.totalSpeed;
+        //if (!GameManager.Instance.IsPlaying())
+        //    targetVelocity = float3.zero; 
+        //else if(stunComponent.isStunned)
+        //    targetVelocity = float3.zero;
+        //else if (slimeFrenzyComponent.isActive)
+        //    targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0)
+        //        * (playerMovement.totalSpeed + playerMovement.totalSpeed * slimeFrenzyComponent.bonusMovementSpeedPercent);
+        //else
+        //    targetVelocity = new float3(playerInput.moveInput.x, playerInput.moveInput.y, 0) * playerMovement.totalSpeed;
 
-        physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
+        //physicsVelocity.Linear = math.lerp(physicsVelocity.Linear, targetVelocity, playerMovement.smoothTime);
 
-        ecb.SetComponent(player, physicsVelocity);
+        //ecb.SetComponent(player, physicsVelocity);
     }
 }

@@ -41,7 +41,7 @@ public class PawPrintPoisonerWeapon : BaseWeapon
 
         activePoisonClouds = new List<PoisonCloud>();
 
-        hasInitialized = false;
+        isInitialized = false;
     }
 
     // Update is called once per frame
@@ -127,7 +127,7 @@ public class PawPrintPoisonerWeapon : BaseWeapon
         canSpawnNewCloud = status;
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         timer = 0;
         distanceTraveled = 0;
@@ -136,7 +136,7 @@ public class PawPrintPoisonerWeapon : BaseWeapon
         if (activePoisonClouds.Count > 0)
             activePoisonClouds.Clear();
 
-        hasInitialized = true;
+        isInitialized = true;
     }
 
     private PawPrintPoisonerLevelDataSO GetCurrentLevelData()

@@ -77,6 +77,8 @@ public class PlayerMovement : MonoBehaviour
     public void Initialize()
     {
         transform.position = GameManager.Instance.GetPlayerInitialPosition();
+
+        GameInitializationManager.Instance.playerPositionInitialized = true;
     }
 }
 

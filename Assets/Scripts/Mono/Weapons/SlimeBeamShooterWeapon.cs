@@ -33,7 +33,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
         genericDamageModifier = player.GetComponent<GenericDamageModifier>();
         frenzySkill = player.GetComponent<FrenzySkill>();
 
-        hasInitialized = false;
+        isInitialized = false;
     }
 
     // Update is called once per frame
@@ -82,11 +82,11 @@ public class SlimeBeamShooterWeapon : BaseWeapon
         timer = finalCooldownTime; // Reset timer
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         timer = 0f;
         currentLevel = 0;
-        hasInitialized = true;
+        isInitialized = true;
     }
 
     private SlimeBeamShooterLevelDataSO GetCurrentLevelData()

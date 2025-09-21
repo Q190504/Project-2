@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
-    private bool needToReset;
+    //private bool needToReset;
 
     [SerializeField] private GameObject playerGO;
     [SerializeField] private GameObject playerInitalPosition;
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SetNeedToReset(true);
+        GameInitializationManager.Instance.ResetCheckers();
         SetGameState(GameState.NotStarted);
     }
 
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
         totalEnemiesKilled = 0;
         enemiesKilledPublisher.RaiseEvent(totalEnemiesKilled);
 
-        SetNeedToReset(true);
+        GameInitializationManager.Instance.ResetCheckers();
         SetGameState(GameState.Initializing);
     }
 
@@ -103,12 +103,12 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.NotStarted);
     }
 
-    public float3 GetPlayerInitialPosition()
+    public Vector2 GetPlayerInitialPosition()
     {
         if (playerInitalPosition == null)
         {
             Debug.LogError("Player initial position is not set in GameManager.");
-            return float3.zero;
+            return Vector2.zero;
         }
 
         return playerInitalPosition.gameObject.transform.position;
@@ -144,15 +144,15 @@ public class GameManager : MonoBehaviour
         gameState = state;
     }
 
-    public bool GetNeedToReset()
-    {
-        return needToReset;
-    }
+    //public bool GetNeedToReset()
+    //{
+    //    return needToReset;
+    //}
 
-    public void SetNeedToReset(bool value)
-    {
-        needToReset = value;
-    }
+    //public void SetNeedToReset(bool value)
+    //{
+    //    needToReset = value;
+    //}
 
     public void ExitGame()
     {

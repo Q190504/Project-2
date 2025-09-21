@@ -11,10 +11,7 @@ public class HealthRegen : BasePassive
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Initialize();
-
         playerHealth = GetComponent<PlayerHealth>();
-        timer = 0f;
     }
 
     // Update is called once per frame
@@ -42,5 +39,11 @@ public class HealthRegen : BasePassive
     {
         base.LevelUp();
         value += increment;
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        timer = 0f;
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using Unity.Entities;
 using Unity.Mathematics;
 
 public enum FlowFieldDebugStatus
@@ -13,42 +12,48 @@ public enum FlowFieldDebugStatus
 
 public class FlowFieldDebug : MonoBehaviour
 {
+    public static FlowFieldDebug Instance { get; private set; }
+
     [SerializeField] private TMP_Text debugTextPrefab;
     [SerializeField] private Canvas debugCanvas;
     [SerializeField] private FlowFieldDebugStatus flowFieldDebugStatus;
 
     private TMP_Text[,] debugTexts;
 
-    private Entity gridEntity;
-    private EntityManager entityManager;
-    private FlowFieldGridDataComponent gridData;
+    private FlowFieldGridData gridData; // switched to MonoBehaviour version
 
     private int width;
     private int height;
     private float cellSize;
     private Vector3 origin;
 
-    private void Start()
+    private void Awake()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        EntityQuery gridQuery = entityManager.CreateEntityQuery(typeof(FlowFieldGridDataComponent));
-
-        if (gridQuery.IsEmpty)
+        if (Instance != null && Instance != this)
         {
-            Debug.LogWarning("Flow Field Grid entity not found in FlowFieldDebug.");
+            Destroy(gameObject);
             return;
         }
+        Instance = this;
+    }
 
-        gridEntity = gridQuery.GetSingletonEntity();
-        gridData = entityManager.GetComponentData<FlowFieldGridDataComponent>(gridEntity);
+    private void Start()
+    {
+        gridData = FlowFieldManager.Instance.GetGridData();
+
+        if (gridData == null)
+        {
+            Debug.LogWarning("FlowFieldGridData singleton not found.");
+            return;
+        }
 
         width = gridData.width;
         height = gridData.height;
         cellSize = gridData.nodeSize;
         origin = gridData.originPosition;
 
-        if (flowFieldDebugStatus == FlowFieldDebugStatus.Cost || flowFieldDebugStatus == FlowFieldDebugStatus.BestCost)
+        if (flowFieldDebugStatus == FlowFieldDebugStatus.Cost ||
+            flowFieldDebugStatus == FlowFieldDebugStatus.BestCost)
         {
             InitializeDebugTexts();
         }
@@ -56,7 +61,7 @@ public class FlowFieldDebug : MonoBehaviour
 
     private void Update()
     {
-        if (gridEntity == Entity.Null || !entityManager.Exists(gridEntity)) return;
+        if (gridData == null) return;
 
         switch (flowFieldDebugStatus)
         {
@@ -79,7 +84,11 @@ public class FlowFieldDebug : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                float3 nodeCenter = new float3(origin.x + (x + 0.5f) * cellSize, origin.y + (y + 0.5f) * cellSize, 0);
+                float3 nodeCenter = new float3(
+                    origin.x + (x + 0.5f) * cellSize,
+                    origin.y + (y + 0.5f) * cellSize,
+                    0
+                );
                 TMP_Text text = Instantiate(debugTextPrefab, nodeCenter, Quaternion.identity, debugCanvas.transform);
                 text.text = "";
                 debugTexts[x, y] = text;
@@ -89,10 +98,9 @@ public class FlowFieldDebug : MonoBehaviour
 
     public void ShowCost()
     {
-        if (!entityManager.HasBuffer<GridNode>(gridEntity)) return;
+        if (gridData == null || gridData.nodes == null) return;
 
-        var buffer = entityManager.GetBuffer<GridNode>(gridEntity);
-        foreach (var node in buffer)
+        foreach (var node in gridData.nodes)
         {
             debugTexts[node.x, node.y].text = node.cost.ToString();
         }
@@ -100,10 +108,9 @@ public class FlowFieldDebug : MonoBehaviour
 
     public void ShowBestCost()
     {
-        if (!entityManager.HasBuffer<GridNode>(gridEntity)) return;
+        if (gridData == null || gridData.nodes == null) return;
 
-        var buffer = entityManager.GetBuffer<GridNode>(gridEntity);
-        foreach (var node in buffer)
+        foreach (var node in gridData.nodes)
         {
             debugTexts[node.x, node.y].text = node.bestCost.ToString();
         }
@@ -111,10 +118,9 @@ public class FlowFieldDebug : MonoBehaviour
 
     public void ShowVector()
     {
-        if (!entityManager.HasBuffer<GridNode>(gridEntity)) return;
+        if (gridData == null || gridData.nodes == null) return;
 
-        var buffer = entityManager.GetBuffer<GridNode>(gridEntity);
-        foreach (var node in buffer)
+        foreach (var node in gridData.nodes)
         {
             int x = node.x;
             int y = node.y;
@@ -124,13 +130,13 @@ public class FlowFieldDebug : MonoBehaviour
             float3 topLeft = new float3(bottomLeft.x, topRight.y, 0);
             float3 bottomRight = new float3(topRight.x, bottomLeft.y, 0);
 
-            // Draw the 4 borders of the cell
+            // Draw cell borders
             Debug.DrawLine(bottomLeft, bottomRight, Color.white);
             Debug.DrawLine(bottomRight, topRight, Color.white);
             Debug.DrawLine(topRight, topLeft, Color.white);
             Debug.DrawLine(topLeft, bottomLeft, Color.white);
 
-            // Calculate the center position of the cell
+            // Draw flow vector
             float3 center = bottomLeft + new float3(cellSize / 2f, cellSize / 2f, 0);
             float2 vec = node.vector;
 
@@ -141,10 +147,8 @@ public class FlowFieldDebug : MonoBehaviour
 
                 Debug.DrawLine(center, arrowEnd, Color.green);
 
-                // Draw arrowhead only if there is a valid direction
                 float3 arrowHead = math.normalize(dir) * (cellSize * 0.2f);
 
-                // Rotate arrowhead lines ±135 degrees
                 float3 leftHead = arrowEnd + math.mul(quaternion.RotateZ(math.radians(135)), arrowHead);
                 float3 rightHead = arrowEnd + math.mul(quaternion.RotateZ(math.radians(-135)), arrowHead);
 

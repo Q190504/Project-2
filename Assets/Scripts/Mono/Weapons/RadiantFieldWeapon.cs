@@ -38,7 +38,7 @@ public class RadiantFieldWeapon : BaseWeapon
         else
             inGameObjectType = InGameObjectType.RadiantField;
 
-        hasInitialized = false;
+        isInitialized = false;
     }
 
     // Update is called once per frame
@@ -101,7 +101,7 @@ public class RadiantFieldWeapon : BaseWeapon
         }
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         currentLevel = 0;
         timer = 0;
@@ -115,7 +115,7 @@ public class RadiantFieldWeapon : BaseWeapon
         if (this.gameObject.TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
             spriteRenderer.enabled = false;
 
-        hasInitialized = true;
+        isInitialized = true;
     }
 
     private RadiantFieldLevelDataSO GetCurrentLevelData()

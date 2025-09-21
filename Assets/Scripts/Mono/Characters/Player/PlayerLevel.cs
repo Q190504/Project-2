@@ -5,6 +5,7 @@ public class PlayerLevel : MonoBehaviour
     private int currentLevel;
     [SerializeField] private int maxLevel;
     [SerializeField] private int baseExperienceToNextLevel;
+    [SerializeField] private float experienceGrowthRate = 1.12f;
     private int experience;
     private int experienceToNextLevel;
 
@@ -49,7 +50,7 @@ public class PlayerLevel : MonoBehaviour
 
             // Inscrease the experience needed for the next level
             experienceToNextLevel =
-                Mathf.FloorToInt(baseExperienceToNextLevel * Mathf.Pow(1.12f, currentLevel));
+                Mathf.FloorToInt(baseExperienceToNextLevel * Mathf.Pow(experienceGrowthRate, currentLevel));
         }
     }
 
@@ -58,10 +59,14 @@ public class PlayerLevel : MonoBehaviour
         return currentLevel;
     }
 
-    public void ResetData()
+    public void Initialize()
     {
         currentLevel = 1;
+        experience = 0;
         experienceToNextLevel = baseExperienceToNextLevel;
+        UpdateXPBar(currentLevel, experience, experienceToNextLevel);
+
+        GameInitializationManager.Instance.playerLevelInitialized = true;
     }
 
     public void UpdateXPBar(int currentLevel, int experience, int experienceToNextLevel)

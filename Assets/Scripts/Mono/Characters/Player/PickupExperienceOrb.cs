@@ -11,7 +11,8 @@ public class PickupExperienceOrb : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Initialize();
+        playerLevel = GetComponent<PlayerLevel>();
+        pickupRadius = GetComponent<PickupRadius>();
     }
 
     // Update is called once per frame
@@ -71,11 +72,5 @@ public class PickupExperienceOrb : MonoBehaviour
 
             Debug.DrawLine(p1, p2, color, 0.1f);
         }
-    }
-
-    public void Initialize()
-    {
-        playerLevel = GetComponent<PlayerLevel>();
-        pickupRadius = GetComponent<PickupRadius>();
     }
 }

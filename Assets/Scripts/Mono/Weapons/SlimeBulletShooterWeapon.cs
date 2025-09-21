@@ -28,7 +28,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         abilityHaste = player.GetComponent<AbilityHaste>();
         genericDamageModifier = player.GetComponent<GenericDamageModifier>();
 
-        hasInitialized = false;
+        isInitialized = false;
     }
 
     // Update is called once per frame
@@ -113,11 +113,11 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         bullet.Initialize(moveDirection, moveSpeed, maxDistance, damage, passthroughDamageModifier, 0, existDuration, slowModifier, slowRadius);
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         currentLevel = 1;
         timer = 0;
-        hasInitialized = true;
+        isInitialized = true;
     }
 
     private SlimeBulletShooterLevelDataSO GetCurrentLevelData()

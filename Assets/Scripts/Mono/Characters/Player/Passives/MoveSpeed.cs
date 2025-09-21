@@ -7,10 +7,7 @@ public class MoveSpeed : BasePassive
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Initialize();
-
         playerMovement = GetComponent<PlayerMovement>();
-        playerMovement.SetCurrentSpeed(value);
     }
 
     protected override void LevelUp()
@@ -19,5 +16,12 @@ public class MoveSpeed : BasePassive
         value += increment; 
         float newMoveSpeed = playerMovement.GetCurrentSpeed() * (1 + value);
         playerMovement.SetCurrentSpeed(newMoveSpeed);
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        playerMovement.SetCurrentSpeed(value);
     }
 }

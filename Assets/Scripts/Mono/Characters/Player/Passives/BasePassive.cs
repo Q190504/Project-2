@@ -3,23 +3,25 @@ using UnityEngine;
 
 public class BasePassive : MonoBehaviour
 {
-    //protected int ID;
     [SerializeField] protected int baseValue;
     protected float value;
     protected int currentLevel;
+    protected bool isInitialized;
     [SerializeField] protected float increment;
 
     [Header("Passive Settings")]
     [SerializeField] protected PassiveType passiveType;
-    //[SerializeField] protected int id;
     [SerializeField] protected int level;
     [SerializeField] protected int maxLevel;
     [SerializeField] protected string displayName;
     [SerializeField] protected string description;
 
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
+        level = 0;
         value = baseValue;
+
+        isInitialized = true;
     }
 
     protected virtual void LevelUp()
@@ -29,14 +31,13 @@ public class BasePassive : MonoBehaviour
             level = maxLevel;
     }
 
-    protected virtual void ResetData()
-    {
-        level = 0;
-        value = baseValue;
-    }
-
     public float GetValue()
     { 
         return value; 
+    }
+
+    public bool IsInitialized()
+    {
+        return isInitialized;
     }
 }

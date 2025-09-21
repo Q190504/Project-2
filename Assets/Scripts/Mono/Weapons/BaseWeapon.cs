@@ -3,7 +3,6 @@ using UnityEngine;
 public abstract class BaseWeapon : MonoBehaviour
 {
     [SerializeField] protected WeaponType weaponType;
-    //[SerializeField] protected int iD;
     [SerializeField] protected int maxLevel;
     [SerializeField] protected string displayName;
     [SerializeField] protected string description;
@@ -11,8 +10,7 @@ public abstract class BaseWeapon : MonoBehaviour
     protected int currentLevel;
     protected bool IsActive => currentLevel > 0;
 
-    protected bool hasInitialized;
-
+    protected bool isInitialized;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,7 +24,7 @@ public abstract class BaseWeapon : MonoBehaviour
 
     }
 
-    protected abstract void Initialize();
+    public abstract void Initialize();
 
     public virtual void LevelUp()
     {
@@ -35,8 +33,8 @@ public abstract class BaseWeapon : MonoBehaviour
             currentLevel = maxLevel;
     }
 
-    public bool HasInitialized()
+    public bool IsInitialized()
     {
-        return hasInitialized;
+        return isInitialized;
     }
 }

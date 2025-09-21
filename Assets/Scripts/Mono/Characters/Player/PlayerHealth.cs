@@ -9,8 +9,6 @@ public class PlayerHealth : BaseHealth
     {
         if (armor == null)
             armor = new Armor();
-
-        UpdateHPBar();
     }
 
     // Update is called once per frame
@@ -64,6 +62,13 @@ public class PlayerHealth : BaseHealth
             currentHealth = maxHealth;
 
         UpdateHPBar();
+    }
+
+    public void Initialize()
+    {
+        SetCurrentHealth(baseMaxHealth);
+
+        GameInitializationManager.Instance.playerHealthInitialized = true;
     }
 
     public void SetMaxHealth(int value)

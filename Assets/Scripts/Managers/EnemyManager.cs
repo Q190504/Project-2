@@ -17,8 +17,9 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private GameObject creepPrefab;
 
     private Queue<GameObject> inactiveCreeps;
+    private List<GameObject> activeCreeps;
     private Transform creepPool;
-    private int creepCount = 0;
+    private int inactiveCreepCount = 0;
 
     Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
 
@@ -57,8 +58,8 @@ public class EnemyManager : MonoBehaviour
             Destroy(this.gameObject);
 
         inactiveCreeps = new Queue<GameObject>();
+        activeCreeps = new List<GameObject>();
     }
-
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -171,7 +172,7 @@ public class EnemyManager : MonoBehaviour
         Creep creepComponent = creep.GetComponent<Creep>();
 
         float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
-        creepComponent.Initialize(position, player, difficultyMultiplier);
+        creepComponent.Initialize(position, difficultyMultiplier);
     }
 
     private void PrepareEnemy()
@@ -183,7 +184,7 @@ public class EnemyManager : MonoBehaviour
             GameObject creep = Instantiate(creepPrefab, creepPool);
             creep.gameObject.SetActive(false);
             inactiveCreeps.Enqueue(creep);
-            creepCount++;
+            inactiveCreepCount++;
         }
     }
 
@@ -193,7 +194,9 @@ public class EnemyManager : MonoBehaviour
             PrepareEnemy();
 
         GameObject creep = inactiveCreeps.Dequeue();
-        creepCount--;
+        inactiveCreepCount--;
+
+        activeCreeps.Add(creep);
 
         creep.gameObject.SetActive(true);
 
@@ -207,8 +210,9 @@ public class EnemyManager : MonoBehaviour
 
         creep.gameObject.SetActive(false);
 
+        activeCreeps.Remove(creep);
         inactiveCreeps.Enqueue(creep);
-        creepCount++;
+        inactiveCreepCount++;
     }
 
     public void Initialize()
@@ -218,6 +222,24 @@ public class EnemyManager : MonoBehaviour
         waveInterval = baseInterval;
         enemiesPerWave = baseEnemiesPerWave;
         enemiesToSpawnCounter = 0;
+
+        ClearAllEnemies();
+
+        GameInitializationManager.Instance.enemySystemInitialized = true;
+    }
+
+    public void ClearAllEnemies()
+    {
+        ClearAllCreep();
+    }
+
+    private void ClearAllCreep()
+    {
+        if (activeCreeps != null && activeCreeps.Count > 0)
+        {
+            foreach (var creep in activeCreeps)
+                ReturnCreep(creep);
+        }
     }
 
     public int GetCreepPrepare()

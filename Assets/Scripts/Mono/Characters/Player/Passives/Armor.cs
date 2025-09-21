@@ -5,7 +5,7 @@ public class Armor : BasePassive
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Initialize();
+
     }
 
     // Update is called once per frame
@@ -14,7 +14,7 @@ public class Armor : BasePassive
         
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         base.Initialize();
         value += increment;

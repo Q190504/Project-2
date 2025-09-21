@@ -7,14 +7,7 @@ public class MaxHealth : BasePassive
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Initialize();
-
         playerHealth = GetComponent<PlayerHealth>();
-        if (playerHealth != null)
-        {
-            playerHealth.SetMaxHealth(baseValue);
-            playerHealth.SetCurrentHealth(baseValue);
-        }
     }
 
     // Update is called once per frame
@@ -30,5 +23,16 @@ public class MaxHealth : BasePassive
         int bonusHealth = Mathf.FloorToInt(playerHealth.GetMaxHealth() * value);
         playerHealth.SetMaxHealth(playerHealth.GetMaxHealth() + bonusHealth);
         playerHealth.Heal(bonusHealth);
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        if (playerHealth != null)
+        {
+            playerHealth.SetMaxHealth(baseValue);
+            playerHealth.SetCurrentHealth(baseValue);
+        }
     }
 }

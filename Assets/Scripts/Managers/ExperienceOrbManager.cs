@@ -13,6 +13,7 @@ public class ExperienceOrbManager : MonoBehaviour
     [SerializeField] private ExperienceOrb orbPrefab;
 
     private Queue<ExperienceOrb> inactiveOrbs;
+    private List<ExperienceOrb> activeOrbs;
     private Transform orbsPool;
     private int orbCount = 0;
 
@@ -43,20 +44,16 @@ public class ExperienceOrbManager : MonoBehaviour
     void Start()
     {
         inactiveOrbs = new Queue<ExperienceOrb>();
+        activeOrbs = new List<ExperienceOrb>();
+
         orbsPool = new GameObject("OrbsPool").transform;
         orbsPool.SetParent(transform);
 
-        Initialize();
         PrepareOrb();
     }
 
     // Update is called once per frame
     void Update()
-    {
-
-    }
-
-    public void Initialize()
     {
 
     }
@@ -113,6 +110,21 @@ public class ExperienceOrbManager : MonoBehaviour
         orb.transform.SetParent(orbsPool.transform, false);
         inactiveOrbs.Enqueue(orb);
         orbCount++;
+    }
+
+    public void Initialize()
+    {
+        ClearOrbs();
+
+    }
+
+    public void ClearOrbs()
+    {
+        if (activeOrbs != null && activeOrbs.Count > 0)
+        {
+            foreach (var orb in activeOrbs)
+                Return(orb);
+        }
     }
 
     public void SetTimeSinceStartPlaying(double time)

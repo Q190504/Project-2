@@ -37,11 +37,11 @@ public class Creep : MonoBehaviour
             damageable.TakeDamage(spike);
     }
 
-    public void Initialize(Vector2 pos, GameObject target, float difficultyMultiplier)
+    public void Initialize(Vector2 pos, float difficultyMultiplier)
     {
         transform.position = pos;
 
-        movement.Initialize(target);
+        movement.Initialize();
 
         int enemyHP = (int)(health.BaseMaxHealth + difficultyMultiplier);
         health.Initialize(enemyHP);

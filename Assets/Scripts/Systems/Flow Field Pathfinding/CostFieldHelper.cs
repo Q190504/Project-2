@@ -1,4 +1,3 @@
-using Unity.Entities;
 using UnityEngine;
 
 public class CostFieldHelper : MonoBehaviour
@@ -6,7 +5,6 @@ public class CostFieldHelper : MonoBehaviour
     public static CostFieldHelper instance;
 
     [SerializeField] private float nodeSizeScale;
-    private EntityCommandBufferSystem ecbSystem;
     private int terrainMask;
 
     private void Awake()
