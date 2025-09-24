@@ -35,7 +35,7 @@ public class HealthRegen : BasePassive
         }
     }
 
-    protected override void LevelUp()
+    public override void LevelUp()
     {
         base.LevelUp();
         value += increment;

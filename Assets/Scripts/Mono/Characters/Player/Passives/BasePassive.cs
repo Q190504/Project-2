@@ -24,7 +24,7 @@ public class BasePassive : MonoBehaviour
         isInitialized = true;
     }
 
-    protected virtual void LevelUp()
+    public virtual void LevelUp()
     {
         level++;
         if (level > maxLevel)
@@ -32,9 +32,26 @@ public class BasePassive : MonoBehaviour
     }
 
     public float GetValue()
-    { 
-        return value; 
+    {
+        return value;
     }
+
+    public PassiveType GetPassiveType()
+    {
+        return passiveType;
+    }
+
+    public int GetCurrentLevel()
+    { return currentLevel; }
+
+    public int GetMaxLevel()
+    { return maxLevel; }
+
+    public string GetDisplayName()
+    { return displayName; }
+
+    public string GetDescription()
+    { return description; }
 
     public bool IsInitialized()
     {

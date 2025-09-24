@@ -1,144 +1,110 @@
-using UnityEngine;
+using System.Collections.Generic;
 using Unity.Collections;
-using Unity.Entities;
+using UnityEngine;
 
 public static class UpgradeOfferingHelper
 {
-    public static NativeList<UpgradeOptionStruct> GenerateOfferings(PlayerUpgradeSlots slots)
+    public static List<UpgradeOption> GenerateOfferings(PlayerUpgradeSlots slots)
     {
         var random = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
-        var offerings = new NativeList<UpgradeOptionStruct>(Allocator.Temp);
+        var offerings = new List<UpgradeOption>();
 
         #region Query valid weapons
 
-        NativeList<Entity> validWeapons = new NativeList<Entity>(Allocator.Temp);
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EntityQuery weaponQuery = entityManager.CreateEntityQuery(typeof(WeaponComponent));
-        if (weaponQuery.CalculateEntityCount() > 0)
-        {
-            NativeArray<Entity> weaponEntities = weaponQuery.ToEntityArray(Allocator.Temp);
-            foreach (Entity weapon in weaponEntities)
-            {
-                var weaponComponent = entityManager.GetComponentData<WeaponComponent>(weapon);
-                int weaponID = weaponComponent.ID;
+        List<BaseWeapon> validWeapons = new List<BaseWeapon>();
 
+        List<BaseWeapon> weapons = WeaponManager.Instance.GetWeapons();
+
+        if (weapons.Count > 0)
+        {
+            foreach (BaseWeapon weapon in weapons)
+            {
                 bool existsInSlots = false;
                 int currentLevel = 0;
 
                 // Check if the weapon is already in the player's slots
-                for (int i = 0; i < slots.weapons.Length; i++)
+                for (int i = 0; i < slots.GetWeaponList().Count; i++)
                 {
-                    if (slots.weapons[i].x == weaponID)
+                    if (slots.GetWeaponAtIndex(i).GetWeaponType() == weapon.GetWeaponType())
                     {
                         existsInSlots = true;
-                        currentLevel = slots.weapons[i].y;
+                        currentLevel = slots.GetWeaponAtIndex(i).GetCurrentLevel();
                         break;
                     }
                 }
 
                 // If weapon is in slots and level is below 5, or (not in slots at all && hasnt full slot)
-                if ((existsInSlots && currentLevel < 5) || !existsInSlots && slots.weapons.Length < slots.maxWeaponSlots)
+                if ((existsInSlots && currentLevel < 5) || !existsInSlots && slots.GetWeaponList().Count < slots.GetMaxWeaponSlots())
                 {
                     validWeapons.Add(weapon);
                 }
 
             }
-
-            weaponEntities.Dispose();
         }
 
         #endregion
 
         #region Query valid passives
 
-        NativeList<Entity> validPassives = new NativeList<Entity>(Allocator.Temp);
-        EntityQuery passiveQuery = entityManager.CreateEntityQuery(typeof(PassiveComponent));
-        if (passiveQuery.CalculateEntityCount() > 0)
+        List<BasePassive> validPassives = new List<BasePassive>();
+
+        List<BasePassive> passives = PassiveManager.Instance.GetPassives();
+
+        if (passives.Count > 0)
         {
-            NativeArray<Entity> passiveEntities = passiveQuery.ToEntityArray(Allocator.Temp);
-            foreach (Entity passive in passiveEntities)
+            foreach (BasePassive passive in passives)
             {
-                var passiveComponent = entityManager.GetComponentData<PassiveComponent>(passive);
-
-                int passiveID = passiveComponent.ID;
-
                 bool existsInSlots = false;
                 int currentLevel = 0;
 
                 // Check if the passive is already in the player's slots
-                for (int i = 0; i < slots.passives.Length; i++)
+                for (int i = 0; i < slots.GetPassiveList().Count; i++)
                 {
-                    if (slots.passives[i].x == passiveID)
+                    if (slots.GetPassvieAtIndex(i).GetPassiveType() == passive.GetPassiveType())
                     {
                         existsInSlots = true;
-                        currentLevel = slots.passives[i].y;
+                        currentLevel = slots.GetPassvieAtIndex(i).GetCurrentLevel();
                         break;
                     }
                 }
 
                 // If passive is in slots and level is below 5, or (not in slots at all && hasnt full slot)
-                if ((existsInSlots && currentLevel < 5) || !existsInSlots && slots.passives.Length < slots.maxPassvieSlots)
+                if ((existsInSlots && currentLevel < 5) || !existsInSlots && slots.GetPassiveList().Count < slots.GetMaxPassvieSlots())
                 {
                     validPassives.Add(passive);
                 }
             }
-
-            passiveEntities.Dispose();
         }
 
         #endregion
 
         #region combine valid weapons & passives into valid options
 
-        NativeList<UpgradeOptionStruct> combined = new NativeList<UpgradeOptionStruct>(Allocator.Temp);
+        List<UpgradeOption> combined = new List<UpgradeOption>();
 
         // Add valid weapons to the combined list
         foreach (var weapon in validWeapons)
         {
-            var weaponComponent = entityManager.GetComponentData<WeaponComponent>(weapon);
-            UpgradeOptionStruct option = new UpgradeOptionStruct
-            {
-                CardType = UpgradeType.Weapon,
-                WeaponType = weaponComponent.WeaponType,
-                ID = weaponComponent.ID,
-                DisplayName = weaponComponent.DisplayName,
-                Description = weaponComponent.Description,
-                CurrentLevel = weaponComponent.Level
-            };
-
+            WeaponUpgradeOption option = new WeaponUpgradeOption(weapon);
             combined.Add(option);
         }
 
         // Add valid passives to the combined list
         foreach (var passive in validPassives)
         {
-            var passiveComponent = entityManager.GetComponentData<PassiveComponent>(passive);
-            UpgradeOptionStruct option = new UpgradeOptionStruct
-            {
-                CardType = UpgradeType.Passive,
-                PassiveType = passiveComponent.PassiveType,
-                ID = passiveComponent.ID,
-                DisplayName = passiveComponent.DisplayName,
-                Description = passiveComponent.Description,
-                CurrentLevel = passiveComponent.Level
-            };
-
+            PassiveUpgradeOption option = new PassiveUpgradeOption(passive);
             combined.Add(option);
         }
 
         #endregion
 
         // Randomly select 3 from combined list
-        while (offerings.Length < 3 && combined.Length > 0)
+        while (offerings.Count < 3 && combined.Count > 0)
         {
-            int index = random.NextInt(combined.Length);
+            int index = random.NextInt(combined.Count);
             offerings.Add(combined[index]);
             combined.RemoveAt(index);
         }
-
-        validWeapons.Dispose();
-        validPassives.Dispose();
-        combined.Dispose();
 
         return offerings;
     }

@@ -29,7 +29,7 @@ public class PlayerUpgradeSlotsAuthoring : MonoBehaviour
             WeaponIDs.Add(defaultWeapon.id);
 
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new PlayerUpgradeSlots
+            AddComponent(entity, new PlayerUpgradeSlotsComponent
             {
                 defaultWeaponId = defaultWeapon.id,
                 defaultWeaponType = authoring.defaultWeaponType,
@@ -42,7 +42,7 @@ public class PlayerUpgradeSlotsAuthoring : MonoBehaviour
     }
 }
 
-public struct PlayerUpgradeSlots : IComponentData
+public struct PlayerUpgradeSlotsComponent : IComponentData
 {
     public int defaultWeaponId;
     public WeaponType defaultWeaponType;

@@ -1,27 +1,30 @@
 using System.Collections.Generic;
-using Unity.Entities;
+using Unity.Collections;
 using UnityEngine;
 
-public class UpgradeOptionManager : MonoBehaviour
+public class UpgradeManager : MonoBehaviour
 {
-    private static UpgradeOptionManager _instance;
+    private static UpgradeManager _instance;
 
-    private float timer;
     [SerializeField] private float totalTime;
+    private float timer;
     private List<UpgradeCard> upgradeOptions;
+    private PlayerUpgradeSlots playerUpgradeSlots;
 
     //private List<UpgradeOptionClass> selectedPassiveUpgrades;
     //private List<UpgradeOptionClass> selectedWeaponUpgrades;
 
+    [Header("Refs")]
+    [SerializeField] private GameObject player;
     [SerializeField] private TwoFloatPublisherSO updateCountdownSO;
     [SerializeField] private VoidPublisherSO togglePauseSO;
 
-    public static UpgradeOptionManager Instance
+    public static UpgradeManager Instance
     {
         get
         {
             if (_instance == null)
-                _instance = FindFirstObjectByType<UpgradeOptionManager>();
+                _instance = FindFirstObjectByType<UpgradeManager>();
             return _instance;
         }
     }
@@ -39,6 +42,10 @@ public class UpgradeOptionManager : MonoBehaviour
     {
         ResetTimer();
         upgradeOptions = new List<UpgradeCard>();
+        if (player != null)
+            playerUpgradeSlots = player.GetComponent<PlayerUpgradeSlots>();
+        else
+            Debug.LogError("Player isn't assign in UpgradeManager");
         //selectedPassiveUpgrades = new List<UpgradeOptionClass>();
         //selectedWeaponUpgrades = new List<UpgradeOptionClass>();
     }
@@ -94,5 +101,29 @@ public class UpgradeOptionManager : MonoBehaviour
     public void ResetTimer()
     {
         timer = totalTime;
+    }
+
+    public void OpenUpgradePanel()
+    {
+        // Pause game
+        GameManager.Instance.TogglePauseGameForUpgrading();
+
+        if (playerUpgradeSlots != null)
+        {
+            // Collect all valid upgrade options
+            List<UpgradeOption> offerings
+                = UpgradeOfferingHelper.GenerateOfferings(playerUpgradeSlots);
+
+            // Open UI
+            SetTimer();
+            GamePlayUIManager.Instance.OpenUpgradePanel(offerings);
+        }
+        else
+            Debug.LogError("Can't find PlayerUpgradeSlots in UpgradeManager");
+    }
+
+    public PlayerUpgradeSlots GetPlayerUpgradeSlots()
+    {
+        return playerUpgradeSlots;
     }
 }

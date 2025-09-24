@@ -12,7 +12,7 @@ public partial struct PlayerUpgradeSlotsInitializationSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<PlayerUpgradeSlots>();
+        state.RequireForUpdate<PlayerUpgradeSlotsComponent>();
         entityManager = state.EntityManager;
 
         // Ensure InitializationTracker exists
@@ -25,59 +25,59 @@ public partial struct PlayerUpgradeSlotsInitializationSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (SystemAPI.TryGetSingletonEntity<PlayerUpgradeSlots>(out Entity player) && GameManager.Instance.IsInitializing())
-        {
-            // Track Initialization Progress
-            if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) 
-                && !initializationTrackerComponent.playerUpgradeSlotsInitialized)
-            {
-                var playerUpgradeSlots = SystemAPI.GetComponent<PlayerUpgradeSlots>(player);
+        //if (SystemAPI.TryGetSingletonEntity<PlayerUpgradeSlotsComponent>(out Entity player) && GameManager.Instance.IsInitializing())
+        //{
+        //    // Track Initialization Progress
+        //    if (SystemAPI.TryGetSingleton<InitializationTrackerComponent>(out var initializationTrackerComponent) 
+        //        && !initializationTrackerComponent.playerUpgradeSlotsInitialized)
+        //    {
+        //        var playerUpgradeSlots = SystemAPI.GetComponent<PlayerUpgradeSlotsComponent>(player);
 
-                playerUpgradeSlots.passives.Clear();
-                playerUpgradeSlots.weapons.Clear();
+        //        playerUpgradeSlots.passives.Clear();
+        //        playerUpgradeSlots.weapons.Clear();
 
-                FixedList64Bytes<int2> newWeaponList = playerUpgradeSlots.weapons;
-                int2 defaultWeapon = new int2(playerUpgradeSlots.defaultWeaponId, 1);
-                newWeaponList.Add(defaultWeapon);
+        //        FixedList64Bytes<int2> newWeaponList = playerUpgradeSlots.weapons;
+        //        int2 defaultWeapon = new int2(playerUpgradeSlots.defaultWeaponId, 1);
+        //        newWeaponList.Add(defaultWeapon);
 
-                foreach (var weaponComponent in SystemAPI.Query<RefRW<WeaponComponent>>())
-                {
-                    if (weaponComponent.ValueRO.WeaponType == playerUpgradeSlots.defaultWeaponType)
-                    {
-                        weaponComponent.ValueRW.Level++;
+        //        foreach (var weaponComponent in SystemAPI.Query<RefRW<WeaponComponent>>())
+        //        {
+        //            if (weaponComponent.ValueRO.WeaponType == playerUpgradeSlots.defaultWeaponType)
+        //            {
+        //                weaponComponent.ValueRW.Level++;
 
-                        // Apply changes back to PlayerUpgradeSlots
-                        state.EntityManager.SetComponentData(player, new PlayerUpgradeSlots
-                        {
-                            defaultWeaponId = playerUpgradeSlots.defaultWeaponId,
-                            defaultWeaponType = playerUpgradeSlots.defaultWeaponType,
-                            maxWeaponSlots = playerUpgradeSlots.maxWeaponSlots,
-                            weapons = newWeaponList,
-                            maxPassvieSlots = playerUpgradeSlots.maxPassvieSlots,
-                            passives = playerUpgradeSlots.passives,
-                        });
+        //                // Apply changes back to PlayerUpgradeSlots
+        //                state.EntityManager.SetComponentData(player, new PlayerUpgradeSlotsComponent
+        //                {
+        //                    defaultWeaponId = playerUpgradeSlots.defaultWeaponId,
+        //                    defaultWeaponType = playerUpgradeSlots.defaultWeaponType,
+        //                    maxWeaponSlots = playerUpgradeSlots.maxWeaponSlots,
+        //                    weapons = newWeaponList,
+        //                    maxPassvieSlots = playerUpgradeSlots.maxPassvieSlots,
+        //                    passives = playerUpgradeSlots.passives,
+        //                });
 
-                        // Update UI
-                        UpgradeEventArgs upgradeEventArgs = new UpgradeEventArgs
-                        {
-                            upgradeType = UpgradeType.Weapon,
-                            weaponType = playerUpgradeSlots.defaultWeaponType,
-                            passiveType = PassiveType.None,
-                            id = playerUpgradeSlots.defaultWeaponId,
-                            level = weaponComponent.ValueRO.Level,
-                        };
+        //                // Update UI
+        //                UpgradeEventArgs upgradeEventArgs = new UpgradeEventArgs
+        //                {
+        //                    upgradeType = UpgradeType.Weapon,
+        //                    weaponType = playerUpgradeSlots.defaultWeaponType,
+        //                    passiveType = PassiveType.None,
+        //                    id = playerUpgradeSlots.defaultWeaponId,
+        //                    level = weaponComponent.ValueRO.Level,
+        //                };
 
-                        GamePlayUIManager.Instance.UpdateSlots(upgradeEventArgs);
+        //                GamePlayUIManager.Instance.UpdateSlots(upgradeEventArgs);
 
-                        // Update tracker
-                        initializationTrackerComponent.playerUpgradeSlotsInitialized = true;
-                        state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), 
-                            initializationTrackerComponent);
+        //                // Update tracker
+        //                initializationTrackerComponent.playerUpgradeSlotsInitialized = true;
+        //                state.EntityManager.SetComponentData(SystemAPI.GetSingletonEntity<InitializationTrackerComponent>(), 
+        //                    initializationTrackerComponent);
 
-                        return;
-                    }
-                }
-            }
-        }
+        //                return;
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

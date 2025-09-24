@@ -37,4 +37,21 @@ public abstract class BaseWeapon : MonoBehaviour
     {
         return isInitialized;
     }
+
+    public WeaponType GetWeaponType()
+    {
+        return weaponType;
+    }
+
+    public int GetMaxLevel()
+    { return maxLevel; }
+
+    public int GetCurrentLevel()
+    { return currentLevel; }
+
+    public string GetDisplayName()
+    { return displayName; }
+
+    public string GetDescription()
+    { return description; }
 }

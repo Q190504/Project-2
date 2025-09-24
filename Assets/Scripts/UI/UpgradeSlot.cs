@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class UpgradeSlot : MonoBehaviour
 {
-    public int ID { get; set; }
+    private UpgradeType upgradeType;
+    private WeaponType weaponType;
+    private PassiveType passiveType;
 
     [SerializeField] private Image image;
     [SerializeField] private TMP_Text levelText;
@@ -15,9 +17,12 @@ public class UpgradeSlot : MonoBehaviour
         ClearSlotInfo();
     }
 
-    public void SetSlotInfo(int ID, Sprite image, int level)
+    public void SetSlotInfo(UpgradeType upgradeType, WeaponType weaponType, PassiveType passiveType, 
+        Sprite image, int level)
     {
-        this.ID = ID;
+        this.upgradeType = upgradeType;
+        this.weaponType = weaponType;
+        this.passiveType = passiveType;
         this.levelText.text = level.ToString();
         this.image.sprite = image;
         levelContainer.SetActive(true);
@@ -33,7 +38,23 @@ public class UpgradeSlot : MonoBehaviour
     {
         image.enabled = false;
         levelContainer.SetActive(false);
-        ID = -1;
+        weaponType = WeaponType.None;
+        passiveType = PassiveType.None;
         levelText.text = "0";
+    }
+
+    public UpgradeType GetUpgradeType()
+    {
+        return upgradeType;
+    }
+
+    public WeaponType GetWeaponType()
+    {
+        return weaponType;
+    }
+
+    public PassiveType GetPassiveType()
+    { 
+        return passiveType; 
     }
 }

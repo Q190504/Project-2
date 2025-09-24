@@ -9,6 +9,9 @@ public class PlayerLevel : MonoBehaviour
     private int experience;
     private int experienceToNextLevel;
 
+    [Header("Refs")]
+    [SerializeField] private VoidPublisherSO onPlayerLevelUp;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,6 +55,8 @@ public class PlayerLevel : MonoBehaviour
             experienceToNextLevel =
                 Mathf.FloorToInt(baseExperienceToNextLevel * Mathf.Pow(experienceGrowthRate, currentLevel));
         }
+
+        onPlayerLevelUp?.RaiseEvent();
     }
 
     public int GetCurrentLevel()
