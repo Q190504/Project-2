@@ -15,10 +15,10 @@ public class PlayerTagAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new PlayerTagComponent());
 
-            AddComponent(entity, new PlayerWorldUIPrefab
-            {
-                value = authoring.worldUIPrefab,
-            });
+            //AddComponent(entity, new PlayerWorldUIPrefab
+            //{
+            //    value = authoring.worldUIPrefab,
+            //});
         }
     }
 }
