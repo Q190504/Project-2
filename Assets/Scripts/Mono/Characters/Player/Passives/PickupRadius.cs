@@ -14,9 +14,9 @@ public class PickupRadius : BasePassive
         
     }
 
-    public override void LevelUp()
+
+    protected override void OnLevelUp()
     {
-        base.LevelUp();
         value *= (1 + increment);
     }
 }

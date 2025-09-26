@@ -14,9 +14,8 @@ public class Armor : BasePassive
         
     }
 
-    public override void Initialize()
+    protected override void OnInitialize()
     {
-        base.Initialize();
         value += increment;
     }
 }

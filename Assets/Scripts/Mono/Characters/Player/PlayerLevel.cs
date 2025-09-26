@@ -78,14 +78,4 @@ public class PlayerLevel : MonoBehaviour
     {
         GamePlayUIManager.Instance.UpdateXPBar(currentLevel, experience, experienceToNextLevel);
     }
-
-    public void Initialized()
-    {
-        currentLevel = 1;
-        experience = 0;
-        experienceToNextLevel = baseExperienceToNextLevel;
-        UpdateXPBar(currentLevel, experience, experienceToNextLevel);
-
-        // TO DO: Update tracker
-    }
 }

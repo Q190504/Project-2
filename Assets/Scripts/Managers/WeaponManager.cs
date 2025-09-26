@@ -28,21 +28,44 @@ public class WeaponManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        weapons = new List<BaseWeapon>();
+
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.GetGameState() == GameState.Initializing &&
+            !GameInitializationManager.Instance.weaponsInitialized &&
+            weapons.Count > 0)
+        {
+            foreach (BaseWeapon weapon in weapons)
+                if (!weapon.IsInitialized())
+                    return;
+
+            GameInitializationManager.Instance.weaponsInitialized = true;
+        }
     }
 
     public void StartInitialize()
     {
         if (weapons.Count > 0)
             foreach (BaseWeapon weapon in weapons)
-                if (weapon.IsInitialized())
+                if (!weapon.IsInitialized())
                     weapon.Initialize();
-
-        GameInitializationManager.Instance.weaponsInitialized = true;
     }
 
     public List<BaseWeapon> GetWeapons()
     {
         return weapons;
+    }
+
+    public BaseWeapon GetWeaponWithType(WeaponType type)
+    {
+        foreach (BaseWeapon weapon in weapons)
+        {
+            if (weapon.GetWeaponType() == type)
+                return weapon;
+        }
+
+        return null;
     }
 }

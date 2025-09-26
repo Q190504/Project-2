@@ -37,7 +37,7 @@ public class FrenzySkill : BaseSkill, IEffectListener
             Debug.LogWarning("Cant find Player in FrenzySkill");
     }
 
-    protected override void Initialize()
+    public override void Initialize()
     {
         base.Initialize();
 
@@ -45,9 +45,9 @@ public class FrenzySkill : BaseSkill, IEffectListener
         cooldownTime = 7f;
     }
 
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
 
         if (Input.GetKeyDown(KeyCode.E) && !isActive)
             Activate();
@@ -94,7 +94,6 @@ public class FrenzySkill : BaseSkill, IEffectListener
         if (effect.Type == EffectType.Frenzy)
         {
             isActive = true;
-
             //Add Frenzy Effect Image
             if (GamePlayUIManager.Instance.GetEffectIndexes(EffectType.Frenzy) == -1)
                 GamePlayUIManager.Instance.AddEffectImage(EffectType.Frenzy);

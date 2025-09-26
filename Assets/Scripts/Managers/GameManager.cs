@@ -15,10 +15,10 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
-    //private bool needToReset;
-
     [SerializeField] private GameObject playerGO;
     [SerializeField] private GameObject playerInitalPosition;
+
+    [SerializeField] private VoidPublisherSO initializeGameSO;
 
     private int totalEnemiesKilled = 0;
     [SerializeField] private IntPublisherSO enemiesKilledPublisher;
@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameInitializationManager.Instance.ResetCheckers();
         SetGameState(GameState.NotStarted);
     }
 
@@ -80,7 +79,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void StartGame()
+    public void StartInitialize()
     {
         timeSinceStartPlaying = 0;
         timePublisher.RaiseEvent(timeSinceStartPlaying);
@@ -90,6 +89,13 @@ public class GameManager : MonoBehaviour
 
         GameInitializationManager.Instance.ResetCheckers();
         SetGameState(GameState.Initializing);
+
+        initializeGameSO.RaiseEvent();
+    }
+
+    public void StartGame()
+    {
+        gameState = GameState.Playing;
     }
 
     public void EndGame(bool result)
@@ -143,16 +149,6 @@ public class GameManager : MonoBehaviour
     {
         gameState = state;
     }
-
-    //public bool GetNeedToReset()
-    //{
-    //    return needToReset;
-    //}
-
-    //public void SetNeedToReset(bool value)
-    //{
-    //    needToReset = value;
-    //}
 
     public void ExitGame()
     {

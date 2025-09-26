@@ -31,7 +31,12 @@ public abstract class BaseWeapon : MonoBehaviour
         currentLevel++;
         if (currentLevel > maxLevel)
             currentLevel = maxLevel;
+        else
+            OnLevelUp();
     }
+
+    protected virtual void OnLevelUp() { }
+
 
     public bool IsInitialized()
     {

@@ -18,95 +18,95 @@ public partial struct SlimeBulletShooterSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        //if (!GameManager.Instance.IsPlaying()) return;
 
-        float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+        //float deltaTime = SystemAPI.Time.DeltaTime;
+        //var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        //var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
-        {
-            Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
-            return;
-        }
+        //if (!SystemAPI.TryGetSingletonEntity<PlayerTagComponent>(out player))
+        //{
+        //    Debug.Log($"Cant Found Player Entity in ShootSlimeBulletSystem!");
+        //    return;
+        //}
 
-        // Get Frenzy data
-        float bonusDamagePercent = 0;
-        if (!SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
-        {
-            Debug.LogError("Cant find SlimeFrenzyComponent in ShootSlimeBulletSystem");
-            return;
-        }
-        else
-        {
-            slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
-            if (slimeFrenzyComponent.isActive)
-                bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
-        }
+        //// Get Frenzy data
+        //float bonusDamagePercent = 0;
+        //if (!SystemAPI.TryGetSingleton<SlimeFrenzyComponent>(out var slimeFrenzyComponent))
+        //{
+        //    Debug.LogError("Cant find SlimeFrenzyComponent in ShootSlimeBulletSystem");
+        //    return;
+        //}
+        //else
+        //{
+        //    slimeFrenzyComponent = entityManager.GetComponentData<SlimeFrenzyComponent>(player);
+        //    if (slimeFrenzyComponent.isActive)
+        //        bonusDamagePercent = slimeFrenzyComponent.bonusDamagePercent;
+        //}
 
-        // Get Ability Haste
-        float abilityHaste = 0;
-        if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
-        {
-            abilityHaste = abilityHasteComponent.abilityHasteValue;
-        }
-        else
-        {
-            Debug.Log($"Cant Found Ability Haste Component in ShootSlimeBulletSystem!");
-        }
+        //// Get Ability Haste
+        //float abilityHaste = 0;
+        //if (SystemAPI.TryGetSingleton<AbilityHasteComponent>(out AbilityHasteComponent abilityHasteComponent))
+        //{
+        //    abilityHaste = abilityHasteComponent.abilityHasteValue;
+        //}
+        //else
+        //{
+        //    Debug.Log($"Cant Found Ability Haste Component in ShootSlimeBulletSystem!");
+        //}
 
-        // Get Generic Damage Modifier
-        float genericDamageModifier = 0;
-        if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
-        {
-            genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
-        }
-        else
-        {
-            Debug.Log($"Cant find Generic Damage Modifier Component in ShootSlimeBulletSystem!");
-        }
+        //// Get Generic Damage Modifier
+        //float genericDamageModifier = 0;
+        //if (SystemAPI.TryGetSingleton<GenericDamageModifierComponent>(out GenericDamageModifierComponent genericDamageModifierComponent))
+        //{
+        //    genericDamageModifier = genericDamageModifierComponent.genericDamageModifierValue;
+        //}
+        //else
+        //{
+        //    Debug.Log($"Cant find Generic Damage Modifier Component in ShootSlimeBulletSystem!");
+        //}
 
-        foreach (var (weaponComponent, weapon, shooterEntity) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
-        {
-            // Determine weapon level index 
-            int levelIndex = weaponComponent.ValueRO.Level;
-            if (levelIndex == 0) //inactive
-                return;
+        //foreach (var (weaponComponent, weapon, shooterEntity) in SystemAPI.Query<RefRO<WeaponComponent>, RefRW<SlimeBulletShooterComponent>>().WithEntityAccess())
+        //{
+        //    // Determine weapon level index 
+        //    int levelIndex = weaponComponent.ValueRO.Level;
+        //    if (levelIndex == 0) //inactive
+        //        return;
 
-            ref var shooter = ref weapon.ValueRW;
+        //    ref var shooter = ref weapon.ValueRW;
 
-            shooter.timer -= deltaTime;
-            if (shooter.timer > 0) continue;
+        //    shooter.timer -= deltaTime;
+        //    if (shooter.timer > 0) continue;
 
-            //var blobData = shooter.Data;
-            //if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
+        //    //var blobData = shooter.Data;
+        //    //if (!blobData.IsCreated || blobData.Value.Levels.Length == 0) continue;
 
-            //ref var levelData = ref blobData.Value.Levels[levelIndex];
+        //    //ref var levelData = ref blobData.Value.Levels[levelIndex];
 
-            //int baseDamage = levelData.damage;
-            //int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
+        //    //int baseDamage = levelData.damage;
+        //    //int finalDamage = (int)(baseDamage * (1 + genericDamageModifier + bonusDamagePercent));
 
-            //float baseCooldownTime = levelData.cooldown;
-            //float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
+        //    //float baseCooldownTime = levelData.cooldown;
+        //    //float finalCooldownTime = baseCooldownTime * (100 / (100 + abilityHaste));
 
-            //int bulletCount = levelData.bulletCount;
-            //int bulletRemaining = bulletCount;
-            //float minimumDistance = levelData.minimumDistance;
-            //float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
-            //float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
-            //float passthroughDamageModifier = levelData.passthroughDamageModifier;
-            //float moveSpeed = levelData.moveSpeed;
-            //float existDuration = levelData.existDuration;
-            //float slowModifier = levelData.slowModifier;
-            //float slowRadius = levelData.slowRadius;
+        //    //int bulletCount = levelData.bulletCount;
+        //    //int bulletRemaining = bulletCount;
+        //    //float minimumDistance = levelData.minimumDistance;
+        //    //float minDistBetweenBullets = levelData.minimumDistanceBetweenBullets;
+        //    //float maxDistBetweenBullets = levelData.maximumDistanceBetweenBullets;
+        //    //float passthroughDamageModifier = levelData.passthroughDamageModifier;
+        //    //float moveSpeed = levelData.moveSpeed;
+        //    //float existDuration = levelData.existDuration;
+        //    //float slowModifier = levelData.slowModifier;
+        //    //float slowRadius = levelData.slowRadius;
 
-            //Shoot(ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
-            //    minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
-            //    passthroughDamageModifier, moveSpeed, existDuration,
-            //    slowModifier, slowRadius);
+        //    //Shoot(ecb, shooterEntity, finalDamage, finalCooldownTime, bulletCount, bulletRemaining,
+        //    //    minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
+        //    //    passthroughDamageModifier, moveSpeed, existDuration,
+        //    //    slowModifier, slowRadius);
 
-            //shooter.timer = finalCooldownTime; // Reset timer
-        }
+        //    //shooter.timer = finalCooldownTime; // Reset timer
+        //}
     }
 
     private void Shoot(

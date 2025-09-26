@@ -34,7 +34,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     // Update is called once per frame
     void Update()
     {
-        if (!IsActive)
+        if (!GameManager.Instance.IsPlaying() || !IsActive)
             return;
 
         timer -= Time.deltaTime;
@@ -59,7 +59,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         float slowRadius = levelData.slowRadius;
         float delayBetweenBullet = levelData.delayBetweenBullet;
 
-        StartCoroutine(Shoot(finalDamage, finalCooldownTime, bulletCount,
+        StartCoroutine(Shoot(finalDamage, bulletCount,
             minimumDistance, minDistBetweenBullets, maxDistBetweenBullets,
             passthroughDamageModifier, moveSpeed, existDuration,
             slowModifier, slowRadius, delayBetweenBullet, finalCooldownTime));
@@ -67,7 +67,6 @@ public class SlimeBulletShooterWeapon : BaseWeapon
 
     IEnumerator Shoot(
     int damage,
-    float cooldown,
     int bulletCount,
     float minimumDistance,
     float minDistBetweenBullets,
@@ -90,7 +89,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
 
             float distance = minimumDistance + i * bonusDistance;
 
-            SetBulletStats(bullet, damage, passthroughDamageModifier, cooldown,
+            SetBulletStats(bullet, damage, passthroughDamageModifier,
                 distance, moveSpeed, existDuration, slowModifier, slowRadius);
 
             // Wait before spawning the next bullet
@@ -102,13 +101,12 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     }
 
     private void SetBulletStats(SlimeBullet bullet, int damage, float passthroughDamageModifier,
-        float cooldown, float maxDistance, float moveSpeed, float existDuration, float slowModifier,
+        float maxDistance, float moveSpeed, float existDuration, float slowModifier,
         float slowRadius)
     {
         Vector2 playerPosition = player.transform.position;
         Vector2 mouseWorldPosition = MapManager.GetMouseWorldPosition();
         Vector2 moveDirection = math.normalize(mouseWorldPosition - playerPosition);
-
         bullet.transform.position = playerPosition;
         bullet.Initialize(moveDirection, moveSpeed, maxDistance, damage, passthroughDamageModifier, 0, existDuration, slowModifier, slowRadius);
     }

@@ -1,17 +1,22 @@
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class SlimeBulletSlowArea : MonoBehaviour
 {
+    [SerializeField] private GameObject slimeBullet;
+
     private float slowModifier;
     private float slowRadius;
 
     private InGameObjectType inGameObjectType;
+    private List<InGameObjectType> targetObjectTypes;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        inGameObjectType = this.GetComponent<ObjectType>().InGameObjectType;
+        inGameObjectType = slimeBullet.GetComponent<ObjectType>().InGameObjectType;
+        targetObjectTypes = slimeBullet.GetComponent<SlimeBullet>().GetTargetObjectTypes();
     }
 
     // Update is called once per frame
@@ -22,8 +27,12 @@ public class SlimeBulletSlowArea : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (!collision.CompareTag("Enemy"))
+        if (!collision.TryGetComponent<ObjectType>(out ObjectType objectType))
             return;
+
+        foreach (InGameObjectType targetType in targetObjectTypes)
+            if (objectType.InGameObjectType != targetType)
+                return;
 
         // Cache effect manager (avoid repeated GetComponent calls by using TryGetComponent)
         if (!collision.TryGetComponent(out EffectManager enemyEffectManager))
@@ -40,7 +49,7 @@ public class SlimeBulletSlowArea : MonoBehaviour
             return;
 
         // Apply slow effect
-        if(collision.TryGetComponent<ObjectType>(out ObjectType objectType))
+        if (objectType != null)
             enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, inGameObjectType, objectType.InGameObjectType);
         else
         {

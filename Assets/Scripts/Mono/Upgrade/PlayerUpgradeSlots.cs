@@ -15,7 +15,8 @@ public class PlayerUpgradeSlots : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        weapons = new List<BaseWeapon>();
+        passives = new List<BasePassive>();
     }
 
     // Update is called once per frame
@@ -28,6 +29,8 @@ public class PlayerUpgradeSlots : MonoBehaviour
     {
         weapons.Clear();
         passives.Clear();
+
+        AddWeapon(defaultWeaponType);
 
         // Update UI
         UpgradeEventArgs upgradeEventArgs = new WeaponUpgradeEventArgs(defaultWeaponType, 1);
@@ -78,6 +81,15 @@ public class PlayerUpgradeSlots : MonoBehaviour
                 return;
             }
         }
+
+        AddWeapon(weaponType);
+    }
+
+    public void AddWeapon(WeaponType weaponType)
+    {
+        BaseWeapon newWeapon = WeaponManager.Instance.GetWeaponWithType(weaponType);
+        newWeapon.LevelUp();
+        weapons.Add(newWeapon);
     }
 
     public List<BasePassive> GetPassiveList()
@@ -121,5 +133,13 @@ public class PlayerUpgradeSlots : MonoBehaviour
                 return;
             }
         }
+        AddPassive(passiveType);
+    }
+
+    public void AddPassive(PassiveType passiveType)
+    {
+        BasePassive newPassive = PassiveManager.Instance.GetPassiveWithType(passiveType);
+        newPassive.LevelUp();
+        passives.Add(newPassive);
     }
 }

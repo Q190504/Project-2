@@ -10,7 +10,7 @@ public abstract class BaseSkill : MonoBehaviour
 {
     [Header("Skill Settings")]
     [SerializeField] protected float baseCooldownTime; // Cooldown time at the beginning of the game
-    protected PlayerSkillID skillID;
+    [SerializeField] protected PlayerSkillID skillID;
 
     protected float cooldownTimer;
     protected float cooldownTime;
@@ -18,7 +18,7 @@ public abstract class BaseSkill : MonoBehaviour
     protected bool isActive;
     protected bool isCooldownActive; 
 
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
         isActive = false;
         isCooldownActive = false;
@@ -26,7 +26,7 @@ public abstract class BaseSkill : MonoBehaviour
         cooldownTime = baseCooldownTime;
     }
 
-    protected virtual void FixedUpdate()
+    protected virtual void Update()
     {
         if (!GameManager.Instance.IsPlaying())
             return;

@@ -179,7 +179,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 512
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -206,6 +206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flySmoothTime: 0.1
   slowArea: {fileID: 5698636998710471777}
+  targetObjectTypes: 02000000
 --- !u!114 &238686373449035256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,6 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac51512a48d21b242b5dd7927a6f4550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slimeBullet: {fileID: 1206248307555317422}
 --- !u!114 &3060220553997302313
 MonoBehaviour:
   m_ObjectHideFlags: 0

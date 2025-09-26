@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -89,10 +88,6 @@ public class GamePlayUIManager : MonoBehaviour
     [SerializeField] private Sprite pawPrintPoisonerIcon;
     [SerializeField] private Sprite radiantFieldIcon;
 
-    private Entity player;
-    private EntityManager entityManager;
-    PlayerInputComponent playerInput;
-
     private Dictionary<PassiveType, Sprite> passiveIcons;
     private Dictionary<WeaponType, Sprite> weaponIcons;
     private Dictionary<PlayerSkillID, Image> skillImages;
@@ -169,30 +164,15 @@ public class GamePlayUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        EntityQuery playerQuery = entityManager.CreateEntityQuery(typeof(PlayerTagComponent));
-        if (playerQuery.CalculateEntityCount() == 0)
-        {
-            Debug.LogError("[GamePlayUIManager] Player not found in the scene.");
-            return;
-        }
-        player = playerQuery.GetSingletonEntity();
-
         OpenApplication();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.IsPlaying())
+        if (GameManager.Instance.IsPlaying() && Input.GetKeyDown(KeyCode.Escape))
         {
-            playerInput = entityManager.GetComponentData<PlayerInputComponent>(player);
-
-            if (playerInput.isEscPressed)
-            {
-                SetSettingPanel(!settingPanel.activeSelf);
-            }
+            SetSettingPanel(!settingPanel.activeSelf);
         }
     }
 
@@ -319,7 +299,7 @@ public class GamePlayUIManager : MonoBehaviour
         int index = effectIndexes[type];
         if (index == -1 || index >= effectImageList.Count) return;
 
-        Destroy(effectImageList[index].gameObject);
+        Destroy(effectImageList[index]);
         effectImageList[index] = null;
         effectIndexes[type] = -1;
     }

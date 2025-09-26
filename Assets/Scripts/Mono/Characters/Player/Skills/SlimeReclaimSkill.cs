@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,20 +20,11 @@ public class SlimeReclaimSkill : BaseSkill
         abilityHaste = GetComponent<AbilityHaste>();
     }
 
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        base.Update();
 
-        float finalCooldownTime = CalculateFinalCooldown();
-
-        if (cooldownTimer > 0f)
-        {
-            cooldownTimer -= Time.deltaTime;
-            UpdateCooldownUI(finalCooldownTime);
-            return;
-        }
-
-        HandleSkillReady(finalCooldownTime);
+        HandleSkillReady();
     }
 
     private float CalculateFinalCooldown()
@@ -43,14 +33,7 @@ public class SlimeReclaimSkill : BaseSkill
         return cooldownTime * (100f / (100f + hasteValue));
     }
 
-    private void UpdateCooldownUI(float finalCooldownTime)
-    {
-        GamePlayUIManager.Instance.SetSkillCooldownUI(PlayerSkillID.Reclaim, true);
-        GamePlayUIManager.Instance.SetSkillImageOpacity(PlayerSkillID.Reclaim, false);
-        GamePlayUIManager.Instance.UpdateSkillCooldownUI(PlayerSkillID.Reclaim, cooldownTimer, finalCooldownTime);
-    }
-
-    private void HandleSkillReady(float finalCooldownTime)
+    private void HandleSkillReady()
     {
         bool hasWaitingSlimeBullet = ProjectilesManager.Instance.HasWaitingSlimeBullet();
 
@@ -61,6 +44,7 @@ public class SlimeReclaimSkill : BaseSkill
             if (Input.GetKeyDown(KeyCode.R) && Activate())
             {
                 Deactivate();
+                float finalCooldownTime = CalculateFinalCooldown();
                 cooldownTimer = finalCooldownTime;
             }
         }
@@ -74,10 +58,10 @@ public class SlimeReclaimSkill : BaseSkill
     {
         int damage = baseDamagePerBullet + increaseDamagePerLevel * playerLevel.GetCurrentLevel();
         List<SlimeBullet> activeBullets = ProjectilesManager.Instance.GetActiveBullets();
-
-        foreach (SlimeBullet bullet in activeBullets)
+        var bulletsCopy = new List<SlimeBullet>(activeBullets);
+        foreach (SlimeBullet bullet in bulletsCopy)
         {
-            bullet.Summon();
+            bullet.Summon(damage);
         }
     }
 
@@ -97,6 +81,6 @@ public class SlimeReclaimSkill : BaseSkill
 
     public float GetBulletSpeedWhenSummoned()
     { 
-        return GetBulletSpeedWhenSummoned(); 
+        return bulletSpeedWhenSummoned; 
     }
 }

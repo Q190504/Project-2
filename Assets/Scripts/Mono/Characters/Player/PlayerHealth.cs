@@ -3,12 +3,15 @@ using UnityEngine;
 public class PlayerHealth : BaseHealth
 {
     private Armor armor;
+    private MaxHealth maxHealthCompoment;
+    private Animator animator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (armor == null)
-            armor = new Armor();
+        armor = GetComponent<Armor>();
+        maxHealthCompoment = GetComponent<MaxHealth>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -46,6 +49,7 @@ public class PlayerHealth : BaseHealth
 
     protected override void Die()
     {
+        animator.SetTrigger("die");
         Debug.Log("Player Died!");
         GameManager.Instance.EndGame(false);
     }
@@ -66,8 +70,8 @@ public class PlayerHealth : BaseHealth
 
     public void Initialize()
     {
-        SetCurrentHealth(baseMaxHealth);
-
+        SetMaxHealth((int)maxHealthCompoment.GetValue());
+        SetCurrentHealth((int)maxHealthCompoment.GetValue());
         GameInitializationManager.Instance.playerHealthInitialized = true;
     }
 

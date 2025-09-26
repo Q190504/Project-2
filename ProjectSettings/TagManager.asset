@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Impassible
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -58,6 +60,9 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 15444467
+    locked: 0
+  - name: UI
+    uniqueID: 358599497
     locked: 0
   m_RenderingLayers:
   - Default

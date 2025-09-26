@@ -115,7 +115,7 @@ public class ExperienceOrbManager : MonoBehaviour
     public void Initialize()
     {
         ClearOrbs();
-
+        GameInitializationManager.Instance.cleanedOrbs = true;
     }
 
     public void ClearOrbs()

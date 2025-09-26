@@ -7,7 +7,6 @@ public class ExperienceOrb : MonoBehaviour
     float pullForce = 0;
     private Transform target;
     private bool isBeingPulled = false;
-    private bool hasBeenCollected = false;
 
     public void StartBeingPulled(Transform playerTransform, float pullForce)
     {
@@ -18,7 +17,7 @@ public class ExperienceOrb : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (/*!hasBeenCollected &&*/ isBeingPulled && target != null)
+        if (isBeingPulled && target != null)
         {
             Vector3 directionToTarget = math.normalize(target.transform.position - transform.position);
 
@@ -37,7 +36,6 @@ public class ExperienceOrb : MonoBehaviour
 
     public void Initialize(int ex)
     {
-        hasBeenCollected = true;
         isBeingPulled = false;
         pullForce = 0;
         target = null;

@@ -16,23 +16,12 @@ public class MaxHealth : BasePassive
 
     }
 
-    public override void LevelUp()
+    protected override void OnLevelUp()
     {
-        base.LevelUp();
+        base.OnLevelUp();
         value += increment;
         int bonusHealth = Mathf.FloorToInt(playerHealth.GetMaxHealth() * value);
         playerHealth.SetMaxHealth(playerHealth.GetMaxHealth() + bonusHealth);
         playerHealth.Heal(bonusHealth);
-    }
-
-    public override void Initialize()
-    {
-        base.Initialize();
-
-        if (playerHealth != null)
-        {
-            playerHealth.SetMaxHealth(baseValue);
-            playerHealth.SetCurrentHealth(baseValue);
-        }
     }
 }

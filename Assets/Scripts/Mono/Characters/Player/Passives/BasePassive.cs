@@ -6,7 +6,8 @@ public class BasePassive : MonoBehaviour
     [SerializeField] protected int baseValue;
     protected float value;
     protected int currentLevel;
-    protected bool isInitialized;
+    private bool initialized;
+    public bool IsInitialized() => initialized; 
     [SerializeField] protected float increment;
 
     [Header("Passive Settings")]
@@ -16,20 +17,31 @@ public class BasePassive : MonoBehaviour
     [SerializeField] protected string displayName;
     [SerializeField] protected string description;
 
-    public virtual void Initialize()
+    public void Initialize()
     {
-        level = 0;
-        value = baseValue;
-
-        isInitialized = true;
+        if (!initialized)
+        {
+            level = 0;
+            value = baseValue;
+            OnInitialize(); // Call the subclass-specific logic
+            initialized = true;
+        }
     }
+
+    // Mark as protected virtual so subclasses can override
+    protected virtual void OnInitialize() { }
 
     public virtual void LevelUp()
     {
-        level++;
-        if (level > maxLevel)
-            level = maxLevel;
+        currentLevel++;
+        if (currentLevel > maxLevel)
+            currentLevel = maxLevel;
+        else
+            OnLevelUp();
     }
+
+    // Mark as protected virtual so subclasses can override
+    protected virtual void OnLevelUp() { }
 
     public float GetValue()
     {
@@ -52,9 +64,4 @@ public class BasePassive : MonoBehaviour
 
     public string GetDescription()
     { return description; }
-
-    public bool IsInitialized()
-    {
-        return isInitialized;
-    }
 }

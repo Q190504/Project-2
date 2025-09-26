@@ -12,6 +12,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
     [SerializeField] float spawnOffsetPositon;
 
     private float timer;
+    private bool isShooting;
 
     [Header("Refs")]
     [SerializeField] private GameObject player;
@@ -43,7 +44,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
             return;
 
         timer -= Time.deltaTime;
-        if (timer > 0) return;
+        if (timer > 0 || isShooting) return;
 
         SlimeBeamShooterLevelDataSO levelData = GetCurrentLevelData();
 
@@ -53,7 +54,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
 
         float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(levelData.cooldown);
 
-        if (currentLevel < 5) // Shoot all beams with a delay  etween 2 beams
+        if (currentLevel < 5) // Shoot all beams with a delay between 2 beams
             StartCoroutine(ShootBeam(spawnOffsetPositon, finalDamage, beamCount, timeBetween,
                 finalCooldownTime));
         else // Shoot all beams at once
@@ -64,22 +65,23 @@ public class SlimeBeamShooterWeapon : BaseWeapon
     IEnumerator ShootBeam(float spawnOffsetPositon, int damage, int beamCount, float timeBetweenBeams,
         float finalCooldownTime)
     {
+        isShooting = true;
         for (int i = 0; i < beamCount; i++)
         {
             Vector2 playerPosition = player.transform.position;
-            Vector2 position = playerPosition + GetAttackDirection(spawnOffsetPositon, beamCount);
-            Quaternion rotation = GetRotation(beamCount);
+            Vector2 position = playerPosition + GetAttackDirection(spawnOffsetPositon, i);
+            Quaternion rotation = GetRotation(i);
 
             //spawn beam
             SlimeBeam slimeBeamInstance = ProjectilesManager.Instance.TakeSlimeBeam();
             SetStats(slimeBeamInstance, damage, position, rotation);
-            AudioManager.Instance.PlaySlimeBeamSoundSFX();
 
             if (i < beamCount - 1 && timeBetweenBeams > 0)
                 yield return new WaitForSeconds(timeBetweenBeams);
         }
 
         timer = finalCooldownTime; // Reset timer
+        isShooting = false;
     }
 
     public override void Initialize()
@@ -87,6 +89,7 @@ public class SlimeBeamShooterWeapon : BaseWeapon
         timer = 0f;
         currentLevel = 0;
         isInitialized = true;
+        isShooting = false;
     }
 
     private SlimeBeamShooterLevelDataSO GetCurrentLevelData()
@@ -104,25 +107,25 @@ public class SlimeBeamShooterWeapon : BaseWeapon
 
     private Vector2 GetAttackDirection(float spawnOffsetPositon, int count)
     {
-        switch (count % 4)
+        return (count % 4) switch
         {
-            case 0: return new Vector2(0, spawnOffsetPositon);  // Top 
-            case 1: return new Vector2(spawnOffsetPositon, 0);  // Right 
-            case 2: return new Vector2(0, -spawnOffsetPositon); // Bottom
-            case 3: return new Vector2(-spawnOffsetPositon, 0); // Left 
-            default: return Vector2.zero;
-        }
+            0 => new Vector2(0, spawnOffsetPositon),// Top 
+            1 => new Vector2(spawnOffsetPositon, 0),// Right 
+            2 => new Vector2(0, -spawnOffsetPositon),// Bottom
+            3 => new Vector2(-spawnOffsetPositon, 0),// Left 
+            _ => Vector2.zero,
+        };
     }
 
     private Quaternion GetRotation(int count)
     {
-        switch (count % 4)
+        return (count % 4) switch
         {
-            case 0: return Quaternion.identity;         // Top 0 degrees
-            case 1: return Quaternion.Euler(0, 0, 270); // Right 270 degrees
-            case 2: return Quaternion.Euler(0, 0, 180); // Bottom 180 degrees
-            case 3: return Quaternion.Euler(0, 0, 90);  // Left 90 degrees
-            default: return Quaternion.identity;
-        }
+            0 => Quaternion.identity,// Top 0 degrees
+            1 => Quaternion.Euler(0, 0, 270),// Right 270 degrees
+            2 => Quaternion.Euler(0, 0, 180),// Bottom 180 degrees
+            3 => Quaternion.Euler(0, 0, 90),// Left 90 degrees
+            _ => Quaternion.identity,
+        };
     }
 }

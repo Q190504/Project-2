@@ -14,9 +14,8 @@ public class GenericDamageModifier : BasePassive
         
     }
 
-    public override void LevelUp()
+    protected override void OnLevelUp()
     {
-        base.LevelUp();
         value += increment;
     }
 }

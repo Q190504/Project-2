@@ -67,8 +67,6 @@ public class EnemyManager : MonoBehaviour
         creepPool = new GameObject("CreepPool").transform;
         creepPool.SetParent(transform);
 
-        Initialize();
-
         PrepareEnemy();
     }
 

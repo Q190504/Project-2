@@ -1,4 +1,4 @@
-using Unity.Entities;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -7,6 +7,7 @@ public class SlimeBullet : MonoBehaviour
 {
     [SerializeField] private float flySmoothTime = 0.1f;
     [SerializeField] SlimeBulletSlowArea slowArea;
+    [SerializeField] private List<InGameObjectType> targetObjectTypes;
 
     private bool isAbleToMove;
     private bool isBeingSummoned;
@@ -16,20 +17,16 @@ public class SlimeBullet : MonoBehaviour
     private float maxDistance;
     private int remainingDamage;
     private float passthroughDamageModifier;
-    //private GameObject lastHitEnemy;
-    private int healPlayerAmount;
-    private bool hasHealPlayer;
     private float existDuration;
 
     private Rigidbody2D rb;
     private GameObject player;
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        Initialize();
     }
 
     // Update is called once per frame
@@ -38,6 +35,11 @@ public class SlimeBullet : MonoBehaviour
         if (!GameManager.Instance.IsPlaying())
         {
             isAbleToMove = false;
+            return;
+        }
+        else if (GameManager.Instance.IsUpgrading())
+        {
+            rb.linearVelocity = Vector2.zero;
             return;
         }
 
@@ -57,7 +59,7 @@ public class SlimeBullet : MonoBehaviour
             player = GameManager.Instance.GetPlayerGO();
             Vector3 playerPos = GameManager.Instance.GetPlayerGO().transform.position;
             Vector3 bulletPosition = transform.position;
-            if(player.TryGetComponent<SlimeReclaimSkill>(out SlimeReclaimSkill slimeReclaimSkill))
+            if (player.TryGetComponent<SlimeReclaimSkill>(out SlimeReclaimSkill slimeReclaimSkill))
             {
                 Vector3 directionToPlayer = playerPos - bulletPosition;
                 float distanceToPlayer = math.length(directionToPlayer);
@@ -65,13 +67,13 @@ public class SlimeBullet : MonoBehaviour
                 if (distanceToPlayer > 0.0001f)
                 {
                     Vector3 moveDirection = directionToPlayer / distanceToPlayer;
-                    transform.position += moveDirection * slimeReclaimSkill.GetBulletSpeedWhenSummoned() * Time.deltaTime;
+                    transform.position += slimeReclaimSkill.GetBulletSpeedWhenSummoned() * Time.deltaTime * moveDirection;
                 }
             }
         }
         else // Out of life time
         {
-            //rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
 
             if (existDuration <= 0)
                 ProjectilesManager.Instance.ReturnSlimeBullet(this);
@@ -83,7 +85,7 @@ public class SlimeBullet : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<IDamageable>(out IDamageable damageable)
-            && collision.TryGetComponent<ObjectType>(out ObjectType objectType) 
+            && collision.TryGetComponent<ObjectType>(out ObjectType objectType)
             && objectType.InGameObjectType != InGameObjectType.Player)
         {
             // Skip if (stopped moving and not being summoned)
@@ -107,6 +109,16 @@ public class SlimeBullet : MonoBehaviour
 
             AudioManager.Instance.PlaySlimeBulletHitSoundSFX();
         }
+        else if (collision.TryGetComponent<ObjectType>(out ObjectType objectType1)
+            && objectType1.InGameObjectType == InGameObjectType.Player)
+        {
+            if (!isAbleToMove && isBeingSummoned)
+            {
+                rb.linearVelocity = Vector2.zero;
+                isBeingSummoned = false;
+                ProjectilesManager.Instance.ReturnSlimeBullet(this);
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -127,10 +139,7 @@ public class SlimeBullet : MonoBehaviour
         maxDistance = 0;
         remainingDamage = 0;
         passthroughDamageModifier = 0;
-        //lastHitEnemy = null;
-        healPlayerAmount = 0;
         existDuration = 0;
-        hasHealPlayer = false;
         isBeingSummoned = false;
 
         slowArea.Initialize(0, 0);
@@ -144,15 +153,11 @@ public class SlimeBullet : MonoBehaviour
         this.moveDirection = moveDirection;
         this.moveSpeed = moveSpeed;
         this.distanceTraveled = 0;
-        this.maxDistance = 0;
+        this.maxDistance = maxDistance;
         this.remainingDamage = remainingDamage;
         this.passthroughDamageModifier = passthroughDamageModifier;
-        //this.lastHitEnemy = null;
-        this.healPlayerAmount = healPlayerAmount;
         this.existDuration = existDuration;
-        this.hasHealPlayer = false;
         this.isBeingSummoned = false;
-
         slowArea.Initialize(slowRadius, slowModifier);
         slowArea.gameObject.SetActive(false);
     }
@@ -164,10 +169,16 @@ public class SlimeBullet : MonoBehaviour
         ProjectilesManager.Instance.RegisterSlimeBulletsToReclaim(this);
     }
 
-    public void Summon()
+    public void Summon(int damage)
     {
         isBeingSummoned = true;
         slowArea.gameObject.SetActive(false);
+        remainingDamage = damage;
         ProjectilesManager.Instance.UnregisterSlimeBulletsToReclaim(this);
+    }
+
+    public List<InGameObjectType> GetTargetObjectTypes()
+    {
+        return targetObjectTypes;
     }
 }

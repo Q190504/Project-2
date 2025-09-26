@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -35,6 +34,7 @@ public class PawPrintPoisonerWeapon : BaseWeapon
             return;
         }
 
+        playerMovement = player.GetComponent<PlayerMovement>();
         abilityHaste = player.GetComponent<AbilityHaste>();
         genericDamageModifier = player.GetComponent<GenericDamageModifier>();
         FrenzySkill = player.GetComponent<FrenzySkill>();

@@ -28,21 +28,44 @@ public class PassiveManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        passives = new List<BasePassive>();
+
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.GetGameState() == GameState.Initializing &&
+            !GameInitializationManager.Instance.passivesInitialized && 
+            passives.Count > 0)
+        {
+            foreach (var passive in passives)
+                if (!passive.IsInitialized())
+                    return;
+
+            GameInitializationManager.Instance.passivesInitialized = true;
+        }
     }
 
     public void StartInitialize()
     {
         if (passives.Count > 0)
-            foreach (BasePassive passive in passives)
-                if (passive.IsInitialized())
+            foreach (var passive in passives)
+                if (!passive.IsInitialized())
                     passive.Initialize();
-
-        GameInitializationManager.Instance.passivesInitialized = true;
     }
 
     public List<BasePassive> GetPassives()
     {
         return passives;
+    }
+
+    public BasePassive GetPassiveWithType(PassiveType type)
+    {
+        foreach (BasePassive passive in passives)
+        {
+            if (passive.GetPassiveType() == type)
+                return passive;
+        }
+
+        return null;
     }
 }

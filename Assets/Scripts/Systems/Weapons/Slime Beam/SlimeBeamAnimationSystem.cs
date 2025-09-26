@@ -11,40 +11,40 @@ public partial struct SlimeBeamAnimationSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!GameManager.Instance.IsPlaying())
-            return;
+        //if (!GameManager.Instance.IsPlaying())
+        //    return;
 
-        if (!SystemAPI.ManagedAPI.TryGetSingleton(out AnimationVisualPrefabsComponent animationVisualPrefabs))
-            return;
+        //if (!SystemAPI.ManagedAPI.TryGetSingleton(out AnimationVisualPrefabsComponent animationVisualPrefabs))
+        //    return;
 
-        entityManager = state.EntityManager;
+        //entityManager = state.EntityManager;
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (transform, slimeBeamComponent, entity) in
-            SystemAPI.Query<LocalTransform, SlimeBeamComponent>().WithEntityAccess())
-        {
-            // Hasnt had VisualReferenceComponent -> add
-            if (!entityManager.HasComponent<VisualReferenceComponent>(entity))
-            {
-                GameObject visual = AnimationManager.Instance.TakeSlimeBeam();
-                ecb.AddComponent(entity, new VisualReferenceComponent { gameObject = visual });
-            }
-            else
-            {
-                VisualReferenceComponent visualReference =
-                    entityManager.GetComponentData<VisualReferenceComponent>(entity);
+        //foreach (var (transform, slimeBeamComponent, entity) in
+        //    SystemAPI.Query<LocalTransform, SlimeBeamComponent>().WithEntityAccess())
+        //{
+        //    // Hasnt had VisualReferenceComponent -> add
+        //    if (!entityManager.HasComponent<VisualReferenceComponent>(entity))
+        //    {
+        //        GameObject visual = AnimationManager.Instance.TakeSlimeBeam();
+        //        ecb.AddComponent(entity, new VisualReferenceComponent { gameObject = visual });
+        //    }
+        //    else
+        //    {
+        //        VisualReferenceComponent visualReference =
+        //            entityManager.GetComponentData<VisualReferenceComponent>(entity);
 
-                visualReference.gameObject.SetActive(true);
+        //        visualReference.gameObject.SetActive(true);
 
-                Animator playerAnimator = visualReference.gameObject.GetComponent<Animator>();
-                visualReference.gameObject.transform.position = transform.Position;
-                visualReference.gameObject.transform.rotation = transform.Rotation;
-            }
-        }
+        //        Animator playerAnimator = visualReference.gameObject.GetComponent<Animator>();
+        //        visualReference.gameObject.transform.position = transform.Position;
+        //        visualReference.gameObject.transform.rotation = transform.Rotation;
+        //    }
+        //}
 
-        ecb.Playback(entityManager);
-        ecb.Dispose();
+        //ecb.Playback(entityManager);
+        //ecb.Dispose();
     }
 }
 

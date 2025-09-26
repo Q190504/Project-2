@@ -15,6 +15,7 @@ public class CreepMovement : MonoBehaviour
     private Rigidbody2D rb;
     private EffectManager effectManager;
     private FlowFieldManager flowFieldManager;
+    private Animator animator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,6 +27,7 @@ public class CreepMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         effectManager = GetComponent<EffectManager>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -67,6 +69,9 @@ public class CreepMovement : MonoBehaviour
             Vector2 flowDirection = flowFieldManager.GetDirectionFromIndex(index);
             Vector2 movement = new Vector2(flowDirection.x, flowDirection.y) * targetSpeed;
             rb.linearVelocity = movement;
+
+            float speed = math.length(rb.linearVelocity);
+            animator.SetFloat("speed", speed);
         }
     }
 

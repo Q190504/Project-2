@@ -123,10 +123,9 @@ public class RadiantFieldWeapon : BaseWeapon
         return levelDatas[math.min(currentLevel - 1, levelDatas.Count - 1)];
     }
 
-    public override void LevelUp()
+    protected override void OnLevelUp()
     {
-        base.LevelUp();
-
+        base.OnLevelUp();
         RadiantFieldLevelDataSO levelData = GetCurrentLevelData();
         damagePerTick = levelData.damagePerTick;
         cooldown = levelData.cooldown;

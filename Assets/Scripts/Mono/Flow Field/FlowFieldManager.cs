@@ -38,7 +38,11 @@ public class FlowFieldManager : MonoBehaviour
     {
         ComputeIntegrationField();
         ComputeFlowDirections();
-        Debug.Log("Flow field computed!");
+    }
+
+    private void Update()
+    {
+        ComputeFlowField();
     }
 
     #region Initialization

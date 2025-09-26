@@ -25,7 +25,7 @@ public class EffectManager : MonoBehaviour
     {
         if(!GameManager.Instance.IsPlaying()) return;
 
-        List<(EffectType, InGameObjectType)> expireds = new List<(EffectType, InGameObjectType)>();
+        Dictionary<(EffectType, InGameObjectType), BaseEffect> expireds = new Dictionary<(EffectType, InGameObjectType), BaseEffect>();
 
         foreach (var effectEntry in activeEffects)
         {
@@ -35,15 +35,20 @@ public class EffectManager : MonoBehaviour
             if (effect.Timer <= 0)
             {
                 effect.Expire();
-                expireds.Add((effect.Type, effect.Source));
+                expireds.Add(effectEntry.Key, effectEntry.Value);
             }
         }
 
         foreach (var expiredEffect in expireds)
         {
-            activeEffects.Remove(expiredEffect);
-            if (owner != null && owner.CompareTag("Player"))
-                GamePlayUIManager.Instance.RemoveEffectImage(expiredEffect.Item1);
+            activeEffects.Remove(expiredEffect.Key);
+
+            if (owner != null 
+                && owner.TryGetComponent<ObjectType>(out ObjectType objectType) 
+                && objectType.InGameObjectType == InGameObjectType.Player)
+            {
+                GamePlayUIManager.Instance.RemoveEffectImage(expiredEffect.Key.Item1);
+            }
         }
     }
 
@@ -54,13 +59,17 @@ public class EffectManager : MonoBehaviour
         if (activeEffects.TryGetValue(key, out var effect))
         {
             effect.Refresh(duration, value);
+            effect.NotifyRefreshed();
         }
         else
         {
             effect = EffectFactory.CreateEffect(type, duration, value, source, owner);
 
             if (listeners.TryGetValue(type, out var listener))
+            {
                 effect.AddListener(listener);
+                effect.NotifyApplied();
+            }
 
             activeEffects[key] = effect;
         }

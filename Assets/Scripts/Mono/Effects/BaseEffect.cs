@@ -67,13 +67,15 @@ public class BaseEffect
 
     public virtual void Expire()
     {
+        NotifyExpired();
+
         Type = EffectType.None;
         Timer = 0;
         Duration = 0;
         Value = 0;
         Source = InGameObjectType.Unknown;
 
-        NotifyExpired();
+        listeners.Clear();
     }
 
     public void AddListener(IEffectListener listener)
@@ -87,17 +89,17 @@ public class BaseEffect
         listeners.Remove(listener);
     }
 
-    private void NotifyApplied()
+    public void NotifyApplied()
     {
         foreach (var l in listeners) l.OnEffectApplied(this);
     }
 
-    private void NotifyRefreshed()
+    public void NotifyRefreshed()
     {
         foreach (var l in listeners) l.OnEffectRefreshed(this);
     }
 
-    private void NotifyExpired()
+    void NotifyExpired()
     {
         foreach (var l in listeners) l.OnEffectExpired(this);
     }

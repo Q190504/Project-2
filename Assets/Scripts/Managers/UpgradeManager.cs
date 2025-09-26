@@ -11,9 +11,6 @@ public class UpgradeManager : MonoBehaviour
     private List<UpgradeCard> upgradeOptions;
     private PlayerUpgradeSlots playerUpgradeSlots;
 
-    //private List<UpgradeOptionClass> selectedPassiveUpgrades;
-    //private List<UpgradeOptionClass> selectedWeaponUpgrades;
-
     [Header("Refs")]
     [SerializeField] private GameObject player;
     [SerializeField] private TwoFloatPublisherSO updateCountdownSO;
@@ -46,8 +43,6 @@ public class UpgradeManager : MonoBehaviour
             playerUpgradeSlots = player.GetComponent<PlayerUpgradeSlots>();
         else
             Debug.LogError("Player isn't assign in UpgradeManager");
-        //selectedPassiveUpgrades = new List<UpgradeOptionClass>();
-        //selectedWeaponUpgrades = new List<UpgradeOptionClass>();
     }
 
     // Update is called once per frame
@@ -83,11 +78,6 @@ public class UpgradeManager : MonoBehaviour
         upgradeOptions.Clear();
     }
 
-    public void SetTimer()
-    {
-        timer = totalTime;
-    }
-
     public void AddUpgradeOption(GameObject card)
     {
         UpgradeCard option = card.GetComponent<UpgradeCard>();
@@ -115,7 +105,7 @@ public class UpgradeManager : MonoBehaviour
                 = UpgradeOfferingHelper.GenerateOfferings(playerUpgradeSlots);
 
             // Open UI
-            SetTimer();
+            ResetTimer();
             GamePlayUIManager.Instance.OpenUpgradePanel(offerings);
         }
         else

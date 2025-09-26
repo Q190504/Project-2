@@ -256,7 +256,6 @@ public class ProjectilesManager : MonoBehaviour
     public void Initialize()
     {
         ClearAllProjectiles();
-
         GameInitializationManager.Instance.hasCleanProjectiles = true;
     }
 

@@ -16,7 +16,7 @@ public partial struct EnemyMoveSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        gridQuery = state.EntityManager.CreateEntityQuery(typeof(FlowFieldGridDataComponent), typeof(GridNode));
+        //gridQuery = state.EntityManager.CreateEntityQuery(typeof(FlowFieldGridDataComponent), typeof(GridNode));
     }
 
     public void OnUpdate(ref SystemState state)

@@ -43,7 +43,7 @@ public class FlowFieldDebug : MonoBehaviour
 
         if (gridData == null)
         {
-            Debug.LogWarning("FlowFieldGridData singleton not found.");
+            Debug.LogWarning("FlowFieldManager singleton not found.");
             return;
         }
 

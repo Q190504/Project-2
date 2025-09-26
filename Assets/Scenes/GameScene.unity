@@ -1255,7 +1255,7 @@ GameObject:
   - component: {fileID: 178474277}
   m_Layer: 9
   m_Name: Obstacle
-  m_TagString: Untagged
+  m_TagString: Impassible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5304,7 +5304,7 @@ GameObject:
   - component: {fileID: 614598239}
   m_Layer: 9
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: Impassible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8298,7 +8298,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000935e2fdeabd8b8818fa25e05a3739860f3a9eb0007a89a3b
+  m_ApplyToSortingLayers: 00000000935e2fdeabd8b8818fa25e05a3739860f3a9eb0007a89a3b49cb5f15
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -9971,6 +9971,7 @@ GameObject:
   m_Component:
   - component: {fileID: 827541386}
   - component: {fileID: 827541385}
+  - component: {fileID: 827541388}
   - component: {fileID: 827541387}
   m_Layer: 0
   m_Name: EnemyManager
@@ -10004,8 +10005,8 @@ MonoBehaviour:
   - {fileID: 1432742774}
   - {fileID: 1173757373}
   - {fileID: 257257449}
-  player: {fileID: 0}
-  creepPrefab: {fileID: 0}
+  player: {fileID: 1688281991}
+  creepPrefab: {fileID: 2885116409787558276, guid: a9a9980cc36d78b4dafc4a2cf887c333, type: 3}
   baseEnemiesPerWave: 10
   initialSpawnDelay: 2
   minInterval: 5
@@ -10055,6 +10056,34 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   publisher: {fileID: 11400000, guid: f62feca3b0f7e174b80758c8173c3dea, type: 2}
+--- !u!114 &827541388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827541383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 827541385}
+        m_TargetAssemblyTypeName: EnemyManager, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &873137940 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
@@ -10565,7 +10594,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!114 &922116007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10640,18 +10669,6 @@ MonoBehaviour:
       - m_Target: {fileID: 922116002}
         m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
         m_MethodName: SetConfirmExitPanel
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 922116002}
-        m_TargetAssemblyTypeName: GamePlayUIManager, Assembly-CSharp
-        m_MethodName: SetSelectPanel
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -49471,7 +49488,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1035922627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52152,6 +52169,7 @@ GameObject:
   - component: {fileID: 1522145081}
   - component: {fileID: 1522145082}
   - component: {fileID: 1522145083}
+  - component: {fileID: 1522145084}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -52188,6 +52206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerGO: {fileID: 1688281991}
   playerInitalPosition: {fileID: 2010950037}
+  initializeGameSO: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
   enemiesKilledPublisher: {fileID: 11400000, guid: 6d7ceea69481604468b1421f7cdf4f08, type: 2}
   endGamePublisher: {fileID: 11400000, guid: 56428737d052c1f46bb975ea4ba8b5ba, type: 2}
   timePublisher: {fileID: 11400000, guid: f62feca3b0f7e174b80758c8173c3dea, type: 2}
@@ -52208,7 +52227,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1522145078}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartInitialize
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -52303,6 +52322,34 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   publisher: {fileID: 11400000, guid: f416fb96a28c45345884db545b184695, type: 2}
+--- !u!114 &1522145084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522145076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1522145078}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 97664583630541d409207e6ee8ed983c, type: 2}
 --- !u!1 &1533457323
 GameObject:
   m_ObjectHideFlags: 0
@@ -52795,6 +52842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1570606934}
   - component: {fileID: 1570606935}
+  - component: {fileID: 1570606936}
   m_Layer: 6
   m_Name: Weapon Manager
   m_TagString: Untagged
@@ -52834,6 +52882,34 @@ MonoBehaviour:
   - {fileID: 1688282012}
   - {fileID: 1688282013}
   - {fileID: 1688282014}
+--- !u!114 &1570606936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570606933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1570606935}
+        m_TargetAssemblyTypeName: WeaponManager, Assembly-CSharp
+        m_MethodName: StartInitialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &1579017023
 GameObject:
   m_ObjectHideFlags: 0
@@ -53224,6 +53300,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1593713121}
   m_CullTransparentMesh: 1
+--- !u!1 &1593803490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1593803492}
+  - component: {fileID: 1593803491}
+  m_Layer: 0
+  m_Name: Game Initialization Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1593803491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593803490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01680cdd114d81144be580f68cea6be9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasFinishInitialization: 0
+  playerHealthInitialized: 0
+  playerSpeedInitialized: 0
+  playerPositionInitialized: 0
+  playerUpgradeSlotsInitialized: 0
+  playerLevelInitialized: 0
+  passivesInitialized: 0
+  weaponsInitialized: 0
+  hasCleanProjectiles: 0
+  enemySystemInitialized: 0
+  cleanedOrbs: 0
+  animationsPrepared: 0
+  startGameSO: {fileID: 11400000, guid: 97664583630541d409207e6ee8ed983c, type: 2}
+--- !u!4 &1593803492
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593803490}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1596924276
 GameObject:
   m_ObjectHideFlags: 0
@@ -53420,12 +53553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8340ca895049045a5f0b2de317c2fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  creepPrefab: {fileID: 2629613540209194340, guid: 90fe08f22dea8ad428579cd2b1679278, type: 3}
   hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
-  poisonCloudPrefab: {fileID: 4447383451000455114, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
-  slimeBeamPrefab: {fileID: 633467526835660584, guid: 15a0c0d7e2d64624db55587a87f37eef, type: 3}
-  slimeBulletSlowZonePrefab: {fileID: 4719175363902246557, guid: ea6d130028f85804db2c32334718878c, type: 3}
-  slimeBulletSlowZonePrepare: 20
   hitEffectPrepare: 20
 --- !u!114 &1607411014
 MonoBehaviour:
@@ -53454,7 +53582,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &1610388369
 GameObject:
   m_ObjectHideFlags: 0
@@ -53757,6 +53885,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1645822301}
   - component: {fileID: 1645822300}
+  - component: {fileID: 1645822302}
   m_Layer: 0
   m_Name: Experience Orb Manager
   m_TagString: Untagged
@@ -53795,6 +53924,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645822302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645822299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1645822300}
+        m_TargetAssemblyTypeName: ExperienceOrbManager, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &1656381200 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
@@ -53986,13 +54143,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1688281996}
-  - component: {fileID: 1688282016}
   - component: {fileID: 1688281994}
   - component: {fileID: 1688281993}
   - component: {fileID: 1688282010}
   - component: {fileID: 1688282017}
   - component: {fileID: 1688282011}
   - component: {fileID: 1688282018}
+  - component: {fileID: 1688282020}
   - component: {fileID: 1688282003}
   - component: {fileID: 1688281992}
   - component: {fileID: 1688282000}
@@ -54009,6 +54166,7 @@ GameObject:
   - component: {fileID: 1688282012}
   - component: {fileID: 1688282013}
   - component: {fileID: 1688282014}
+  - component: {fileID: 1688282021}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -54124,6 +54282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseCooldownTime: 7
+  skillID: 0
   frenzyBonusPercent: 0.5
   baseDuration: 6
   maxIncreaseDuration: 2
@@ -54322,6 +54481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseCooldownTime: 14
+  skillID: 1
   baseDamagePerBullet: 225
   increaseDamagePerLevel: 25
   hpHealPercentPerBullet: 1.25
@@ -54349,7 +54509,7 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ForceReceiveLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 512
   m_ContactCaptureLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -54450,28 +54610,6 @@ MonoBehaviour:
   maximumClouds: 24
   distanceToCreateACloud: 1
   player: {fileID: 1688281991}
---- !u!95 &1688282016
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1688281991}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 13abceb9165bc464ba8a090c4ea27bce, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1688282017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54505,6 +54643,133 @@ MonoBehaviour:
   - {fileID: 1688282005}
   - {fileID: 1688282004}
   - {fileID: 1688282008}
+--- !u!114 &1688282020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f743b09a7bbf64fb9f2ce8091c5fa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultWeaponType: 1
+  maxWeaponSlots: 3
+  maxPassvieSlots: 5
+--- !u!114 &1688282021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688281991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1688282011}
+        m_TargetAssemblyTypeName: EffectManager, Assembly-CSharp
+        m_MethodName: ClearAllEffects
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688282018}
+        m_TargetAssemblyTypeName: PassiveManager, Assembly-CSharp
+        m_MethodName: StartInitialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688282020}
+        m_TargetAssemblyTypeName: PlayerUpgradeSlots, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688282003}
+        m_TargetAssemblyTypeName: PlayerLevel, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688282002}
+        m_TargetAssemblyTypeName: PlayerHealth, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688281992}
+        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688281997}
+        m_TargetAssemblyTypeName: FrenzySkill, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1688282009}
+        m_TargetAssemblyTypeName: BaseSkill, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &1707641450 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
@@ -55852,7 +56117,6 @@ GameObject:
   - component: {fileID: 1970843902}
   - component: {fileID: 1970843901}
   - component: {fileID: 1970843903}
-  - component: {fileID: 1970843904}
   - component: {fileID: 1970843905}
   m_Layer: 0
   m_Name: Upgrade Manager
@@ -55975,25 +56239,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
---- !u!114 &1970843904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1970843898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EventResponse:
-    m_PersistentCalls:
-      m_Calls:
       - m_Target: {fileID: 1970843900}
-        m_TargetAssemblyTypeName: UpgradeOptionManager, Assembly-CSharp
-        m_MethodName: SetTimer
+        m_TargetAssemblyTypeName: UpgradeManager, Assembly-CSharp
+        m_MethodName: ResetTimer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -56003,7 +56251,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  publisher: {fileID: 11400000, guid: 8d531d17176c0f44dbbbda17ebb89ff3, type: 2}
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!114 &1970843905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56359,6 +56607,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2028360960}
   - component: {fileID: 2028360961}
+  - component: {fileID: 2028360962}
   m_Layer: 0
   m_Name: Projectiles Manager
   m_TagString: Untagged
@@ -56399,6 +56648,34 @@ MonoBehaviour:
   slimeBulletPrefab: {fileID: 3044557864586212971, guid: b341f66900d79c14994d6690bb9f5ca6, type: 3}
   slimeBeamPrefab: {fileID: 5882936879872144874, guid: 2687fa3aecbe91f4088910fd576ead07, type: 3}
   poisonCloudPrefab: {fileID: 1942575064161144900, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
+--- !u!114 &2028360962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028360959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d67c870696e604e92e17f2f06b7f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EventResponse:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2028360961}
+        m_TargetAssemblyTypeName: ProjectilesManager, Assembly-CSharp
+        m_MethodName: Initialize
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  publisher: {fileID: 11400000, guid: 7abf263a762a8634e8f76b057c72bc6b, type: 2}
 --- !u!1 &2028653151
 GameObject:
   m_ObjectHideFlags: 0
@@ -56791,7 +57068,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 358599497
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &2087238803
@@ -57083,7 +57360,7 @@ GameObject:
   - component: {fileID: 2138152568}
   m_Layer: 9
   m_Name: Statue
-  m_TagString: Untagged
+  m_TagString: Impassible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57241,9 +57518,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2146433235}
   - component: {fileID: 2146433236}
+  - component: {fileID: 2146433237}
+  - component: {fileID: 2146433238}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57309,7 +57588,7 @@ SpriteRenderer:
   m_SortingOrder: 10
   m_Sprite: {fileID: -7317611472884909742, guid: 987e790e59bbf69439a4a389cdf9b611, type: 3}
   m_Color: {r: 0.39607844, g: 0.7921569, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -57318,6 +57597,41 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2146433237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146433234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5bc9f4008753d41ad9c699e48acc24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1688281991}
+--- !u!95 &2146433238
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146433234}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 13abceb9165bc464ba8a090c4ea27bce, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -57326,6 +57640,7 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 453533631}
   - {fileID: 1522145077}
+  - {fileID: 1593803492}
   - {fileID: 744304671}
   - {fileID: 922116001}
   - {fileID: 1970843899}

@@ -25,6 +25,7 @@ public class SlimeBeam : MonoBehaviour
 
     public void CanDamage()
     {
+        AudioManager.Instance.PlaySlimeBeamSoundSFX();
         this.canDamage = true;
     }
 

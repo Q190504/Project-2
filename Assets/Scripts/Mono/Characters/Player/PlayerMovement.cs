@@ -1,13 +1,18 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float smoothTime;
 
+    private MoveSpeed moveSpeed;
+
     float currentSpeed;
+    float targetSpeed;
 
     private Rigidbody2D rb;
     private EffectManager effectManager;
@@ -20,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         effectManager = GetComponent<EffectManager>();
         frenzySkill = GetComponent<FrenzySkill>();
+        moveSpeed = GetComponent<MoveSpeed>();
     }
 
     private void Update()
@@ -42,10 +48,10 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        float targetSpeed = currentSpeed;
+        targetSpeed = currentSpeed;
         if (effectManager.HasEffect(EffectType.Frenzy))
             targetSpeed += currentSpeed * frenzySkill.GetFrenzyBonusPercent();
-       
+
         float multiplier = 1f;
         if (effectManager.HasEffect(EffectType.Slow))
         {
@@ -74,11 +80,20 @@ public class PlayerMovement : MonoBehaviour
         currentSpeed = value;
     }
 
+    public float GetTargetSpeed()
+    { return targetSpeed; }
+
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
+
     public void Initialize()
     {
         transform.position = GameManager.Instance.GetPlayerInitialPosition();
-
         GameInitializationManager.Instance.playerPositionInitialized = true;
+        currentSpeed = moveSpeed.GetValue();
+        GameInitializationManager.Instance.playerSpeedInitialized = true;
     }
 }
 
