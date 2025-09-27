@@ -105,9 +105,10 @@ public class PawPrintPoisonerWeapon : BaseWeapon
                 totalEnemiesInCloud += cloud.GetTotalEnemies();
 
             // Update player speed
-            PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-            float bonusMultiplier = 1f + (bonusMoveSpeedPerTargetInTheCloudModifier * totalEnemiesInCloud);
-            playerMovement.SetCurrentSpeed(playerMovement.GetCurrentSpeed() * bonusMultiplier);
+            EffectManager effectManager = player.GetComponent<EffectManager>();
+            float bonusMultiplier = bonusMoveSpeedPerTargetInTheCloudModifier * totalEnemiesInCloud;
+            effectManager.ApplyEffect(EffectType.BoostMoveSpeed, math.INFINITY, bonusMultiplier,
+                InGameObjectType.PoisonCloud, InGameObjectType.Player);
         }
     }
 
@@ -142,5 +143,11 @@ public class PawPrintPoisonerWeapon : BaseWeapon
     private PawPrintPoisonerLevelDataSO GetCurrentLevelData()
     {
         return levelDatas[math.min(currentLevel - 1, levelDatas.Count - 1)];
+    }
+
+    public void RemoveCloudFromList(PoisonCloud cloud)
+    {
+        if (cloud == null && activePoisonClouds.Contains(cloud))
+            activePoisonClouds.Remove(cloud);
     }
 }

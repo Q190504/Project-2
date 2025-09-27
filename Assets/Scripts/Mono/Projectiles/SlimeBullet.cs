@@ -84,6 +84,9 @@ public class SlimeBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (GameManager.Instance != null && GameManager.Instance.GetGameState() != GameState.Playing)
+            return;
+
         if (collision.TryGetComponent<IDamageable>(out IDamageable damageable)
             && collision.TryGetComponent<ObjectType>(out ObjectType objectType)
             && objectType.InGameObjectType != InGameObjectType.Player)

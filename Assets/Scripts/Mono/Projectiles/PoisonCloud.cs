@@ -13,6 +13,8 @@ public class PoisonCloud : MonoBehaviour
     float bonusMoveSpeedPerTargetInTheCloudModifier;
     int totalEnemiesCurrentlyInTheCloud;
 
+    [SerializeField] PoisonCloudPublisherSO onCloudReturn;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +29,7 @@ public class PoisonCloud : MonoBehaviour
         existDurationTimer -= Time.deltaTime;
         if (existDurationTimer <= 0)
         {
+            onCloudReturn?.RaiseEvent(this);
             ProjectilesManager.Instance.ReturnPoisonCloud(this);
             return;
         }
@@ -65,10 +68,11 @@ public class PoisonCloud : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        if (GameManager.Instance == null || !GameManager.Instance.IsPlaying()) return;
 
         // Set canSpawnNewCloud = false to Paw Print Poisoner Weapon
-        if (collision.CompareTag("Player"))
+        if (collision.TryGetComponent<ObjectType>(out ObjectType objectType) 
+            && objectType.InGameObjectType == InGameObjectType.Player)
         {
             PawPrintPoisonerWeapon pawPrintPoisonerWeapon = collision.GetComponent<PawPrintPoisonerWeapon>();
             if (pawPrintPoisonerWeapon != null)
@@ -78,10 +82,11 @@ public class PoisonCloud : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!GameManager.Instance.IsPlaying()) return;
+        if (GameManager.Instance == null || !GameManager.Instance.IsPlaying()) return;
 
         // Set canSpawnNewCloud = true to Paw Print Poisoner Weapon
-        if (collision.CompareTag("Player"))
+        if (collision.TryGetComponent<ObjectType>(out ObjectType objectType)
+            && objectType.InGameObjectType == InGameObjectType.Player)
         {
             PawPrintPoisonerWeapon pawPrintPoisonerWeapon = collision.GetComponent<PawPrintPoisonerWeapon>();
             if (pawPrintPoisonerWeapon != null)

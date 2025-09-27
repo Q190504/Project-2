@@ -18,8 +18,7 @@ public class MoveSpeed : BasePassive
     protected override void OnLevelUp()
     {
         base.OnLevelUp();
-        value += increment;
-        float newMoveSpeed = playerMovement.GetCurrentSpeed() * (1 + value);
-        playerMovement.SetCurrentSpeed(newMoveSpeed);
+        value *= (1 + increment);
+        playerMovement.SetCurrentSpeed(value);
     }
 }

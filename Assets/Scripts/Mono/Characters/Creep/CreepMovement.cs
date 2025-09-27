@@ -17,6 +17,8 @@ public class CreepMovement : MonoBehaviour
     private FlowFieldManager flowFieldManager;
     private Animator animator;
 
+    float targetSpeed;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -41,14 +43,15 @@ public class CreepMovement : MonoBehaviour
         else
         {
             #region Apply effects
-            float targetSpeed = moveSpeed;
+            targetSpeed = moveSpeed;
             float multiplier = 1f;
             if (effectManager.HasEffect(EffectType.Stun))
             {
                 rb.linearVelocity = Vector2.zero;
                 return;
             }
-            else if (effectManager.HasEffect(EffectType.Slow))
+
+            if (effectManager.HasEffect(EffectType.Slow))
             {
                 List<BaseEffect> slowEffects = effectManager.GetEffectOfType(EffectType.Slow);
 

@@ -40,11 +40,11 @@ public class SlimeBeamShooterWeapon : BaseWeapon
     // Update is called once per frame
     void Update()
     {
-        if (!IsActive)
+        if (!GameManager.Instance.IsPlaying() || !IsActive || isShooting)
             return;
 
         timer -= Time.deltaTime;
-        if (timer > 0 || isShooting) return;
+        if (timer > 0) return;
 
         SlimeBeamShooterLevelDataSO levelData = GetCurrentLevelData();
 

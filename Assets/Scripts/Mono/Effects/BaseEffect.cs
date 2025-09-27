@@ -7,6 +7,7 @@ public enum EffectType
     None,
     Frenzy,
     Slow,
+    BoostMoveSpeed,
     Stun,
     Poison,
 }

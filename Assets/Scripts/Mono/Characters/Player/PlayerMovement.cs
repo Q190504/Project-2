@@ -53,6 +53,16 @@ public class PlayerMovement : MonoBehaviour
             targetSpeed += currentSpeed * frenzySkill.GetFrenzyBonusPercent();
 
         float multiplier = 1f;
+        if (effectManager.HasEffect(EffectType.BoostMoveSpeed))
+        {
+            List<BaseEffect> boostEffects = effectManager.GetEffectOfType(EffectType.BoostMoveSpeed);
+
+            foreach (var effect in boostEffects)
+            {
+                multiplier *= 1f + math.clamp(effect.Value, 0f, 1f);
+            }
+        }
+
         if (effectManager.HasEffect(EffectType.Slow))
         {
             List<BaseEffect> slowEffects = effectManager.GetEffectOfType(EffectType.Slow);

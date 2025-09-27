@@ -12,6 +12,9 @@ public class PlayerUpgradeSlots : MonoBehaviour
     private List<BaseWeapon> weapons;
     private List<BasePassive> passives;
 
+    [SerializeField] private UpgradePublisherSO updateUISO;
+    [SerializeField] private VoidPublisherSO togglePauseSO;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,10 +34,6 @@ public class PlayerUpgradeSlots : MonoBehaviour
         passives.Clear();
 
         AddWeapon(defaultWeaponType);
-
-        // Update UI
-        UpgradeEventArgs upgradeEventArgs = new WeaponUpgradeEventArgs(defaultWeaponType, 1);
-        GamePlayUIManager.Instance.UpdateSlots(upgradeEventArgs);
 
         GameInitializationManager.Instance.playerUpgradeSlotsInitialized = true;
     }
@@ -78,11 +77,14 @@ public class PlayerUpgradeSlots : MonoBehaviour
             if (weapon.GetWeaponType().Equals(weaponType))
             {
                 weapon.LevelUp();
+                UpdateWeaponUISlot(weapon.GetWeaponType(), weapon.GetCurrentLevel());
                 return;
             }
         }
 
         AddWeapon(weaponType);
+
+        togglePauseSO.RaiseEvent();
     }
 
     public void AddWeapon(WeaponType weaponType)
@@ -90,6 +92,13 @@ public class PlayerUpgradeSlots : MonoBehaviour
         BaseWeapon newWeapon = WeaponManager.Instance.GetWeaponWithType(weaponType);
         newWeapon.LevelUp();
         weapons.Add(newWeapon);
+        UpdateWeaponUISlot(newWeapon.GetWeaponType(), newWeapon.GetCurrentLevel());
+    }
+
+    private void UpdateWeaponUISlot(WeaponType weaponType, int level)
+    {
+        UpgradeEventArgs upgradeEventArgs = new WeaponUpgradeEventArgs(weaponType, level);
+        updateUISO?.RaiseEvent(upgradeEventArgs);
     }
 
     public List<BasePassive> GetPassiveList()
@@ -130,10 +139,14 @@ public class PlayerUpgradeSlots : MonoBehaviour
             if (passive.GetPassiveType().Equals(passiveType))
             {
                 passive.LevelUp();
+                UpdatePassiveUISlot(passive.GetPassiveType(), passive.GetCurrentLevel());
                 return;
             }
         }
+
         AddPassive(passiveType);
+
+        togglePauseSO.RaiseEvent();
     }
 
     public void AddPassive(PassiveType passiveType)
@@ -141,5 +154,12 @@ public class PlayerUpgradeSlots : MonoBehaviour
         BasePassive newPassive = PassiveManager.Instance.GetPassiveWithType(passiveType);
         newPassive.LevelUp();
         passives.Add(newPassive);
+        UpdatePassiveUISlot(newPassive.GetPassiveType(), newPassive.GetCurrentLevel());
+    }
+
+    private void UpdatePassiveUISlot(PassiveType passiveType, int level)
+    {
+        UpgradeEventArgs upgradeEventArgs = new PassiveUpgradeEventArgs(passiveType, level);
+        updateUISO?.RaiseEvent(upgradeEventArgs);
     }
 }

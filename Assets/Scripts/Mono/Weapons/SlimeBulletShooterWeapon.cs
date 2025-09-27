@@ -8,6 +8,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     [SerializeField] private List<SlimeBulletShooterLevelDataSO> levelDatas;
 
     private float timer;
+    private bool isShooting;
 
     [Header("Refs")]
     [SerializeField] GameObject player;
@@ -34,7 +35,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.IsPlaying() || !IsActive)
+        if (!GameManager.Instance.IsPlaying() || !IsActive || isShooting)
             return;
 
         timer -= Time.deltaTime;
@@ -79,6 +80,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
     float delayBetweenBullet,
     float finalCooldownTime)
     {
+        isShooting = true;
         // Precompute step size
         float bonusDistance = (maxDistBetweenBullets - minDistBetweenBullets) / Mathf.Max(1, bulletCount - 1);
 
@@ -98,6 +100,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
         }
 
         timer = finalCooldownTime; // Reset timer
+        isShooting = false;
     }
 
     private void SetBulletStats(SlimeBullet bullet, int damage, float passthroughDamageModifier,
@@ -113,7 +116,7 @@ public class SlimeBulletShooterWeapon : BaseWeapon
 
     public override void Initialize()
     {
-        currentLevel = 1;
+        currentLevel = 0;
         timer = 0;
         isInitialized = true;
     }

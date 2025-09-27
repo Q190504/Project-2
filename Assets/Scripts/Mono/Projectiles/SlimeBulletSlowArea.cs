@@ -35,32 +35,37 @@ public class SlimeBulletSlowArea : MonoBehaviour
                 return;
 
         // Cache effect manager (avoid repeated GetComponent calls by using TryGetComponent)
-        if (!collision.TryGetComponent(out EffectManager enemyEffectManager))
+        if (!collision.TryGetComponent(out EffectManager effectManager))
             return;
 
         // Ingore if the source matches
-        if (enemyEffectManager.HasEffectOfSource(EffectType.Slow, inGameObjectType))
+        if (effectManager.HasEffectOfSource(EffectType.Slow, inGameObjectType))
             return;
 
-        float3 toCenter = transform.position - collision.transform.position;
-        float distSq = math.lengthsq(toCenter);
+        //float3 toCenter = transform.position - collision.transform.position;
+        //float distSq = math.lengthsq(toCenter);
 
-        if (distSq > slowRadius * slowRadius || distSq < 0.0001f)
-            return;
+        //if (distSq > slowRadius * slowRadius || distSq < 0.0001f)
+        //    return;
 
         // Apply slow effect
         if (objectType != null)
-            enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, inGameObjectType, objectType.InGameObjectType);
+            effectManager.ApplyEffect(EffectType.Slow, math.INFINITY, slowModifier, inGameObjectType, objectType.InGameObjectType);
         else
         {
-            enemyEffectManager.ApplyEffect(EffectType.Slow, float.MaxValue, 0, inGameObjectType, InGameObjectType.Unknown);
+            effectManager.ApplyEffect(EffectType.Slow, math.INFINITY, slowModifier, inGameObjectType, InGameObjectType.Unknown);
             Debug.LogWarning("Cant find ObjectType of enemy");
         }
-        // Apply velocity slow if Rigidbody2D exists
-        if (collision.TryGetComponent(out Rigidbody2D enemyRb) && math.lengthsq(enemyRb.linearVelocity) > 0)
-        {
-            enemyRb.linearVelocity *= (1 - slowModifier);
-        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // Cache effect manager (avoid repeated GetComponent calls by using TryGetComponent)
+        if (!collision.TryGetComponent(out EffectManager effectManager))
+            return;
+
+        if (effectManager.HasEffectOfSource(EffectType.Slow, inGameObjectType))
+            effectManager.RemoveEffect(EffectType.Slow, inGameObjectType);
     }
 
     public void Initialize(float slowRadius, float slowModifier)

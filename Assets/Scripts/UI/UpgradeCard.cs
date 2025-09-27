@@ -12,8 +12,6 @@ public class UpgradeCard : MonoBehaviour
     [SerializeField] private Image cardImage;
     [SerializeField] private TMP_Text cardDescription;
 
-    [SerializeField] private UpgradePublisherSO updateUISO;
-    [SerializeField] private VoidPublisherSO togglePauseSO;
     [SerializeField] private VoidPublisherSO playSoundSO;
 
     private WeaponType weaponType;
@@ -69,14 +67,11 @@ public class UpgradeCard : MonoBehaviour
             return;
         }
 
-        int newLevel = 0;
-
         if (upgradeCardType == UpgradeType.Weapon)
         {
             if (weaponUpgradeHandlers.TryGetValue(weaponType, out var handler))
             {
                 handler(playerSlots);
-                newLevel = playerSlots.GetWeaponLevel(weaponType);
             }
             else
             {
@@ -89,7 +84,6 @@ public class UpgradeCard : MonoBehaviour
             if (passiveUpgradeHandlers.TryGetValue(passiveType, out var handler))
             {
                 handler(playerSlots);
-                newLevel = playerSlots.GetPassiveLevel(passiveType);
             }
             else
             {
@@ -98,15 +92,5 @@ public class UpgradeCard : MonoBehaviour
             }
         }
 
-        // Raise UI update event
-        updateUISO.RaiseEvent(new UpgradeEventArgs
-        {
-            upgradeType = upgradeCardType,
-            weaponType = weaponType,
-            passiveType = passiveType,
-            level = newLevel
-        });
-
-        togglePauseSO.RaiseEvent();
     }
 }
