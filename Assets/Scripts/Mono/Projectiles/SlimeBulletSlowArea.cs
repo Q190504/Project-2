@@ -16,7 +16,7 @@ public class SlimeBulletSlowArea : MonoBehaviour
     void Start()
     {
         inGameObjectType = slimeBullet.GetComponent<ObjectType>().InGameObjectType;
-        targetObjectTypes = slimeBullet.GetComponent<SlimeBullet>().GetTargetObjectTypes();
+        targetObjectTypes = slimeBullet.GetComponent<SlimeBullet>().GetDamageTargetObjectTypes();
     }
 
     // Update is called once per frame

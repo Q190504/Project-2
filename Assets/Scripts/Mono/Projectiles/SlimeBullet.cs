@@ -7,7 +7,7 @@ public class SlimeBullet : MonoBehaviour
 {
     [SerializeField] private float flySmoothTime = 0.1f;
     [SerializeField] SlimeBulletSlowArea slowArea;
-    [SerializeField] private List<InGameObjectType> targetObjectTypes;
+    [SerializeField] private List<InGameObjectType> damageTargetObjectTypes;
 
     private bool isAbleToMove;
     private bool isBeingSummoned;
@@ -89,10 +89,10 @@ public class SlimeBullet : MonoBehaviour
 
         if (collision.TryGetComponent<IDamageable>(out IDamageable damageable)
             && collision.TryGetComponent<ObjectType>(out ObjectType objectType)
-            && objectType.InGameObjectType != InGameObjectType.Player)
+            && damageTargetObjectTypes.Contains(objectType.InGameObjectType))
         {
             // Skip if (stopped moving and not being summoned)
-            if ((!isAbleToMove && !isBeingSummoned) /*|| lastHitEnemy == collision.gameObject*/)
+            if ((!isAbleToMove && !isBeingSummoned))
                 return;
 
             // Deal damage
@@ -107,7 +107,6 @@ public class SlimeBullet : MonoBehaviour
             if (!isBeingSummoned)
             {
                 remainingDamage = (int)(damage * passthroughDamageModifier);
-                //bulletComponent.lastHitEnemy = enemyEntity;
             }
 
             AudioManager.Instance.PlaySlimeBulletHitSoundSFX();
@@ -180,8 +179,8 @@ public class SlimeBullet : MonoBehaviour
         ProjectilesManager.Instance.UnregisterSlimeBulletsToReclaim(this);
     }
 
-    public List<InGameObjectType> GetTargetObjectTypes()
+    public List<InGameObjectType> GetDamageTargetObjectTypes()
     {
-        return targetObjectTypes;
+        return damageTargetObjectTypes;
     }
 }

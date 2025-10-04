@@ -1,37 +1,49 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SlimeBeam : MonoBehaviour
 {
-    private int damage;
-    private bool canDamage;
+    [SerializeField] private List<InGameObjectType> damageTargetObjectTypes;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private Vector2 baseAttackSize;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private int damage;
+
+    private Vector2 CurrentAttackSize => new Vector2(
+    baseAttackSize.x * transform.localScale.x,
+    baseAttackSize.y * transform.localScale.y);
+
+    public void DealDamage()
     {
-        if (canDamage && collision == null)
+        Collider2D[] hits = Physics2D.OverlapBoxAll(attackPoint.position, CurrentAttackSize, 0f);
+
+        foreach (var hit in hits)
         {
-            IDamageable damageable = collision.GetComponent<IDamageable>();
-            if (damageable != null && !collision.CompareTag("Player"))
+            if (hit.TryGetComponent<ObjectType>(out ObjectType objectType)
+                && damageTargetObjectTypes.Contains(objectType.InGameObjectType)
+                && hit.TryGetComponent<IDamageable>(out IDamageable iDamageable))
             {
-                damageable.TakeDamage(damage);
+                iDamageable.TakeDamage(damage);
             }
         }
+
+        AudioManager.Instance.PlaySlimeBeamSoundSFX();
     }
 
     public void Initialize(int damage)
     {
         this.damage = damage;
-        canDamage = false;
-    }
-
-    public void CanDamage()
-    {
-        AudioManager.Instance.PlaySlimeBeamSoundSFX();
-        this.canDamage = true;
     }
 
     public void Return()
     {
-        canDamage = false;
         ProjectilesManager.Instance.ReturnSlimeBeam(this);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(attackPoint.position, CurrentAttackSize);
     }
 }
