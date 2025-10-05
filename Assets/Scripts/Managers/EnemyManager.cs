@@ -9,17 +9,24 @@ public class EnemyManager : MonoBehaviour
 {
     private static EnemyManager _instance;
 
-    [SerializeField] private int creepPrepare;
+    [SerializeField] private int redPigPrepare;
+    [SerializeField] private int explodeSlimePrepare;
     public List<GameObject> SpawnerList;
 
     [Header("Refs")]
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject creepPrefab;
+    [SerializeField] private GameObject redPigPrefab;
+    [SerializeField] private GameObject explodeSlimePrefab;
 
-    private Queue<GameObject> inactiveCreeps;
-    private List<GameObject> activeCreeps;
-    private Transform creepPool;
-    private int inactiveCreepCount = 0;
+    private Queue<GameObject> inactiveRedPigs;
+    private List<GameObject> activeRedPigs;
+    private Transform redPigPool;
+    private int inactiveRedPigsCount = 0;
+
+    private Queue<GameObject> inactiveExplodeSlimes;
+    private List<GameObject> activeExplodeSlimes;
+    private Transform explodeSlimePool;
+    private int inactiveExplodeSlimesCount = 0;
 
     Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
 
@@ -57,17 +64,19 @@ public class EnemyManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-        inactiveCreeps = new Queue<GameObject>();
-        activeCreeps = new List<GameObject>();
+        inactiveRedPigs = new Queue<GameObject>();
+        activeRedPigs = new List<GameObject>();
+
+        inactiveExplodeSlimes = new Queue<GameObject>();
+        activeExplodeSlimes = new List<GameObject>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        creepPool = new GameObject("CreepPool").transform;
-        creepPool.SetParent(transform);
+        PreparePools();
 
-        PrepareEnemy();
+        PrepareEnemies();
     }
 
     // Update is called once per frame
@@ -161,57 +170,161 @@ public class EnemyManager : MonoBehaviour
         #endregion
     }
 
+    private void PreparePools()
+    {
+        redPigPool = new GameObject("RedPigPool").transform;
+        redPigPool.SetParent(transform);
+
+        explodeSlimePool = new GameObject("explodeSlimePool").transform;
+        explodeSlimePool.SetParent(transform);
+    }
+
     public void SpawnEnemy(Vector3 position)
     {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        GameObject creep = TakeCreep();
-        Creep creepComponent = creep.GetComponent<Creep>();
-
         float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
-        creepComponent.Initialize(position, difficultyMultiplier);
+
+        GameObject redPig = TakeRedPig();
+        RedPig redPigComponent = redPig.GetComponent<RedPig>();
+        redPigComponent.Initialize(position, difficultyMultiplier);
+
+        //GameObject exSlime = TakeExplodeSlime();
+        //ExplodeSlime explodeSlimeComponent = exSlime.GetComponent<ExplodeSlime>();
+        //explodeSlimeComponent.Initialize(position, difficultyMultiplier);
     }
 
-    private void PrepareEnemy()
+    private void PrepareEnemies()
     {
-        if (creepPrefab == null) return;
+        PrepareRedPig();
+        PrepareExplodeSlime();
+    }
 
-        for (int i = 0; i < creepPrepare; i++)
+    #region Red Pig
+
+    private void PrepareRedPig()
+    {
+        if (redPigPrefab == null) return;
+
+        for (int i = 0; i < redPigPrepare; i++)
         {
-            GameObject creep = Instantiate(creepPrefab, creepPool);
-            creep.gameObject.SetActive(false);
-            inactiveCreeps.Enqueue(creep);
-            inactiveCreepCount++;
+            GameObject pig = Instantiate(redPigPrefab, redPigPool);
+            pig.SetActive(false);
+            inactiveRedPigs.Enqueue(pig);
+            inactiveRedPigsCount++;
         }
     }
 
-    public GameObject TakeCreep()
+    public GameObject TakeRedPig()
     {
-        if (inactiveCreeps.Count <= 0)
-            PrepareEnemy();
+        if (inactiveRedPigs.Count <= 0)
+            PrepareRedPig();
 
-        GameObject creep = inactiveCreeps.Dequeue();
-        inactiveCreepCount--;
+        GameObject pig = inactiveRedPigs.Dequeue();
+        inactiveRedPigsCount--;
+        activeRedPigs.Add(pig);
 
-        activeCreeps.Add(creep);
+        pig.transform.SetParent(null);
+        pig.SetActive(true);
 
-        creep.gameObject.SetActive(true);
-
-        return creep;
+        return pig;
     }
 
-    public void ReturnCreep(GameObject creep)
+    public void ReturnRedPig(GameObject pig)
     {
-        if (creep.TryGetComponent<EffectManager>(out EffectManager effectManager))
+        if (pig.TryGetComponent<EffectManager>(out EffectManager effectManager))
             effectManager.ClearAllEffects();
 
-        creep.gameObject.SetActive(false);
+        pig.SetActive(false);
+        pig.transform.SetParent(redPigPool);
 
-        activeCreeps.Remove(creep);
-        inactiveCreeps.Enqueue(creep);
-        inactiveCreepCount++;
+        activeRedPigs.Remove(pig);
+        inactiveRedPigs.Enqueue(pig);
+        inactiveRedPigsCount++;
     }
+
+    private void ClearAllRedPig()
+    {
+        if (activeRedPigs != null && activeRedPigs.Count > 0)
+        {
+            foreach (var pig in activeRedPigs)
+                ReturnRedPig(pig);
+
+            activeRedPigs.Clear();
+        }
+    }
+
+    public int GetRedPigPrepare()
+    {
+        return redPigPrepare;
+    }
+
+    #endregion
+
+
+    #region Explode Slime
+
+    private void PrepareExplodeSlime()
+    {
+        if (explodeSlimePrefab == null) return;
+
+        for (int i = 0; i < explodeSlimePrepare; i++)
+        {
+            GameObject go = Instantiate(explodeSlimePrefab, explodeSlimePool);
+            go.SetActive(false);
+            inactiveExplodeSlimes.Enqueue(go);
+            inactiveExplodeSlimesCount++;
+        }
+    }
+
+    public GameObject TakeExplodeSlime()
+    {
+        if (inactiveExplodeSlimes.Count <= 0)
+            PrepareExplodeSlime();
+
+        GameObject go = inactiveExplodeSlimes.Dequeue();
+        inactiveExplodeSlimesCount--;
+
+        activeExplodeSlimes.Add(go);
+
+        go.transform.SetParent(null);
+        go.SetActive(true);
+
+        return go;
+    }
+
+    public void ReturnExplodeSlime(GameObject go)
+    {
+        if (go.TryGetComponent<EffectManager>(out EffectManager effectManager))
+            effectManager.ClearAllEffects();
+
+        go.SetActive(false);
+        go.transform.SetParent(explodeSlimePool);
+
+        activeExplodeSlimes.Remove(go);
+        inactiveExplodeSlimes.Enqueue(go);
+        inactiveExplodeSlimesCount++;
+    }
+
+    private void ClearAllExplodeSlime()
+    {
+        if (activeExplodeSlimes != null && activeExplodeSlimes.Count > 0)
+        {
+            foreach (GameObject go in activeExplodeSlimes)
+                ReturnExplodeSlime(go);
+
+            activeExplodeSlimes.Clear();
+        }
+
+    }
+
+    public int GetExplodeSlimePrepare()
+    {
+        return explodeSlimePrepare;
+    }
+
+    #endregion
 
     public void Initialize()
     {
@@ -228,21 +341,8 @@ public class EnemyManager : MonoBehaviour
 
     public void ClearAllEnemies()
     {
-        ClearAllCreep();
-    }
-
-    private void ClearAllCreep()
-    {
-        if (activeCreeps != null && activeCreeps.Count > 0)
-        {
-            foreach (var creep in activeCreeps)
-                ReturnCreep(creep);
-        }
-    }
-
-    public int GetCreepPrepare()
-    {
-        return creepPrepare;
+        ClearAllRedPig();
+        ClearAllExplodeSlime();
     }
 
     public void SetTimeSinceStartPlaying(double time)

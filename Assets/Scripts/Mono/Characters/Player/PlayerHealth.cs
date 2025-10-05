@@ -47,7 +47,7 @@ public class PlayerHealth : BaseHealth
         UpdateHPBar();
     }
 
-    protected override void Die()
+    public override void Die()
     {
         animator.SetTrigger("die");
         Debug.Log("Player Died!");

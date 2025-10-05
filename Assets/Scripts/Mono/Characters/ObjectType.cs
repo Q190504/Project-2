@@ -4,7 +4,7 @@ public enum InGameObjectType
 {
     Unknown,
     Player,
-    Creep,
+    Enemy,
     RadiantField,
     SlimeBullet,
     FrenzySkill,

@@ -10,7 +10,8 @@ public enum SFXID
     Failure = 2,
     SelectUpgrade = 3,
     SlimeBulletHit = 4,
-    SlimeBeam = 5
+    SlimeBeam = 5,
+    ExplodeSlimeExplosion = 6,
 }
 
 public class AudioManager : MonoBehaviour
@@ -30,6 +31,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip selectUpgradeSFX;
     [SerializeField] private AudioClip slimeBulletHitSound;
     [SerializeField] private AudioClip slimeBeamSoundSFX;
+    [SerializeField] private AudioClip explodeSlimeExplosionSoundSFX;
 
     [Header("BGMs")]
     [SerializeField] private AudioClip bgm;
@@ -81,7 +83,8 @@ public class AudioManager : MonoBehaviour
             { SFXID.Failure, failureSoundSFX },
             { SFXID.SelectUpgrade, selectUpgradeSFX },
             { SFXID.SlimeBulletHit, slimeBulletHitSound },
-            { SFXID.SlimeBeam, slimeBeamSoundSFX }
+            { SFXID.SlimeBeam, slimeBeamSoundSFX },
+            { SFXID.ExplodeSlimeExplosion, explodeSlimeExplosionSoundSFX},
         };
     }
 
@@ -146,6 +149,8 @@ public class AudioManager : MonoBehaviour
     public void PlaySelectUpgradeSFX() => PlaySFX(SFXID.SelectUpgrade);
     public void PlaySlimeBulletHitSoundSFX() => PlaySFX(SFXID.SlimeBulletHit);
     public void PlaySlimeBeamSoundSFX() => PlaySFX(SFXID.SlimeBeam);
+
+    public void PlayExplodeSlimeExplosionSFX() => PlaySFX(SFXID.ExplodeSlimeExplosion);
 
     public void StartGame()
     {

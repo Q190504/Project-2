@@ -3369,6 +3369,7 @@ MonoBehaviour:
   selectUpgradeSFX: {fileID: 8300000, guid: 86fb00f1bcaa12f46931d542c8b7c84c, type: 3}
   slimeBulletHitSound: {fileID: 8300000, guid: 66f65c3f5579a8c468b69ad46d79659c, type: 3}
   slimeBeamSoundSFX: {fileID: 8300000, guid: e5843337ef57e1841a7dc1ec988439ce, type: 3}
+  explodeSlimeExplosionSoundSFX: {fileID: 8300000, guid: d7dd673d4846c3948a7d2d3cceb0b977, type: 3}
   bgm: {fileID: 8300000, guid: 5722a2d725d01974b954657a10385f04, type: 3}
   inGameMusic: {fileID: 8300000, guid: 224a0086c8b2b7747801ff71b81c32ef, type: 3}
   setSFXSliderSO: {fileID: 11400000, guid: ca3888019e8a29943a9186d79711aaa4, type: 2}
@@ -9974,7 +9975,7 @@ GameObject:
   - component: {fileID: 827541388}
   - component: {fileID: 827541387}
   m_Layer: 0
-  m_Name: EnemyManager
+  m_Name: Enemy Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9992,7 +9993,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9d6a2c4cfb87647ad663fa5f48d890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  creepPrepare: 100
+  redPigPrepare: 20
+  explodeSlimePrepare: 20
   SpawnerList:
   - {fileID: 1013224453}
   - {fileID: 211163224}
@@ -10006,7 +10008,8 @@ MonoBehaviour:
   - {fileID: 1173757373}
   - {fileID: 257257449}
   player: {fileID: 1688281991}
-  creepPrefab: {fileID: 2885116409787558276, guid: a9a9980cc36d78b4dafc4a2cf887c333, type: 3}
+  redPigPrefab: {fileID: 2885116409787558276, guid: a9a9980cc36d78b4dafc4a2cf887c333, type: 3}
+  explodeSlimePrefab: {fileID: 8177490194703282562, guid: b546e9347ce689e44b90d74a6c3d98fc, type: 3}
   baseEnemiesPerWave: 10
   initialSpawnDelay: 2
   minInterval: 5
@@ -53555,6 +53558,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitEffectPrefab: {fileID: 7800111571244290935, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   hitEffectPrepare: 20
+  explodeSlimeExplodeEffectPrefab: {fileID: 5324224299319329268, guid: fdc71766d2869ee41828bad90c2544cd, type: 3}
+  explodeSlimeExplodeEffectPrepare: 30
 --- !u!114 &1607411014
 MonoBehaviour:
   m_ObjectHideFlags: 0

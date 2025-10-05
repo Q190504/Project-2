@@ -206,7 +206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flySmoothTime: 0.1
   slowArea: {fileID: 5698636998710471777}
-  targetObjectTypes: 02000000
+  damageTargetObjectTypes: 02000000
 --- !u!114 &238686373449035256
 MonoBehaviour:
   m_ObjectHideFlags: 0

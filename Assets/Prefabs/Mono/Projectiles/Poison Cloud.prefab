@@ -161,9 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dda464216da1ae498c5e85730fd0ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 128
+  damageTargetObjectTypes: 02000000
   onCloudReturn: {fileID: 11400000, guid: 13755f6ad5e613d439a9beb87511fe11, type: 2}
 --- !u!114 &-4629188402099409172
 MonoBehaviour:

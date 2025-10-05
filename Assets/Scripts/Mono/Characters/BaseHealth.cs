@@ -30,11 +30,16 @@ public abstract class BaseHealth : MonoBehaviour, IDamageable
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
 
-    protected abstract void Die();
+    public abstract void Die();
 
     public void Initialize(int maxHealth)
     {
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
+    }
+
+    public bool IsAlive()
+    {
+        return currentHealth > 0;
     }
 }

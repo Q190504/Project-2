@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
 public class PoisonCloud : MonoBehaviour
 {
-    [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private List<InGameObjectType> damageTargetObjectTypes;
 
     float tick;
     float tickTimer;
@@ -37,17 +38,18 @@ public class PoisonCloud : MonoBehaviour
         tickTimer -= Time.deltaTime;
         if (tickTimer <= 0)
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, cloudRadius / 2, targetLayer);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, cloudRadius / 2);
 
             //DebugDrawSphere(transform.position, cloudRadius / 2, Color.magenta);
 
             // Deals damage
             foreach (var hit in hits)
             {
-                IDamageable damageable = hit.GetComponent<IDamageable>();
-                if (damageable != null && !hit.CompareTag("Player"))
+                if (hit.TryGetComponent<ObjectType>(out ObjectType objectType)
+                    && damageTargetObjectTypes.Contains(objectType.InGameObjectType)
+                    && hit.TryGetComponent<IDamageable>(out IDamageable iDamageable))
                 {
-                    damageable.TakeDamage(damagePerTick);
+                    iDamageable.TakeDamage(damagePerTick);
                 }
             }
 
@@ -57,10 +59,12 @@ public class PoisonCloud : MonoBehaviour
 
     public int GetTotalEnemies()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, cloudRadius / 2, targetLayer);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, cloudRadius / 2);
         foreach (var hit in hits)
         {
-            totalEnemiesCurrentlyInTheCloud++;
+            if (hit.TryGetComponent<ObjectType>(out ObjectType objectType)
+                && damageTargetObjectTypes.Contains(objectType.InGameObjectType))
+                totalEnemiesCurrentlyInTheCloud++;
         }
 
         return totalEnemiesCurrentlyInTheCloud;
@@ -71,11 +75,10 @@ public class PoisonCloud : MonoBehaviour
         if (GameManager.Instance == null || !GameManager.Instance.IsPlaying()) return;
 
         // Set canSpawnNewCloud = false to Paw Print Poisoner Weapon
-        if (collision.TryGetComponent<ObjectType>(out ObjectType objectType) 
+        if (collision.TryGetComponent<ObjectType>(out ObjectType objectType)
             && objectType.InGameObjectType == InGameObjectType.Player)
         {
-            PawPrintPoisonerWeapon pawPrintPoisonerWeapon = collision.GetComponent<PawPrintPoisonerWeapon>();
-            if (pawPrintPoisonerWeapon != null)
+            if (collision.TryGetComponent<PawPrintPoisonerWeapon>(out PawPrintPoisonerWeapon pawPrintPoisonerWeapon))
                 pawPrintPoisonerWeapon.SetCanSpawnNewCloud(false);
         }
     }
@@ -88,8 +91,7 @@ public class PoisonCloud : MonoBehaviour
         if (collision.TryGetComponent<ObjectType>(out ObjectType objectType)
             && objectType.InGameObjectType == InGameObjectType.Player)
         {
-            PawPrintPoisonerWeapon pawPrintPoisonerWeapon = collision.GetComponent<PawPrintPoisonerWeapon>();
-            if (pawPrintPoisonerWeapon != null)
+            if (collision.TryGetComponent<PawPrintPoisonerWeapon>(out PawPrintPoisonerWeapon pawPrintPoisonerWeapon))
                 pawPrintPoisonerWeapon.SetCanSpawnNewCloud(true);
         }
     }
