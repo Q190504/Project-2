@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-
-public class RedPigMovement : MonoBehaviour
+public class ShootingSlimeMovement : MonoBehaviour
 {
     [SerializeField] float baseMoveSpeed;
     float moveSpeed;
@@ -12,10 +11,12 @@ public class RedPigMovement : MonoBehaviour
     int mapWidth;
 
     // Refs
+    private ShootingLogic shootingLogic;
     private Rigidbody2D rb;
     private EffectManager effectManager;
     private FlowFieldManager flowFieldManager;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     float targetSpeed;
 
@@ -30,6 +31,8 @@ public class RedPigMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         effectManager = GetComponent<EffectManager>();
         animator = GetComponentInChildren<Animator>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        shootingLogic = GetComponentInChildren<ShootingLogic>();
     }
 
     // Update is called once per frame
@@ -43,6 +46,7 @@ public class RedPigMovement : MonoBehaviour
         else
         {
             #region Apply effects
+
             targetSpeed = moveSpeed;
             float multiplier = 1f;
             if (effectManager.HasEffect(EffectType.Stun))
@@ -71,10 +75,20 @@ public class RedPigMovement : MonoBehaviour
 
             Vector2 flowDirection = flowFieldManager.GetDirectionFromIndex(index);
             Vector2 movement = new Vector2(flowDirection.x, flowDirection.y) * targetSpeed;
-            rb.linearVelocity = movement;
 
-            float speed = math.length(rb.linearVelocity);
-            animator.SetFloat("speed", speed);
+            #region Animation
+
+            animator.SetFloat("x", flowDirection.x);
+            animator.SetFloat("y", flowDirection.y);
+
+            spriteRenderer.flipX = flowDirection.x < 0;
+
+            #endregion
+
+            if (shootingLogic.IsShooting() || shootingLogic.IsTargetInRange())
+                rb.linearVelocity = Vector2.zero;
+            else
+                rb.linearVelocity = movement;
         }
     }
 

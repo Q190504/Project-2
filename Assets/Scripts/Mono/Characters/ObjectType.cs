@@ -11,6 +11,7 @@ public enum InGameObjectType
     PoisonCloud,
     SlimeBeam,
     ExperienceOrb,
+    EnemyBullet,
 }
 
 public class ObjectType : MonoBehaviour

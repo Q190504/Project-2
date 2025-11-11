@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PlayerHealth : BaseHealth
 {
+    [SerializeField] private float invincibleDuration = 2f;
+    private bool isInvincible = false;
+    private float invincibleTimer = 0f;
+
     private Armor armor;
     private MaxHealth maxHealthCompoment;
     private Animator animator;
@@ -20,10 +24,22 @@ public class PlayerHealth : BaseHealth
         // Skip updates if game isn’t playing
         if (!GameManager.Instance.IsPlaying())
             return;
+
+        // Reduce invincibility timer
+        if (isInvincible)
+        {
+            invincibleTimer -= Time.deltaTime;
+            if (invincibleTimer <= 0f)
+            {
+                isInvincible = false;
+            }
+        }
     }
 
     public override void TakeDamage(int amount)
     {
+        if (isInvincible) return;
+
         int finalDamage = Mathf.FloorToInt(Mathf.Max(0, amount - armor.GetValue()));
 
         currentHealth -= finalDamage;
@@ -31,6 +47,10 @@ public class PlayerHealth : BaseHealth
             currentHealth = 0;
 
         UpdateHPBar();
+
+        // Activate invincibility
+        isInvincible = true;
+        invincibleTimer = invincibleDuration;
 
         if (currentHealth <= 0)
         {

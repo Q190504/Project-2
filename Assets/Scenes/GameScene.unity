@@ -567,6 +567,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -1049,6 +1053,10 @@ PrefabInstance:
     - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
@@ -3184,6 +3192,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -3916,6 +3928,10 @@ PrefabInstance:
     - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
@@ -4926,6 +4942,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -5099,6 +5119,10 @@ PrefabInstance:
     - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
@@ -8871,6 +8895,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -9993,8 +10021,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9d6a2c4cfb87647ad663fa5f48d890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  difficultyGrowthExponent: 1.05
   redPigPrepare: 20
   explodeSlimePrepare: 20
+  shootingSlimePrepare: 1
   SpawnerList:
   - {fileID: 1013224453}
   - {fileID: 211163224}
@@ -10010,12 +10040,13 @@ MonoBehaviour:
   player: {fileID: 1688281991}
   redPigPrefab: {fileID: 2885116409787558276, guid: a9a9980cc36d78b4dafc4a2cf887c333, type: 3}
   explodeSlimePrefab: {fileID: 8177490194703282562, guid: b546e9347ce689e44b90d74a6c3d98fc, type: 3}
-  baseEnemiesPerWave: 10
+  shootingSlimePrefab: {fileID: 2885116409787558276, guid: 9dbb185a976b5f947b2b532abf6c8458, type: 3}
+  baseEnemiesPerWave: 5
   initialSpawnDelay: 2
   minInterval: 5
-  baseInterval: 7
-  spawnAcceleration: 7
-  individualEnemyDelay: 0.3
+  baseInterval: 10
+  spawnAcceleration: 0.4
+  individualEnemyDelay: 0.5
 --- !u!4 &827541386
 Transform:
   m_ObjectHideFlags: 0
@@ -50410,6 +50441,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -50625,6 +50660,10 @@ PrefabInstance:
     - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
@@ -53736,6 +53775,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius
       value: 20
@@ -54367,7 +54410,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7412da8a049d17f4c8d4e579c8ced2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaxHealth: 0
+  baseMaxHealth: 100
+  invincibleDuration: 2
 --- !u!114 &1688282003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54396,7 +54440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a9837fdb5abe64abfea90acc4c9ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseValue: 4
+  baseValue: 0
   increment: 4
   passiveType: 4
   level: 0
@@ -56681,9 +56725,11 @@ MonoBehaviour:
   slimeBulletPrepare: 100
   slimeBeamPrepare: 4
   poisonCloudPrepare: 24
+  enemyBulletPrepare: 50
   slimeBulletPrefab: {fileID: 3044557864586212971, guid: b341f66900d79c14994d6690bb9f5ca6, type: 3}
   slimeBeamPrefab: {fileID: 5882936879872144874, guid: 2687fa3aecbe91f4088910fd576ead07, type: 3}
   poisonCloudPrefab: {fileID: 1942575064161144900, guid: 3ee96822bbbb2f94eafe19de79bec741, type: 3}
+  enemyBulletPrefab: {fileID: 5880904170294926641, guid: 64590572763d8f545922537505147cbb, type: 3}
 --- !u!114 &2028360962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57327,6 +57373,10 @@ PrefabInstance:
     - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638647067281645957, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3840896415926950095, guid: cc27bf93c26364f4396d9ee573510b71, type: 3}
       propertyPath: m_Radius

@@ -9,11 +9,13 @@ public class ProjectilesManager : MonoBehaviour
     [SerializeField] private int slimeBulletPrepare = 100;
     [SerializeField] private int slimeBeamPrepare = 4;
     [SerializeField] private int poisonCloudPrepare = 24;
+    [SerializeField] private int enemyBulletPrepare = 50;
 
     [Header("Prefabs")]
     [SerializeField] private SlimeBullet slimeBulletPrefab;
     [SerializeField] private SlimeBeam slimeBeamPrefab;
     [SerializeField] private PoisonCloud poisonCloudPrefab;
+    [SerializeField] private EnemyBullet enemyBulletPrefab;
 
     private Queue<SlimeBullet> inactiveSlimeBullets = new Queue<SlimeBullet>();
     private List<SlimeBullet> activeSlimeBullets = new List<SlimeBullet>();
@@ -30,6 +32,11 @@ public class ProjectilesManager : MonoBehaviour
     private List<PoisonCloud> activePoisonClouds = new List<PoisonCloud>();
     private Transform poisonCloudsPool;
     private int poisonCloudCount = 0;
+
+    private Queue<EnemyBullet> inactiveEnemyBullets = new Queue<EnemyBullet>();
+    private List<EnemyBullet> activeEnemyBullets = new List<EnemyBullet>();
+    private Transform enemyBulletsPool;
+    private int enemyBulletCount = 0;
 
     public static ProjectilesManager Instance
     {
@@ -58,6 +65,7 @@ public class ProjectilesManager : MonoBehaviour
         PreparePoisonCloud();
         PrepareSlimeBeam();
         PrepareSlimeBullet();
+        PrepareEnemyBullet();
     }
 
     // Update is called once per frame
@@ -76,6 +84,9 @@ public class ProjectilesManager : MonoBehaviour
 
         poisonCloudsPool = new GameObject("PoisionCloudsPool").transform;
         poisonCloudsPool.SetParent(transform);
+
+        enemyBulletsPool = new GameObject("EnemyBulletsPool").transform;
+        enemyBulletsPool.SetParent(transform);
     }
 
     #region Slime Bullet
@@ -243,6 +254,52 @@ public class ProjectilesManager : MonoBehaviour
 
     #endregion
 
+    #region Enemy Bullet
+
+    private void PrepareEnemyBullet()
+    {
+        if (enemyBulletPrefab == null) return;
+
+        for (int i = 0; i < enemyBulletPrepare; i++)
+        {
+            EnemyBullet slimeBulletInstance = Instantiate(enemyBulletPrefab, enemyBulletsPool);
+            slimeBulletInstance.gameObject.SetActive(false);
+            inactiveEnemyBullets.Enqueue(slimeBulletInstance);
+            enemyBulletCount++;
+        }
+    }
+
+    public EnemyBullet TakeEnemyBullet()
+    {
+        if (inactiveEnemyBullets.Count <= 0)
+            PrepareEnemyBullet();
+
+        EnemyBullet bullet = inactiveEnemyBullets.Dequeue();
+        enemyBulletCount--;
+
+        if (!activeEnemyBullets.Contains(bullet))
+            activeEnemyBullets.Add(bullet);
+
+        bullet.transform.SetParent(null, false);
+        bullet.gameObject.SetActive(true);
+
+        return bullet;
+    }
+
+    public void ReturnEnemyBullet(EnemyBullet bullet)
+    {
+        bullet.gameObject.SetActive(false);
+        bullet.transform.SetParent(enemyBulletsPool.transform, false);
+
+        if (activeEnemyBullets.Contains(bullet))
+            activeEnemyBullets.Remove(bullet);
+
+        inactiveEnemyBullets.Enqueue(bullet);
+        enemyBulletCount++;
+    }
+
+    #endregion
+
     public int GetPoisionCloudPrepare()
     {
         return poisonCloudPrepare;
@@ -264,6 +321,7 @@ public class ProjectilesManager : MonoBehaviour
         ClearAllSlimeBullets();
         ClearAllSlimeBeams();
         ClearAllPoisonClouds();
+        ClearAllEnemyBullets();
     }
 
     private void ClearAllSlimeBullets()
@@ -296,6 +354,17 @@ public class ProjectilesManager : MonoBehaviour
             foreach (var cloud in activePoisonClouds)
             {
                 ReturnPoisonCloud(cloud);
+            }
+        }
+    }
+
+    private void ClearAllEnemyBullets()
+    {
+        if (activeEnemyBullets != null && activeEnemyBullets.Count > 0)
+        {
+            foreach (var bullet in activeEnemyBullets)
+            {
+                ReturnEnemyBullet(bullet);
             }
         }
     }

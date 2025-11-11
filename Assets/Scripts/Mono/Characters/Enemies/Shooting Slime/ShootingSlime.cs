@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class RedPig : BaseEnemy
+public class ShootingSlime : BaseEnemy
 {
     private BaseEnemyHealth health;
-    private BaseEnemyMovement movement;
+    private ShootingSlimeMovement movement;
+    private ShootingLogic shootingLogic;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -14,7 +15,8 @@ public class RedPig : BaseEnemy
     private void OnEnable()
     {
         health = GetComponent<BaseEnemyHealth>();
-        movement = GetComponent<BaseEnemyMovement>();
+        movement = GetComponent<ShootingSlimeMovement>();
+        shootingLogic = GetComponentInChildren<ShootingLogic>();
     }
 
     // Update is called once per frame
@@ -34,5 +36,7 @@ public class RedPig : BaseEnemy
 
         int enemySpike = (int)(baseSpike + difficultyMultiplier);
         spike = enemySpike;
+
+        shootingLogic.Initialize(difficultyMultiplier);
     }
 }

@@ -9,26 +9,20 @@ public class EnemyManager : MonoBehaviour
 {
     private static EnemyManager _instance;
 
+    [Header("Difficulty Settings")]
+    [SerializeField] private float difficultyGrowthExponent = 1.05f;
+
+    [Header("Enemies Prepare Quantity Settings")]
     [SerializeField] private int redPigPrepare;
     [SerializeField] private int explodeSlimePrepare;
-    public List<GameObject> SpawnerList;
+    [SerializeField] private int shootingSlimePrepare;
 
     [Header("Refs")]
+    public List<GameObject> SpawnerList;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject redPigPrefab;
     [SerializeField] private GameObject explodeSlimePrefab;
-
-    private Queue<GameObject> inactiveRedPigs;
-    private List<GameObject> activeRedPigs;
-    private Transform redPigPool;
-    private int inactiveRedPigsCount = 0;
-
-    private Queue<GameObject> inactiveExplodeSlimes;
-    private List<GameObject> activeExplodeSlimes;
-    private Transform explodeSlimePool;
-    private int inactiveExplodeSlimesCount = 0;
-
-    Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
+    [SerializeField] private GameObject shootingSlimePrefab;
 
     [Header("Spawning stats")]
     [SerializeField] private int baseEnemiesPerWave;        // Base number of enemies per wave
@@ -44,8 +38,24 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float individualEnemyDelay;    // Delay between spawning each enemy in a wave
     private float individualEnemyDelayTimer;
 
-    //private float difficultyMultiplier;
     private double timeSinceStartPlaying;
+
+    private Queue<GameObject> inactiveRedPigs;
+    private List<GameObject> activeRedPigs;
+    private Transform redPigPool;
+    private int inactiveRedPigsCount = 0;
+
+    private Queue<GameObject> inactiveExplodeSlimes;
+    private List<GameObject> activeExplodeSlimes;
+    private Transform explodeSlimePool;
+    private int inactiveExplodeSlimesCount = 0;
+
+    private Queue<GameObject> inactiveShootingSlimes;
+    private List<GameObject> activeShootingSlimes;
+    private Transform shootingSlimePool;
+    private int inactiveShootingSlimesCount = 0;
+
+    Dictionary<GameObject, int> spawnerQueue = new Dictionary<GameObject, int>();
 
     public static EnemyManager Instance
     {
@@ -69,6 +79,9 @@ public class EnemyManager : MonoBehaviour
 
         inactiveExplodeSlimes = new Queue<GameObject>();
         activeExplodeSlimes = new List<GameObject>();
+
+        inactiveShootingSlimes = new Queue<GameObject>();
+        activeShootingSlimes = new List<GameObject>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -175,8 +188,11 @@ public class EnemyManager : MonoBehaviour
         redPigPool = new GameObject("RedPigPool").transform;
         redPigPool.SetParent(transform);
 
-        explodeSlimePool = new GameObject("explodeSlimePool").transform;
+        explodeSlimePool = new GameObject("ExplodeSlimePool").transform;
         explodeSlimePool.SetParent(transform);
+
+        shootingSlimePool = new GameObject("ShootingSlimePool").transform;
+        shootingSlimePool.SetParent(transform);
     }
 
     public void SpawnEnemy(Vector3 position)
@@ -184,21 +200,26 @@ public class EnemyManager : MonoBehaviour
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
+        float difficultyMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, difficultyGrowthExponent);
 
-        GameObject redPig = TakeRedPig();
-        RedPig redPigComponent = redPig.GetComponent<RedPig>();
-        redPigComponent.Initialize(position, difficultyMultiplier);
+        //GameObject redPig = TakeRedPig();
+        //RedPig redPigComponent = redPig.GetComponent<RedPig>();
+        //redPigComponent.Initialize(position, difficultyMultiplier);
 
         //GameObject exSlime = TakeExplodeSlime();
         //ExplodeSlime explodeSlimeComponent = exSlime.GetComponent<ExplodeSlime>();
         //explodeSlimeComponent.Initialize(position, difficultyMultiplier);
+
+        GameObject shootingSlime = TakeShootingSlime();
+        ShootingSlime shootingSlimeComponent = shootingSlime.GetComponent<ShootingSlime>();
+        shootingSlimeComponent.Initialize(position, difficultyMultiplier);
     }
 
     private void PrepareEnemies()
     {
         PrepareRedPig();
         PrepareExplodeSlime();
+        PrepareShootingSlime();
     }
 
     #region Red Pig
@@ -326,6 +347,69 @@ public class EnemyManager : MonoBehaviour
 
     #endregion
 
+    #region Shooting Slime
+
+    private void PrepareShootingSlime()
+    {
+        if (shootingSlimePrefab == null) return;
+
+        for (int i = 0; i < shootingSlimePrepare; i++)
+        {
+            GameObject go = Instantiate(shootingSlimePrefab, shootingSlimePool);
+            go.SetActive(false);
+            inactiveShootingSlimes.Enqueue(go);
+            inactiveShootingSlimesCount++;
+        }
+    }
+
+    public GameObject TakeShootingSlime()
+    {
+        if (inactiveShootingSlimes.Count <= 0)
+            PrepareShootingSlime();
+
+        GameObject go = inactiveShootingSlimes.Dequeue();
+        inactiveShootingSlimesCount--;
+
+        activeShootingSlimes.Add(go);
+
+        go.transform.SetParent(null);
+        go.SetActive(true);
+
+        return go;
+    }
+
+    public void ReturnShootingSlime(GameObject go)
+    {
+        if (go.TryGetComponent<EffectManager>(out EffectManager effectManager))
+            effectManager.ClearAllEffects();
+
+        go.SetActive(false);
+        go.transform.SetParent(shootingSlimePool);
+
+        activeShootingSlimes.Remove(go);
+        inactiveShootingSlimes.Enqueue(go);
+        inactiveShootingSlimesCount++;
+    }
+
+    private void ClearAllShootingSlime()
+    {
+        if (activeShootingSlimes != null && activeShootingSlimes.Count > 0)
+        {
+            foreach (GameObject go in activeShootingSlimes)
+                ReturnShootingSlime(go);
+
+            activeShootingSlimes.Clear();
+        }
+
+    }
+
+    public int GetShootingSlimePrepare()
+    {
+        return shootingSlimePrepare;
+    }
+
+    #endregion
+
     public void Initialize()
     {
         waveTimer = initialSpawnDelay;
@@ -343,6 +427,7 @@ public class EnemyManager : MonoBehaviour
     {
         ClearAllRedPig();
         ClearAllExplodeSlime();
+        ClearAllShootingSlime();
     }
 
     public void SetTimeSinceStartPlaying(double time)
