@@ -1,21 +1,9 @@
 using UnityEngine;
 
-public class HitVFX : MonoBehaviour
+public class HitVFX : BaseVFX
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Return()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Return()
-    {
-        AnimationManager.Instance.ReturnHitEffect(this.gameObject);
+        VFXManager.Instance.ReturnEffect(this);
     }
 }

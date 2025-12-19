@@ -3,369 +3,86 @@ using UnityEngine;
 
 public class ProjectilesManager : MonoBehaviour
 {
-    private static ProjectilesManager _instance;
+    public static ProjectilesManager Instance;
 
-    [Header("Prepare")]
-    [SerializeField] private int slimeBulletPrepare = 100;
-    [SerializeField] private int slimeBeamPrepare = 4;
-    [SerializeField] private int poisonCloudPrepare = 24;
-    [SerializeField] private int enemyBulletPrepare = 50;
+    private readonly HashSet<BaseProjectile> activeProjectiles = new();
 
-    [Header("Prefabs")]
-    [SerializeField] private SlimeBullet slimeBulletPrefab;
-    [SerializeField] private SlimeBeam slimeBeamPrefab;
-    [SerializeField] private PoisonCloud poisonCloudPrefab;
-    [SerializeField] private EnemyBullet enemyBulletPrefab;
-
-    private Queue<SlimeBullet> inactiveSlimeBullets = new Queue<SlimeBullet>();
-    private List<SlimeBullet> activeSlimeBullets = new List<SlimeBullet>();
-    private readonly List<SlimeBullet> slimeBulletsToReclaim = new List<SlimeBullet>();
-    private Transform slimeBulletsPool;
-    private int slimeBulletCount = 0;
-
-    private Queue<SlimeBeam> inactiveSlimeBeams = new Queue<SlimeBeam>();
-    private List<SlimeBeam> activeSlimeBeams = new List<SlimeBeam>();
-    private Transform slimeBeamsPool;
-    private int slimeBeamCount = 0;
-
-    private Queue<PoisonCloud> inactivePoisonClouds = new Queue<PoisonCloud>();
-    private List<PoisonCloud> activePoisonClouds = new List<PoisonCloud>();
-    private Transform poisonCloudsPool;
-    private int poisonCloudCount = 0;
-
-    private Queue<EnemyBullet> inactiveEnemyBullets = new Queue<EnemyBullet>();
-    private List<EnemyBullet> activeEnemyBullets = new List<EnemyBullet>();
-    private Transform enemyBulletsPool;
-    private int enemyBulletCount = 0;
-
-    public static ProjectilesManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = FindFirstObjectByType<ProjectilesManager>();
-            return _instance;
-        }
-    }
+    // Slime Bullets waiting to be reclaimed
+    private readonly List<SlimeBullet> slimeBulletsToReclaim = new();
 
     private void Awake()
     {
-        if (_instance == null)
-            _instance = this;
+        if (Instance == null)
+            Instance = this;
         else
-            Destroy(this.gameObject);
+            Destroy(gameObject);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // -------- SPAWN --------
+    public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation)
+        where T : BaseProjectile
     {
-        CreatePools();
-
-        // Prepare the initial pool of entities
-        PreparePoisonCloud();
-        PrepareSlimeBeam();
-        PrepareSlimeBullet();
-        PrepareEnemyBullet();
+        T projectile = PoolingManager.Instance.Spawn(prefab, position, rotation);
+        activeProjectiles.Add(projectile);
+        return projectile;
     }
 
-    // Update is called once per frame
-    void Update()
+    // -------- RETURN --------
+    public void Return(BaseProjectile projectile)
     {
+        if (!activeProjectiles.Remove(projectile))
+            return;
 
+        PoolingManager.Instance.Despawn(projectile);
     }
 
-    public void CreatePools()
+    // -------- CLEANUP --------
+    public void Initialize()
     {
-        slimeBulletsPool = new GameObject("SlimeBulletsPool").transform;
-        slimeBulletsPool.SetParent(transform);
+        foreach (var proj in activeProjectiles)
+            PoolingManager.Instance.Despawn(proj);
 
-        slimeBeamsPool = new GameObject("SlimeBeamsPool").transform;
-        slimeBeamsPool.SetParent(transform);
-
-        poisonCloudsPool = new GameObject("PoisionCloudsPool").transform;
-        poisonCloudsPool.SetParent(transform);
-
-        enemyBulletsPool = new GameObject("EnemyBulletsPool").transform;
-        enemyBulletsPool.SetParent(transform);
+        activeProjectiles.Clear();
+        GameInitializationManager.Instance.hasCleanProjectiles = true;
     }
 
-    #region Slime Bullet
+    // ---------------- SLIME BULLET RECLAIM ----------------
 
-    private void PrepareSlimeBullet()
+    /// <summary>
+    /// Mark Slime Bullet to be reclaimed later
+    /// </summary>
+    public void RegisterSlimeBulletToReclaim(SlimeBullet slimeBullet)
     {
-        if (slimeBulletPrefab == null) return;
-
-        for (int i = 0; i < slimeBulletPrepare; i++)
-        {
-            SlimeBullet slimeBulletInstance = Instantiate(slimeBulletPrefab, slimeBulletsPool);
-            slimeBulletInstance.gameObject.SetActive(false);
-            inactiveSlimeBullets.Enqueue(slimeBulletInstance);
-            slimeBulletCount++;
-        }
+        if (activeProjectiles.Contains(slimeBullet))
+            slimeBulletsToReclaim.Add(slimeBullet);
     }
 
-    public SlimeBullet TakeSlimeBullet()
+    /// <summary>
+    /// Remove Slime Bullet from reclaim queue
+    /// </summary>
+    public void UnregisterSlimeBulletToReclaim(SlimeBullet slimeBullet)
     {
-        if (inactiveSlimeBullets.Count <= 0)
-            PrepareSlimeBullet();
-
-        SlimeBullet bullet = inactiveSlimeBullets.Dequeue();
-        slimeBulletCount--;
-
-        if (!activeSlimeBullets.Contains(bullet))
-            activeSlimeBullets.Add(bullet);
-
-        bullet.transform.SetParent(null, false);
-        bullet.gameObject.SetActive(true);
-
-        return bullet;
+        slimeBulletsToReclaim.Remove(slimeBullet);
     }
 
-    public void ReturnSlimeBullet(SlimeBullet bullet)
-    {
-        UnregisterSlimeBulletsToReclaim(bullet);
-        bullet.gameObject.SetActive(false);
-        bullet.transform.SetParent(slimeBulletsPool.transform, false);
-
-        if (activeSlimeBullets.Contains(bullet))
-            activeSlimeBullets.Remove(bullet);
-
-        inactiveSlimeBullets.Enqueue(bullet);
-        slimeBulletCount++;
-    }
-
-    public void RegisterSlimeBulletsToReclaim(SlimeBullet bullet)
-    {
-        if (!slimeBulletsToReclaim.Contains(bullet))
-            slimeBulletsToReclaim.Add(bullet);
-    }
-
-    public void UnregisterSlimeBulletsToReclaim(SlimeBullet bullet)
-    {
-        if (slimeBulletsToReclaim.Contains(bullet))
-            slimeBulletsToReclaim.Remove(bullet);
-    }
-
-    public bool HasWaitingSlimeBullet()
+    /// <summary>
+    /// Are there Slime Bullet waiting to be reclaimed?
+    /// </summary>
+    public bool HasSlimeBulletsToReclaim()
     {
         return slimeBulletsToReclaim.Count > 0;
     }
 
-    public List<SlimeBullet> GetActiveBullets()
+    public List<SlimeBullet> GetSlimeBulletsWaitToReclaim()
     {
         return slimeBulletsToReclaim;
     }
 
-    #endregion
-
-    #region SlimeBeam
-
-    private void PrepareSlimeBeam()
+    /// <summary>
+    /// Snapshot for safe iteration
+    /// </summary>
+    public IReadOnlyCollection<SlimeBullet> GetSlimeBulletsToReclaim()
     {
-        if (slimeBeamPrefab == null) return;
-
-        for (int i = 0; i < slimeBeamPrepare; i++)
-        {
-            SlimeBeam beam = Instantiate(slimeBeamPrefab, slimeBeamsPool);
-            beam.gameObject.SetActive(false);
-            slimeBeamCount++;
-            inactiveSlimeBeams.Enqueue(beam);
-        }
-    }
-
-    public SlimeBeam TakeSlimeBeam()
-    {
-        if (inactiveSlimeBeams.Count <= 0)
-            PrepareSlimeBeam();
-
-        SlimeBeam beam = inactiveSlimeBeams.Dequeue();
-        if (!activeSlimeBeams.Contains(beam))
-            activeSlimeBeams.Add(beam);
-
-        beam.transform.SetParent(null, false);
-        beam.gameObject.SetActive(true);
-        slimeBeamCount--;
-
-        return beam;
-    }
-
-    public void ReturnSlimeBeam(SlimeBeam beam)
-    {
-        if (beam == null) return;
-
-        beam.gameObject.SetActive(false);
-        beam.transform.SetParent(slimeBeamsPool, false);
-
-        if (activeSlimeBeams.Contains(beam))
-            activeSlimeBeams.Remove(beam);
-
-        inactiveSlimeBeams.Enqueue(beam);
-        slimeBeamCount++;
-    }
-
-    #endregion
-
-    #region Poison Cloud
-
-    private void PreparePoisonCloud()
-    {
-        if (poisonCloudPrefab == null) return;
-
-        for (int i = 0; i < poisonCloudPrepare; i++)
-        {
-            PoisonCloud cloud = Instantiate(poisonCloudPrefab, poisonCloudsPool);
-            cloud.gameObject.SetActive(false);
-            poisonCloudCount++;
-            inactivePoisonClouds.Enqueue(cloud);
-        }
-    }
-
-    public PoisonCloud TakePoisonCloud()
-    {
-        if (inactivePoisonClouds.Count <= 0)
-            PreparePoisonCloud();
-
-        PoisonCloud cloud = inactivePoisonClouds.Dequeue();
-
-        if (!activePoisonClouds.Contains(cloud))
-            activePoisonClouds.Add(cloud);
-
-        cloud.transform.SetParent(null, false);
-        cloud.gameObject.SetActive(true);
-        poisonCloudCount--;
-
-        return cloud;
-    }
-
-    public void ReturnPoisonCloud(PoisonCloud cloud)
-    {
-        if (cloud == null) return;
-
-        cloud.gameObject.SetActive(false);
-        cloud.transform.SetParent(poisonCloudsPool, false);
-
-        if (activePoisonClouds.Contains(cloud))
-            activePoisonClouds.Remove(cloud);
-
-        inactivePoisonClouds.Enqueue(cloud);
-
-        poisonCloudCount++;
-    }
-
-    #endregion
-
-    #region Enemy Bullet
-
-    private void PrepareEnemyBullet()
-    {
-        if (enemyBulletPrefab == null) return;
-
-        for (int i = 0; i < enemyBulletPrepare; i++)
-        {
-            EnemyBullet slimeBulletInstance = Instantiate(enemyBulletPrefab, enemyBulletsPool);
-            slimeBulletInstance.gameObject.SetActive(false);
-            inactiveEnemyBullets.Enqueue(slimeBulletInstance);
-            enemyBulletCount++;
-        }
-    }
-
-    public EnemyBullet TakeEnemyBullet()
-    {
-        if (inactiveEnemyBullets.Count <= 0)
-            PrepareEnemyBullet();
-
-        EnemyBullet bullet = inactiveEnemyBullets.Dequeue();
-        enemyBulletCount--;
-
-        if (!activeEnemyBullets.Contains(bullet))
-            activeEnemyBullets.Add(bullet);
-
-        bullet.transform.SetParent(null, false);
-        bullet.gameObject.SetActive(true);
-
-        return bullet;
-    }
-
-    public void ReturnEnemyBullet(EnemyBullet bullet)
-    {
-        bullet.gameObject.SetActive(false);
-        bullet.transform.SetParent(enemyBulletsPool.transform, false);
-
-        if (activeEnemyBullets.Contains(bullet))
-            activeEnemyBullets.Remove(bullet);
-
-        inactiveEnemyBullets.Enqueue(bullet);
-        enemyBulletCount++;
-    }
-
-    #endregion
-
-    public int GetPoisionCloudPrepare()
-    {
-        return poisonCloudPrepare;
-    }
-
-    public int GetSlimeBeamPrepare()
-    {
-        return slimeBeamPrepare;
-    }
-
-    public void Initialize()
-    {
-        ClearAllProjectiles();
-        GameInitializationManager.Instance.hasCleanProjectiles = true;
-    }
-
-    public void ClearAllProjectiles()
-    {
-        ClearAllSlimeBullets();
-        ClearAllSlimeBeams();
-        ClearAllPoisonClouds();
-        ClearAllEnemyBullets();
-    }
-
-    private void ClearAllSlimeBullets()
-    {
-        if (activeSlimeBullets != null && activeSlimeBullets.Count > 0)
-        {
-            foreach (var bullet in activeSlimeBullets)
-            {
-                ReturnSlimeBullet(bullet);
-                UnregisterSlimeBulletsToReclaim(bullet);
-            }
-        }
-    }
-
-    private void ClearAllSlimeBeams()
-    {
-        if (activeSlimeBeams != null && activeSlimeBeams.Count > 0)
-        {
-            foreach (var beam in activeSlimeBeams)
-            {
-                ReturnSlimeBeam(beam);
-            }
-        }
-    }
-
-    private void ClearAllPoisonClouds()
-    {
-        if (activePoisonClouds != null && activePoisonClouds.Count > 0)
-        {
-            foreach (var cloud in activePoisonClouds)
-            {
-                ReturnPoisonCloud(cloud);
-            }
-        }
-    }
-
-    private void ClearAllEnemyBullets()
-    {
-        if (activeEnemyBullets != null && activeEnemyBullets.Count > 0)
-        {
-            foreach (var bullet in activeEnemyBullets)
-            {
-                ReturnEnemyBullet(bullet);
-            }
-        }
+        return slimeBulletsToReclaim;
     }
 }

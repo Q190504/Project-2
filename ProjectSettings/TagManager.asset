@@ -17,11 +17,11 @@ TagManager:
   - Enemy
   - SlimeBullet
   - Impassable
-  - PoisonCloud
+  - PawPrintPoisonCloud
   - ExperienceOrb
   - RadiantField
   - EnemyBullet
-  - 
+  - EnemyPoisonCloud
   - 
   - 
   - 

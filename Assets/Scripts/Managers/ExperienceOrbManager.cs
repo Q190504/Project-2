@@ -1,130 +1,65 @@
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.Transforms;
 using UnityEngine;
 
 public class ExperienceOrbManager : MonoBehaviour
 {
-    private static ExperienceOrbManager _instance;
+    public static ExperienceOrbManager Instance;
 
-    [SerializeField] int baseExperiencePerOrb;
-    [SerializeField] private int orbPrepare;
-    [SerializeField] private float spawnChance; // <= 1  Chance to spawn an orb when an enemy is defeated
     [SerializeField] private ExperienceOrb orbPrefab;
+    [SerializeField] private int baseExperiencePerOrb;
+    [SerializeField, Range(0f, 1f)] private float spawnChance;
 
-    private Queue<ExperienceOrb> inactiveOrbs;
-    private List<ExperienceOrb> activeOrbs;
-    private Transform orbsPool;
-    private int orbCount = 0;
-
-    [Header("Spawing stats")]
-    //private float difficultyMultiplier;
+    private readonly HashSet<ExperienceOrb> activeOrbs = new();
     private double timeSinceStartPlaying;
-
-    public static ExperienceOrbManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = FindFirstObjectByType<ExperienceOrbManager>();
-            return _instance;
-        }
-    }
 
     private void Awake()
     {
-        if (_instance == null)
-            _instance = this;
+        if (Instance == null)
+            Instance = this;
         else
-            Destroy(this.gameObject);
-
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        inactiveOrbs = new Queue<ExperienceOrb>();
-        activeOrbs = new List<ExperienceOrb>();
-
-        orbsPool = new GameObject("OrbsPool").transform;
-        orbsPool.SetParent(transform);
-
-        PrepareOrb();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void PrepareOrb()
-    {
-        if (orbPrefab == null) return;
-
-        for (int i = 0; i < orbPrepare; i++)
-        {
-            ExperienceOrb orb = GameObject.Instantiate(orbPrefab, orbsPool);
-            orb.gameObject.SetActive(false);
-            inactiveOrbs.Enqueue(orb);
-            orbCount++;
-        }
+            Destroy(gameObject);
     }
 
     public void TrySpawnExperienceOrb(Vector3 position)
     {
-        if (Random.value < spawnChance)
-        {
-            SpawnOrb(position);
-        }
-    }
-
-    public void SpawnOrb(Vector3 position)
-    {
         if (!GameManager.Instance.IsPlaying())
             return;
 
-        ExperienceOrb orbInstance = Take();
-
-        orbInstance.transform.position = position;
-        float experienceMultiplier = 1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
-        int ex = Mathf.FloorToInt(baseExperiencePerOrb * experienceMultiplier);
-        orbInstance.Initialize(ex);
+        if (Random.value <= spawnChance)
+            SpawnOrb(position);
     }
 
-    public ExperienceOrb Take()
+    private void SpawnOrb(Vector3 position)
     {
-        if (inactiveOrbs.Count <= 0)
-            PrepareOrb();
+        ExperienceOrb orb = PoolingManager.Instance.Spawn(
+            orbPrefab,
+            position,
+            Quaternion.identity
+        );
 
-        ExperienceOrb orb = inactiveOrbs.Dequeue();
-        orbCount--;
-        orb.gameObject.SetActive(true);
-        return orb;
+        activeOrbs.Add(orb);
+
+        float multiplier =
+            1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.2f);
+
+        orb.Initialize(Mathf.FloorToInt(baseExperiencePerOrb * multiplier));
     }
 
-    public void Return(ExperienceOrb orb)
+    public void ReturnOrb(ExperienceOrb orb)
     {
-        orb.Initialize(0);
-        orb.gameObject.SetActive(false);
-        orb.transform.SetParent(orbsPool.transform, false);
-        inactiveOrbs.Enqueue(orb);
-        orbCount++;
+        if (!activeOrbs.Remove(orb))
+            return;
+
+        PoolingManager.Instance.Despawn(orb);
     }
 
     public void Initialize()
     {
-        ClearOrbs();
-        GameInitializationManager.Instance.cleanedOrbs = true;
-    }
+        foreach (var orb in activeOrbs)
+            PoolingManager.Instance.Despawn(orb);
 
-    public void ClearOrbs()
-    {
-        if (activeOrbs != null && activeOrbs.Count > 0)
-        {
-            foreach (var orb in activeOrbs)
-                Return(orb);
-        }
+        activeOrbs.Clear();
+        GameInitializationManager.Instance.cleanedOrbs = true;
     }
 
     public void SetTimeSinceStartPlaying(double time)

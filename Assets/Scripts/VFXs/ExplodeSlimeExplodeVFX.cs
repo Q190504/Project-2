@@ -1,26 +1,14 @@
 using UnityEngine;
 
-public class ExplodeSlimeExplodeVFX : MonoBehaviour
+public class ExplodeSlimeExplodeVFX : BaseVFX
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void PlaySFX()
     {
         AudioManager.Instance.PlayExplodeSlimeExplosionSFX();
     }
 
-    public void Return()
+    public override void Return()
     {
-        AnimationManager.Instance.ReturnExplodeSlimeExplodeEffect(this.gameObject);
+        VFXManager.Instance.ReturnEffect(this);
     }
 }

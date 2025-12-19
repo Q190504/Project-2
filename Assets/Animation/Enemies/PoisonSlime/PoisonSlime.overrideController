@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PoisonSlime
+  m_Controller: {fileID: 9100000, guid: cd6cdfd74969c644b9c36a42ea492a21, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: e33292df2ccc65e489c2eda4a0ff61c2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2707afc6fbd7de04c83a25a412f5d80b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1a59b90c02cea93438f10296793f01e9, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d219d98f1af46d4418342609b2bd0fdf, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 33db022d239dad24cbdee4d132852730, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9fd2797aa9326b04ba5ce24294b9af0f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 59f57e787bff76f43a88013a52745951, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5ad2bf27c1c40d24c922ab24b24485fe, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 2dbba70ff56a70d4b824cba15148c75e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a912848ee4a92974f94ea2864c753695, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 95fff4bbaf12c3f4bb41b0dfe07e0eaf, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ce3754197bc4e0c4990b5ef75c051396, type: 2}

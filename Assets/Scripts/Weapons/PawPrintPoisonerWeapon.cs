@@ -1,0 +1,149 @@
+using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
+
+public class PawPrintPoisonerWeapon : BaseWeapon
+{
+    [SerializeField] private List<PawPrintPoisonerLevelDataSO> levelDatas;
+
+    private bool canSpawnNewCloud;
+
+    private float timer;
+    [SerializeField] private float tick;
+    [SerializeField] private float cooldown;
+    [SerializeField] private int maximumClouds;
+    [SerializeField] private float distanceToCreateACloud;
+    private float distanceTraveled;
+
+    [Header("Refs")]
+    [SerializeField] private GameObject player;
+    [SerializeField] private PawPrintPoisonCloud pawPrintPoisonCloudPrefab;
+
+    private PlayerMovement playerMovement;
+    private AbilityHaste abilityHaste;
+    private GenericDamageModifier genericDamageModifier;
+    private FrenzySkill FrenzySkill;
+
+    private List<PawPrintPoisonCloud> activePoisonClouds;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Cant find player in SlimeBeamShooterWeapon");
+            return;
+        }
+
+        playerMovement = player.GetComponent<PlayerMovement>();
+        abilityHaste = player.GetComponent<AbilityHaste>();
+        genericDamageModifier = player.GetComponent<GenericDamageModifier>();
+        FrenzySkill = player.GetComponent<FrenzySkill>();
+
+        activePoisonClouds = new List<PawPrintPoisonCloud>();
+
+        isInitialized = false;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (!IsActive) return;
+
+        timer -= Time.deltaTime;
+        if (timer > 0) return;
+
+        PawPrintPoisonerLevelDataSO levelData = GetCurrentLevelData();
+
+        int damagePerTick = levelData.damagePerTick;
+        int finalDamagePerTick = (int)(damagePerTick * (1 + genericDamageModifier.GetValue() + FrenzySkill.GetFrenzyBonusPercent()));
+
+        float cloudRadius = levelData.cloudRadius;
+        float maximumCloudDuration = levelData.maximumCloudDuration;
+        float bonusMoveSpeedPerTargetInTheCloudModifier = levelData.bonusMoveSpeedPerTargetInTheCloudModifier;
+
+        // Update distance traveled
+        float playerCurrentSpeed = playerMovement.GetCurrentSpeed();
+        float distanceThisFrame = playerCurrentSpeed * Time.deltaTime;
+        distanceTraveled += distanceThisFrame;
+
+        // If the player moved at least distanceToCreateACloud & is not in any existing cloud, create a new one
+        if (distanceTraveled >= distanceToCreateACloud)
+        {
+            // If the player isn't in any existing cloud, create a new one
+            if (canSpawnNewCloud)
+            {
+                // If total number of clouds is greater than maximumClouds, remove the oldest cloud
+                if (activePoisonClouds.Count >= maximumClouds)
+                {
+                    PawPrintPoisonCloud oldestCloud = activePoisonClouds[0];
+                    activePoisonClouds.Remove(oldestCloud);
+                    ProjectilesManager.Instance.Return(oldestCloud);
+                }
+
+                // Spawn the cloud
+                PawPrintPoisonCloud cloud = ProjectilesManager.Instance.Spawn
+                    (pawPrintPoisonCloudPrefab, player.transform.position, Quaternion.identity);
+
+                // Set the cloud's stats
+                SetCloudStats(cloud, tick, finalDamagePerTick, cloudRadius, maximumCloudDuration);
+
+                // Add this cloud to the list of clouds
+                if (!activePoisonClouds.Contains(cloud))
+                    activePoisonClouds.Add(cloud);
+
+                float finalCooldownTime = abilityHaste.GetCooldownTimeAfterReduction(cooldown);
+                timer = finalCooldownTime; // Reset timer
+                distanceTraveled = 0; // Reset distance traveled
+            }
+        }
+
+        // Boost Speed
+        if (bonusMoveSpeedPerTargetInTheCloudModifier > 0)
+        {
+            int totalEnemiesInCloud = 0;
+            foreach (var cloud in activePoisonClouds)
+                totalEnemiesInCloud += cloud.GetTotalEnemies();
+
+            // Update player speed
+            EffectManager effectManager = player.GetComponent<EffectManager>();
+            float bonusMultiplier = bonusMoveSpeedPerTargetInTheCloudModifier * totalEnemiesInCloud;
+            effectManager.ApplyEffect(EffectType.BoostMoveSpeed, math.INFINITY, bonusMultiplier,
+                InGameObjectType.PawPrintPoisonCloud, InGameObjectType.Player);
+        }
+    }
+
+    public void SetCloudStats(PoisonCloud cloud, float tick, int damagePerTick, float cloudRadius,
+    float maximumCloudDuration)
+    {
+        cloud.Initialize( tick, damagePerTick, cloudRadius, maximumCloudDuration);
+    }
+
+    public void SetCanSpawnNewCloud(bool status)
+    {
+        canSpawnNewCloud = status;
+    }
+
+    public override void Initialize()
+    {
+        timer = 0;
+        distanceTraveled = 0;
+        currentLevel = 0;
+        canSpawnNewCloud = true;
+        if (activePoisonClouds.Count > 0)
+            activePoisonClouds.Clear();
+
+        isInitialized = true;
+    }
+
+    private PawPrintPoisonerLevelDataSO GetCurrentLevelData()
+    {
+        return levelDatas[math.min(currentLevel - 1, levelDatas.Count - 1)];
+    }
+
+    public void RemoveCloudFromList(PawPrintPoisonCloud cloud)
+    {
+        if (cloud == null && activePoisonClouds.Contains(cloud))
+            activePoisonClouds.Remove(cloud);
+    }
+}
