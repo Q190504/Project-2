@@ -12,30 +12,30 @@ public class EnemyAttackState : EnemyState
     public override void AnimationTriggerEvent(BaseEnemy.AnimationTriggerType triggerType)
     {
         base.AnimationTriggerEvent(triggerType);
-        enemy.EnemyAttackBase.DoAnimationTriggerEventLogic(enemy, triggerType);
+        enemy.EnemyAttackBaseInstance.DoAnimationTriggerEventLogic(triggerType);
     }
 
     public override void EnterState()
     {
         base.EnterState();
-        enemy.EnemyAttackBase.DoEnterLogic(enemy);
+        enemy.EnemyAttackBaseInstance.DoEnterLogic();
     }
 
     public override void ExitState()
     {
         base.ExitState();
-        enemy.EnemyAttackBase.DoExitLogic(enemy);
+        enemy.EnemyAttackBaseInstance.DoExitLogic();
     }
 
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        enemy.EnemyAttackBase.DoFrameUpdateLogic(enemy);
+        enemy.EnemyAttackBaseInstance.DoFrameUpdateLogic();
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        enemy.EnemyAttackBase.DoPhysicsLogic(enemy);
+        enemy.EnemyAttackBaseInstance.DoPhysicsLogic();
     }
 }

@@ -12,30 +12,30 @@ public class EnemySkill2State : EnemyState
     public override void AnimationTriggerEvent(BaseEnemy.AnimationTriggerType triggerType)
     {
         base.AnimationTriggerEvent(triggerType);
-        enemy.EnemySkill2Base.DoAnimationTriggerEventLogic(enemy, triggerType);
+        enemy.EnemySkill2BaseInstance.DoAnimationTriggerEventLogic(triggerType);
     }
 
     public override void EnterState()
     {
         base.EnterState();
-        enemy.EnemySkill2Base.DoEnterLogic(enemy);
+        enemy.EnemySkill2BaseInstance.DoEnterLogic();
     }
 
     public override void ExitState()
     {
         base.ExitState();
-        enemy.EnemySkill2Base.DoExitLogic(enemy);
+        enemy.EnemySkill2BaseInstance.DoExitLogic();
     }
 
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        enemy.EnemySkill2Base.DoFrameUpdateLogic(enemy);
+        enemy.EnemySkill2BaseInstance.DoFrameUpdateLogic();
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        enemy.EnemySkill2Base.DoPhysicsLogic(enemy);
+        enemy.EnemySkill2BaseInstance.DoPhysicsLogic();
     }
 }

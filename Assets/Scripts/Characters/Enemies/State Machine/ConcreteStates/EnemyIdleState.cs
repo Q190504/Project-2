@@ -9,30 +9,30 @@ public class EnemyIdleState : EnemyState
     public override void AnimationTriggerEvent(BaseEnemy.AnimationTriggerType triggerType)
     {
         base.AnimationTriggerEvent(triggerType);
-        enemy.EnemyIdleBase.DoAnimationTriggerEventLogic(enemy, triggerType);
+        enemy.EnemyIdleBaseInstance.DoAnimationTriggerEventLogic(triggerType);
     }
 
     public override void EnterState()
     {
         base.EnterState();
-        enemy.EnemyIdleBase.DoEnterLogic(enemy);
+        enemy.EnemyIdleBaseInstance.DoEnterLogic();
     }
 
     public override void ExitState()
     {
         base.ExitState();
-        enemy.EnemyIdleBase.DoExitLogic(enemy);
+        enemy.EnemyIdleBaseInstance.DoExitLogic();
     }
 
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-        enemy.EnemyIdleBase.DoFrameUpdateLogic(enemy);
+        enemy.EnemyIdleBaseInstance.DoFrameUpdateLogic();
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
-        enemy.EnemyIdleBase.DoPhysicsLogic(enemy);
+        enemy.EnemyIdleBaseInstance.DoPhysicsLogic();
     }
 }
