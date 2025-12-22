@@ -14,10 +14,9 @@ public class EnemyManager : MonoBehaviour
     [Header("Player")]
     [SerializeField] private GameObject player;
 
-    [Header("Spawn Rate")]
-    [SerializeField]
-    [Tooltip("Enemies per second")]
-    private float baseSpawnRate = 1.2f;
+    [Header("Spawn Settings")]
+    [SerializeField] private float beginDelaySpawnSeconds = 2f;
+    [SerializeField] private float baseSpawnRate = 1.2f;
     [SerializeField] private float spawnRateGrowth = 0.05f;
 
     [Header("Spawn Count Curve")]
@@ -51,10 +50,10 @@ public class EnemyManager : MonoBehaviour
 
         #region Spawn Enemies
 
-        if (!GameManager.Instance.IsPlaying())
-            return;
-
         timeSinceStartPlaying += Time.deltaTime;
+        float secondsSinceStartPlaying = (float)timeSinceStartPlaying % 60f;
+        if (secondsSinceStartPlaying < beginDelaySpawnSeconds)
+            return;
 
         if (activeEnemies.Count >= maxAliveEnemies)
             return;
