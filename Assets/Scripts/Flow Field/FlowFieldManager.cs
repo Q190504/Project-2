@@ -31,6 +31,13 @@ public class FlowFieldManager : MonoBehaviour
     {
         InitializeGrid();
         ComputeFlowField();
+        if (FlowFieldDebug.Instance != null)
+            FlowFieldDebug.Instance.Init();
+        else
+        {
+            Debug.LogWarning("FlowFieldDebug singleton not found.");
+            return;
+        }
     }
 
     /// <summary> Full flow field computation pipeline </summary>

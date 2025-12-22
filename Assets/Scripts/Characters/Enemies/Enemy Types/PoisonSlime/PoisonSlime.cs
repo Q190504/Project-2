@@ -7,13 +7,6 @@ public class PoisonSlime : BaseEnemy
     [Header("Refs")]
     [SerializeField] private EnemyPoisonCloud enemyPoisonCloudPrefab;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        maxHealth = baseMaxHealth;
-        currentHealth = baseMaxHealth;
-    }
-
     public override void Initialize(float difficultyMultiplier)
     {
         int enemyHP = (int)(BaseMaxHealth + difficultyMultiplier);

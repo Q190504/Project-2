@@ -4,12 +4,21 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 {
     [SerializeField] protected InGameObjectType objectTypeCanDamage;
     [SerializeField] protected MoveDirectionType moveDirection;
+
+    [Header("Spike Damage")]
     [SerializeField] protected int baseSpike;
     protected int spike;
 
+    [Header("Health")]
     [SerializeField] protected int baseMaxHealth;
     protected int maxHealth;
     protected int currentHealth;
+
+    [Header("Move Variables")]
+    [SerializeField] private float moveSpeed;
+    protected float targetSpeed;
+    protected float nodeSize;
+    protected int mapWidth;
 
     [SerializeField] protected BaseVFX hitEffectPrefab;
 
@@ -18,15 +27,17 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
     public bool CanAttack { get; set; }
     public bool IsWithinStrikingDistance { get; set; } = true;
 
-
     public int BaseMaxHealth => baseMaxHealth;
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
 
+    // Refs
     public Rigidbody2D RB { get; set; }
     public Animator Animator { get; set; }
     public SpriteRenderer SpriteRenderer { get; set; }
     public EffectManager EffectManager { get; set; }
+    public FlowFieldManager FlowFieldManager { get; set; }
+    public GameObject Player { get; set; }
     public bool IsFacingRight { get; set; } = true;
 
     #region Striking Distance Debug Variables
@@ -65,11 +76,16 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 
     private void Awake()
     {
-        EnemyIdleBaseInstance = Instantiate(EnemyIdleBase);
-        EnemyChaseBaseInstance = Instantiate(EnemyChaseBase);
-        EnemyAttackBaseInstance = Instantiate(EnemyAttackBase);
-        EnemySkill1BaseInstance = Instantiate(EnemySkill1Base);
-        EnemySkill2BaseInstance = Instantiate(EnemySkill2Base);
+        if (EnemyIdleBase != null)
+            EnemyIdleBaseInstance = Instantiate(EnemyIdleBase);
+        if (EnemyChaseBase != null)
+            EnemyChaseBaseInstance = Instantiate(EnemyChaseBase);
+        if (EnemyAttackBase != null)
+            EnemyAttackBaseInstance = Instantiate(EnemyAttackBase);
+        if (EnemySkill1Base != null)
+            EnemySkill1BaseInstance = Instantiate(EnemySkill1Base);
+        if (EnemySkill2Base != null)
+            EnemySkill2BaseInstance = Instantiate(EnemySkill2Base);
 
         StateMachine = new EnemyStateMachine();
         IdleState = new EnemyIdleState(this, StateMachine);
@@ -80,10 +96,17 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected virtual void Start()
     {
         RB = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
+        if (Animator == null)
+        {
+            Animator = GetComponentInChildren<Animator>();
+            if (Animator == null)
+                Debug.LogError($"Can't find Animator in {gameObject.name}");
+        }
+
         SpriteRenderer = GetComponent<SpriteRenderer>();
         if (SpriteRenderer == null)
         {
@@ -97,13 +120,18 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
         maxHealth = baseMaxHealth;
         currentHealth = maxHealth;
 
-        EnemyIdleBaseInstance.Initialize(gameObject, this);
-        EnemyChaseBaseInstance.Initialize(gameObject, this);
-        EnemyAttackBaseInstance.Initialize(gameObject, this);
-        EnemySkill1BaseInstance.Initialize(gameObject, this);
-        EnemySkill2BaseInstance.Initialize(gameObject, this);
+        if (EnemyIdleBaseInstance != null)
+            EnemyIdleBaseInstance.Initialize(gameObject, this);
+        if (EnemyChaseBaseInstance != null)
+            EnemyChaseBaseInstance.Initialize(gameObject, this);
+        if (EnemyAttackBaseInstance != null)
+            EnemyAttackBaseInstance.Initialize(gameObject, this);
+        if (EnemySkill1BaseInstance != null)
+            EnemySkill1BaseInstance.Initialize(gameObject, this);
+        if (EnemySkill2BaseInstance != null)
+            EnemySkill2BaseInstance.Initialize(gameObject, this);
 
-        StateMachine.Initialize(IdleState);
+        StateMachine.Initialize(ChaseState);
     }
 
     // Update is called once per frame

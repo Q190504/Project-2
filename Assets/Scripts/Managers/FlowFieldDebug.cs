@@ -39,24 +39,7 @@ public class FlowFieldDebug : MonoBehaviour
 
     private void Start()
     {
-        gridData = FlowFieldManager.Instance.GetGridData();
 
-        if (gridData == null)
-        {
-            Debug.LogWarning("FlowFieldManager singleton not found.");
-            return;
-        }
-
-        width = gridData.width;
-        height = gridData.height;
-        cellSize = gridData.nodeSize;
-        origin = gridData.originPosition;
-
-        if (flowFieldDebugStatus == FlowFieldDebugStatus.Cost ||
-            flowFieldDebugStatus == FlowFieldDebugStatus.BestCost)
-        {
-            InitializeDebugTexts();
-        }
     }
 
     private void Update()
@@ -74,6 +57,28 @@ public class FlowFieldDebug : MonoBehaviour
             case FlowFieldDebugStatus.Vector:
                 ShowVector();
                 break;
+        }
+    }
+
+    public void Init()
+    {
+        gridData = FlowFieldManager.Instance.GetGridData();
+
+        if (gridData == null)
+        {
+            Debug.LogWarning("FlowFieldManager singleton not found.");
+            return;
+        }
+
+        width = gridData.width;
+        height = gridData.height;
+        cellSize = gridData.nodeSize;
+        origin = gridData.originPosition;
+
+        if (flowFieldDebugStatus == FlowFieldDebugStatus.Cost ||
+            flowFieldDebugStatus == FlowFieldDebugStatus.BestCost)
+        {
+            InitializeDebugTexts();
         }
     }
 
