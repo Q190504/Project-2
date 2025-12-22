@@ -21266,7 +21266,7 @@ MonoBehaviour:
   player: {fileID: 1688281991}
   beginDelaySpawnSeconds: 4
   baseSpawnRate: 1
-  spawnRateGrowth: 0.05
+  spawnRateGrowth: 0.005
   enemiesPerTickCurve:
     serializedVersion: 2
     m_Curve:
