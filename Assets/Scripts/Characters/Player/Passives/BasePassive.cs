@@ -23,7 +23,7 @@ public class BasePassive : MonoBehaviour
         {
             level = 0;
             value = baseValue;
-            OnInitialize(); // Call the subclass-specific logic
+            OnInitialize();
             initialized = true;
         }
     }
