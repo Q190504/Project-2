@@ -369,6 +369,7 @@ GameObject:
   - component: {fileID: 8594300565307815555}
   - component: {fileID: -5767326215207898758}
   - component: {fileID: 5220916131666841590}
+  - component: {fileID: -2665361394720017874}
   m_Layer: 7
   m_Name: Shooting Slime
   m_TagString: Enemy
@@ -534,6 +535,9 @@ MonoBehaviour:
   moveDirection: 3
   baseSpike: 7
   baseMaxHealth: 4
+  targetSpeed: 0
+  nodeSize: 0
+  mapWidth: 0
   hitEffectPrefab: {fileID: 8485009551413792585, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   showRangeDebug: 0
   debugSegments: 50
@@ -542,6 +546,21 @@ MonoBehaviour:
   EnemyAttackBase: {fileID: 11400000, guid: 744da460653926f44ab6cfb25e870351, type: 2}
   EnemySkill1Base: {fileID: 0}
   EnemySkill2Base: {fileID: 0}
+--- !u!114 &-2665361394720017874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2885116409787558276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5132f7989f1b1448f1c95951710660, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  difficultyMultiplier: 0
+  isShooting: 0
+  cooldownTimer: 0
 --- !u!1 &3938008683408170431
 GameObject:
   m_ObjectHideFlags: 0

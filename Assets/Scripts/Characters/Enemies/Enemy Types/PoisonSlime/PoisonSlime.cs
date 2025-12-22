@@ -7,15 +7,9 @@ public class PoisonSlime : BaseEnemy
     [Header("Refs")]
     [SerializeField] private EnemyPoisonCloud enemyPoisonCloudPrefab;
 
-    public override void Initialize(float difficultyMultiplier)
+    public override void Initialize(Transform playerPos, float difficultyMultiplier)
     {
-        int enemyHP = (int)(BaseMaxHealth + difficultyMultiplier);
-        maxHealth = enemyHP;
-        currentHealth = enemyHP;
-
-        int enemySpike = (int)(baseSpike + difficultyMultiplier);
-        spike = enemySpike;
-
+        base.Initialize(playerPos, difficultyMultiplier);
         this.difficultyMultiplier = difficultyMultiplier;
     }
 

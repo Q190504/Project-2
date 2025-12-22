@@ -4,38 +4,33 @@ using UnityEngine;
 
 public class EnemySkill1State : EnemyState
 {
-    public EnemySkill1State(BaseEnemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
+    public override void AnimationTriggerEvent(BaseEnemy enemy, BaseEnemy.AnimationTriggerType triggerType)
     {
-
+        base.AnimationTriggerEvent(enemy, triggerType);
+        enemy.EnemySkill1Base.DoAnimationTriggerEventLogic(enemy, triggerType);
     }
 
-    public override void AnimationTriggerEvent(BaseEnemy.AnimationTriggerType triggerType)
+    public override void EnterState(BaseEnemy enemy)
     {
-        base.AnimationTriggerEvent(triggerType);
-        enemy.EnemySkill1BaseInstance.DoAnimationTriggerEventLogic(triggerType);
+        base.EnterState(enemy);
+        enemy.EnemySkill1Base.DoEnterLogic(enemy);
     }
 
-    public override void EnterState()
+    public override void ExitState(BaseEnemy enemy)
     {
-        base.EnterState();
-        enemy.EnemySkill1BaseInstance.DoEnterLogic();
+        base.ExitState(enemy);
+        enemy.EnemySkill1Base.DoExitLogic(enemy);
     }
 
-    public override void ExitState()
+    public override void FrameUpdate(BaseEnemy enemy)
     {
-        base.ExitState();
-        enemy.EnemySkill1BaseInstance.DoExitLogic();
+        base.FrameUpdate(enemy);
+        enemy.EnemySkill1Base.DoFrameUpdateLogic(enemy);
     }
 
-    public override void FrameUpdate()
+    public override void PhysicsUpdate(BaseEnemy enemy)
     {
-        base.FrameUpdate();
-        enemy.EnemySkill1BaseInstance.DoFrameUpdateLogic();
-    }
-
-    public override void PhysicsUpdate()
-    {
-        base.PhysicsUpdate();
-        enemy.EnemySkill1BaseInstance.DoPhysicsLogic();
+        base.PhysicsUpdate(enemy);
+        enemy.EnemySkill1Base.DoPhysicsLogic(enemy);
     }
 }

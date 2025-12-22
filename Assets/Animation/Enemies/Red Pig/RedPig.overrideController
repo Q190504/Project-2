@@ -9,5 +9,5 @@ AnimatorOverrideController:
   m_Name: RedPig
   m_Controller: {fileID: 9100000, guid: cd6cdfd74969c644b9c36a42ea492a21, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: 2dbba70ff56a70d4b824cba15148c75e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1a59b90c02cea93438f10296793f01e9, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 4e04f575871dd6d47914316e0da5799a, type: 2}

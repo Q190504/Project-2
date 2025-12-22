@@ -24,8 +24,7 @@ public class EnemyManager : MonoBehaviour
     [Tooltip("X = minutes, Y = enemies per spawn tick")]
     [SerializeField] private AnimationCurve enemiesPerTickCurve;
 
-    [Header("Spawner Priority")]
-    [Tooltip("higher = flatter distribution")]
+    [Header("Spawner Priority"), Tooltip("Higher = flatter distribution")]
     [SerializeField] private float spawnerDistanceBias = 2f;
 
     [Header("Enemy Cap")]
@@ -150,7 +149,7 @@ public class EnemyManager : MonoBehaviour
         float difficulty =
             1 + Mathf.Pow((float)timeSinceStartPlaying / 60f, 1.1f);
 
-        enemy.Initialize(difficulty);
+        enemy.Initialize(player.transform, difficulty);
         return enemy;
     }
 

@@ -10094,7 +10094,7 @@ MonoBehaviour:
   - {fileID: 804633026}
   - {fileID: 1183955792}
   player: {fileID: 1688281991}
-  baseSpawnRate: 1.2
+  baseSpawnRate: 1
   spawnRateGrowth: 0.05
   enemiesPerTickCurve:
     serializedVersion: 2
@@ -10120,7 +10120,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  spawnerDistanceBias: 2
+  spawnerDistanceBias: 0.5
   maxAliveEnemies: 100
 --- !u!4 &827541386
 Transform:

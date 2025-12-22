@@ -6,76 +6,50 @@ using UnityEngine;
 public class EnemyChaseDirectToTarget : EnemyChaseSOBase
 {
     [SerializeField] private float moveSpeed;
-    float targetSpeed;
-    float nodeSize;
-    int mapWidth;
 
-    // Refs
-    Rigidbody2D rb;
-    EffectManager effectManager;
-    FlowFieldManager flowFieldManager;
-
-    public override void DoEnterLogic()
+    public override void DoEnterLogic(BaseEnemy enemy)
     {
-        base.DoEnterLogic();
+        base.DoEnterLogic(enemy);
 
-        if (flowFieldManager == null)
-            flowFieldManager = FlowFieldManager.Instance;
-        mapWidth = flowFieldManager.GetMapWidth();
-        nodeSize = flowFieldManager.GetNodeSize();
-        effectManager = enemy.EffectManager;
+        if (enemy.FlowFieldManager == null)
+            enemy.FlowFieldManager = FlowFieldManager.Instance;
     }
 
-    public override void DoExitLogic()
+    public override void DoExitLogic(BaseEnemy enemy)
     {
-        base.DoExitLogic();
+        base.DoExitLogic(enemy);
     }
 
-    public override void DoFrameUpdateLogic()
+    public override void DoFrameUpdateLogic(BaseEnemy enemy)
     {
-        base.DoFrameUpdateLogic();
+        base.DoFrameUpdateLogic(enemy);
         if (!GameManager.Instance.IsPlaying())
-            rb.linearVelocity = Vector2.zero;
+            enemy.RB.linearVelocity = Vector2.zero;
         else
         {
-            ApplyEffect();
-            if (GetMovement().sqrMagnitude < 0.01f)
-                rb.linearVelocity = Vector2.zero;
+            enemy.mapWidth = enemy.FlowFieldManager.GetMapWidth();
+            enemy.nodeSize = enemy.FlowFieldManager.GetNodeSize();
+
+            if (GetMovement(enemy).sqrMagnitude < 0.01f)
+                enemy.RB.linearVelocity = Vector2.zero;
             else
-                enemy.MoveEnemy(GetMovement());
+                enemy.MoveEnemy(GetMovement(enemy));
         }
     }
 
-    public override void DoPhysicsLogic()
+    public float ApplyEffectToMoveSpeed(BaseEnemy enemy)
     {
-        base.DoPhysicsLogic();
-    }
-
-    public override void Initialize(GameObject gameObject, BaseEnemy enemy)
-    {
-        base.Initialize(gameObject, enemy);
-        targetSpeed = moveSpeed;
-        rb = enemy.RB;
-    }
-
-    public override void ResetValues()
-    {
-        base.ResetValues();
-    }
-
-    public void ApplyEffect()
-    {
-        targetSpeed = moveSpeed;
+        float targetSpeed = moveSpeed;
         float multiplier = 1f;
-        if (effectManager.HasEffect(EffectType.Stun))
+        if (enemy.EffectManager.HasEffect(EffectType.Stun))
         {
-            rb.linearVelocity = Vector2.zero;
-            return;
+            enemy.RB.linearVelocity = Vector2.zero;
+            return 0;
         }
 
-        if (effectManager.HasEffect(EffectType.Slow))
+        if (enemy.EffectManager.HasEffect(EffectType.Slow))
         {
-            List<BaseEffect> slowEffects = effectManager.GetEffectOfType(EffectType.Slow);
+            List<BaseEffect> slowEffects = enemy.EffectManager.GetEffectOfType(EffectType.Slow);
 
             foreach (var effect in slowEffects)
             {
@@ -83,21 +57,21 @@ public class EnemyChaseDirectToTarget : EnemyChaseSOBase
             }
         }
 
-        targetSpeed *= multiplier;
+        return targetSpeed *= multiplier;
     }
 
-    public Vector2 GetFlowDirection()
+    public Vector2 GetFlowDirection(BaseEnemy enemy)
     {
-        int x = (int)(enemy.transform.position.x / nodeSize);
-        int y = (int)(enemy.transform.position.y / nodeSize);
-        int index = x + y * mapWidth;
+        int x = (int)(enemy.gameObject.transform.position.x / enemy.nodeSize);
+        int y = (int)(enemy.gameObject.transform.position.y / enemy.nodeSize);
+        int index = x + y * enemy.mapWidth;
 
-        return flowFieldManager.GetDirectionFromIndex(index);
+        return enemy.FlowFieldManager.GetDirectionFromIndex(index);
     }
 
-    protected Vector2 GetMovement()
+    protected Vector2 GetMovement(BaseEnemy enemy)
     {
-        Vector2 flowDirection = GetFlowDirection();
-        return new Vector2(flowDirection.x, flowDirection.y) * targetSpeed;
+        Vector2 flowDirection = GetFlowDirection(enemy);
+        return new Vector2(flowDirection.x, flowDirection.y) * ApplyEffectToMoveSpeed(enemy);
     }
 }

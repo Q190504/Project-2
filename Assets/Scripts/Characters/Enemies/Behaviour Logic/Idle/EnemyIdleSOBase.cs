@@ -2,46 +2,33 @@ using UnityEngine;
 
 public class EnemyIdleSOBase : ScriptableObject
 {
-    protected BaseEnemy enemy;
-    protected Transform transform;
-    protected GameObject gameObject; 
-    protected Transform playerTransform;
-
-    public virtual void Initialize(GameObject gameObject, BaseEnemy enemy) 
-    { 
-        this.gameObject = gameObject; 
-        transform = gameObject.transform;
-        this.enemy = enemy; 
-        playerTransform = GameManager.Instance.GetPlayerGO().transform; 
-    }
-
-    public virtual void DoEnterLogic()
+    public virtual void DoEnterLogic(BaseEnemy enemy)
     {
         enemy.Animator.SetBool("isIlde", true);
     }
 
-    public virtual void DoExitLogic()
+    public virtual void DoExitLogic(BaseEnemy enemy)
     {
         enemy.Animator.SetBool("isIlde", false);
 
-        ResetValues();
+        ResetValues(enemy);
     }
 
-    public virtual void DoFrameUpdateLogic()
+    public virtual void DoFrameUpdateLogic(BaseEnemy enemy)
     {
         if (GameManager.Instance.IsPlaying())
         {
-            enemy.StateMachine.ChangeState(enemy.ChaseState);
+            enemy.StateMachine.ChangeState(enemy, enemy.ChaseState);
             return;
         }
         else if (enemy.CanAttack && enemy.IsWithinStrikingDistance)
         {
-            enemy.StateMachine.ChangeState(enemy.AttackState);
+            enemy.StateMachine.ChangeState(enemy, enemy.AttackState);
             return;
         }
     }
-    public virtual void DoPhysicsLogic() { }
-    public virtual void DoAnimationTriggerEventLogic(BaseEnemy.AnimationTriggerType triggerType) { }
-    public virtual void ResetValues() { }
-    public virtual void SetAnimation() { }
+    public virtual void DoPhysicsLogic(BaseEnemy enemy) { }
+    public virtual void DoAnimationTriggerEventLogic(BaseEnemy enemy, BaseEnemy.AnimationTriggerType triggerType) { }
+    public virtual void ResetValues(BaseEnemy enemy) { }
+    public virtual void SetAnimation(BaseEnemy enemy) { }
 }

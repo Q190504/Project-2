@@ -4,17 +4,17 @@ public class EnemyStateMachine
 {
     public EnemyState CurrentEnemyState { get; set; }
 
-    public void Initialize(EnemyState startingState)
+    public void Initialize(BaseEnemy enemy, EnemyState startingState)
     {
         CurrentEnemyState = startingState;
-        CurrentEnemyState.EnterState();
+        CurrentEnemyState.EnterState(enemy);
     }
 
-    public void ChangeState(EnemyState newState)
+    public void ChangeState(BaseEnemy enemy, EnemyState newState)
     {
-        CurrentEnemyState.ExitState();
+        CurrentEnemyState.ExitState(enemy);
         CurrentEnemyState = newState;
-        CurrentEnemyState.EnterState();
+        CurrentEnemyState.EnterState(enemy);
 
     }
 }

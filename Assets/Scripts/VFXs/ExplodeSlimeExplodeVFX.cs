@@ -6,9 +6,4 @@ public class ExplodeSlimeExplodeVFX : BaseVFX
     {
         AudioManager.Instance.PlayExplodeSlimeExplosionSFX();
     }
-
-    public override void Return()
-    {
-        VFXManager.Instance.ReturnEffect(this);
-    }
 }

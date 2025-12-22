@@ -20,7 +20,7 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
 
     private void OnEnable()
     {
-        if (gameObject.TryGetComponent<ExplodeSlime>(out explodeSlime))
+        if (gameObject.TryGetComponent(out explodeSlime))
             damageTargetObjectType = explodeSlime.GetObjectTypeCanDamage();
 
         animator = GetComponent<Animator>();
@@ -46,7 +46,7 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
 
             foreach (var hit in hits)
             {
-                if (hit.TryGetComponent<ObjectType>(out ObjectType objectType)
+                if (hit.TryGetComponent(out ObjectType objectType)
                     && damageTargetObjectType == objectType.InGameObjectType)
                 {
                     isExploding = true;
@@ -70,9 +70,9 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            if (hit.TryGetComponent<ObjectType>(out ObjectType objectType)
+            if (hit.TryGetComponent(out ObjectType objectType)
                 && damageTargetObjectType == objectType.InGameObjectType
-                && hit.TryGetComponent<IDamageable>(out IDamageable iDamageable))
+                && hit.TryGetComponent(out IDamageable iDamageable))
             {
                 iDamageable.TakeDamage(explodeDamage);
             }
@@ -112,7 +112,7 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
 
     LineRenderer CreateCircleRenderer(Color color)
     {
-        if (!gameObject.TryGetComponent<LineRenderer>(out LineRenderer lr))
+        if (!gameObject.TryGetComponent(out LineRenderer lr))
             lr = new GameObject("Circle").AddComponent<LineRenderer>();
 
         lr.transform.SetParent(transform);

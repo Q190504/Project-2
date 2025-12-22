@@ -15,10 +15,10 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
     protected int currentHealth;
 
     [Header("Move Variables")]
-    [SerializeField] private float moveSpeed;
-    protected float targetSpeed;
-    protected float nodeSize;
-    protected int mapWidth;
+    [HideInInspector]
+    public float nodeSize;
+    [HideInInspector]
+    public int mapWidth;
 
     [SerializeField] protected BaseVFX hitEffectPrefab;
 
@@ -37,7 +37,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
     public SpriteRenderer SpriteRenderer { get; set; }
     public EffectManager EffectManager { get; set; }
     public FlowFieldManager FlowFieldManager { get; set; }
-    public GameObject Player { get; set; }
+    public Transform PlayerTransform { get; set; }
     public bool IsFacingRight { get; set; } = true;
 
     #region Striking Distance Debug Variables
@@ -60,43 +60,47 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 
     #region Scriptable Object Variables
 
-    [SerializeField] private EnemyIdleSOBase EnemyIdleBase;
-    [SerializeField] private EnemyChaseSOBase EnemyChaseBase;
-    [SerializeField] private EnemyAttackSOBase EnemyAttackBase;
-    [SerializeField] private EnemySkill1SOBase EnemySkill1Base;
-    [SerializeField] private EnemySkill2SOBase EnemySkill2Base;
-
-    public EnemyIdleSOBase EnemyIdleBaseInstance { get; set; }
-    public EnemyChaseSOBase EnemyChaseBaseInstance { get; set; }
-    public EnemyAttackSOBase EnemyAttackBaseInstance { get; set; }
-    public EnemySkill1SOBase EnemySkill1BaseInstance { get; set; }
-    public EnemySkill2SOBase EnemySkill2BaseInstance { get; set; }
+    public EnemyIdleSOBase EnemyIdleBase;
+    public EnemyChaseSOBase EnemyChaseBase;
+    public EnemyAttackSOBase EnemyAttackBase;
+    public EnemySkill1SOBase EnemySkill1Base;
+    public EnemySkill2SOBase EnemySkill2Base;
 
     #endregion
 
     private void Awake()
     {
-        if (EnemyIdleBase != null)
-            EnemyIdleBaseInstance = Instantiate(EnemyIdleBase);
-        if (EnemyChaseBase != null)
-            EnemyChaseBaseInstance = Instantiate(EnemyChaseBase);
-        if (EnemyAttackBase != null)
-            EnemyAttackBaseInstance = Instantiate(EnemyAttackBase);
-        if (EnemySkill1Base != null)
-            EnemySkill1BaseInstance = Instantiate(EnemySkill1Base);
-        if (EnemySkill2Base != null)
-            EnemySkill2BaseInstance = Instantiate(EnemySkill2Base);
-
         StateMachine = new EnemyStateMachine();
-        IdleState = new EnemyIdleState(this, StateMachine);
-        ChaseState = new EnemyChaseState(this, StateMachine);
-        AttackState = new EnemyAttackState(this, StateMachine);
-        Skill1State = new EnemySkill1State(this, StateMachine);
-        Skill2State = new EnemySkill2State(this, StateMachine);
+        IdleState = new EnemyIdleState();
+        ChaseState = new EnemyChaseState();
+        AttackState = new EnemyAttackState();
+        Skill1State = new EnemySkill1State();
+        Skill2State = new EnemySkill2State();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected virtual void Start()
+    // Update is called once per frame
+    void Update()
+    {
+        StateMachine.CurrentEnemyState.FrameUpdate(this);
+        SetAnimation();
+    }
+
+    void FixedUpdate()
+    {
+        StateMachine.CurrentEnemyState.PhysicsUpdate(this);
+    }
+
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!GameManager.Instance.IsPlaying()) return;
+
+        if (collision.TryGetComponent(out ObjectType objectType)
+            && objectType.InGameObjectType == objectTypeCanDamage
+            && collision.TryGetComponent(out IDamageable damageable))
+            damageable.TakeDamage(spike);
+    }
+
+    public virtual void Initialize(Transform playerTransform, float difficultyMultiplier)
     {
         RB = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
@@ -117,46 +121,16 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 
         EffectManager = GetComponent<EffectManager>();
 
-        maxHealth = baseMaxHealth;
-        currentHealth = maxHealth;
+        PlayerTransform = playerTransform;
 
-        if (EnemyIdleBaseInstance != null)
-            EnemyIdleBaseInstance.Initialize(gameObject, this);
-        if (EnemyChaseBaseInstance != null)
-            EnemyChaseBaseInstance.Initialize(gameObject, this);
-        if (EnemyAttackBaseInstance != null)
-            EnemyAttackBaseInstance.Initialize(gameObject, this);
-        if (EnemySkill1BaseInstance != null)
-            EnemySkill1BaseInstance.Initialize(gameObject, this);
-        if (EnemySkill2BaseInstance != null)
-            EnemySkill2BaseInstance.Initialize(gameObject, this);
+        int enemyHP = (int)(BaseMaxHealth + difficultyMultiplier);
+        currentHealth = enemyHP;
 
-        StateMachine.Initialize(ChaseState);
+        int enemySpike = (int)(baseSpike + difficultyMultiplier);
+        spike = enemySpike;
+
+        StateMachine.Initialize(this, ChaseState);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        StateMachine.CurrentEnemyState.FrameUpdate();
-        SetAnimation();
-    }
-
-    void FixedUpdate()
-    {
-        StateMachine.CurrentEnemyState.PhysicsUpdate();
-    }
-
-    protected void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!GameManager.Instance.IsPlaying()) return;
-
-        if (collision.TryGetComponent(out ObjectType objectType)
-            && objectType.InGameObjectType == objectTypeCanDamage
-            && collision.TryGetComponent(out IDamageable damageable))
-            damageable.TakeDamage(spike);
-    }
-
-    public abstract void Initialize(float difficultyMultiplier);
 
     public InGameObjectType GetObjectTypeCanDamage()
     {
@@ -193,7 +167,10 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
 
-    public abstract void Die();
+    public virtual void Die()
+    {
+        EnemyManager.Instance.ReturnEnemy(this);
+    }
 
     public bool IsAlive()
     {
@@ -214,14 +191,14 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
     {
         if (IsFacingRight && velovity.x < 0f)
         {
-            Vector3 rotator = new Vector3(transform.rotation.x, 180f, transform.rotation.z);
-            transform.rotation = Quaternion.Euler(rotator);
+            //Vector3 rotator = new Vector3(transform.rotation.x, 180f, transform.rotation.z);
+            //transform.rotation = Quaternion.Euler(rotator);
             IsFacingRight = !IsFacingRight;
         }
         else if (!IsFacingRight && velovity.x > 0f)
         {
-            Vector3 rotator = new Vector3(transform.rotation.x, 0f, transform.rotation.z);
-            transform.rotation = Quaternion.Euler(rotator);
+            //Vector3 rotator = new Vector3(transform.rotation.x, 0f, transform.rotation.z);
+            //transform.rotation = Quaternion.Euler(rotator);
             IsFacingRight = !IsFacingRight;
         }
     }
@@ -247,7 +224,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
     {
-        StateMachine.CurrentEnemyState.AnimationTriggerEvent(triggerType);
+        StateMachine.CurrentEnemyState.AnimationTriggerEvent(this, triggerType);
     }
 
     #endregion

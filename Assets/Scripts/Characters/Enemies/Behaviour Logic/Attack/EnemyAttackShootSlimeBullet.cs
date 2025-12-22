@@ -13,73 +13,65 @@ public class EnemyAttackShootSlimeBullet : EnemyAttackSOBase
     [SerializeField] private int bulletCount = 1;
     [SerializeField] private float delayBetweenBullet = 0.5f;
 
-
-    private float difficultyMultiplier = 0;
-    private bool isShooting = false;
-    private float cooldownTimer = 0;
-
-    public override void DoAnimationTriggerEventLogic(BaseEnemy.AnimationTriggerType triggerType)
+    public override void DoAnimationTriggerEventLogic(BaseEnemy enemy, BaseEnemy.AnimationTriggerType triggerType)
     {
-        base.DoAnimationTriggerEventLogic(triggerType);
+        base.DoAnimationTriggerEventLogic(enemy, triggerType);
     }
 
-    public override void DoFrameUpdateLogic()
+    public override void DoFrameUpdateLogic(BaseEnemy enemy)
     {
-        base.DoFrameUpdateLogic();
+        base.DoFrameUpdateLogic(enemy);
 
         enemy.MoveEnemy(Vector2.zero);
 
-        if (cooldownTimer > 0)
+        if (enemy.TryGetComponent(out ShootingProjectileLogic shootingProjectileLogic))
         {
-            cooldownTimer -= Time.deltaTime;
-            return;
+            if (shootingProjectileLogic.cooldownTimer > 0)
+                return;
+
+            if (enemy.PlayerTransform == null || shootingProjectileLogic.isShooting) return;
+
+            enemy.StartCoroutine(Shoot(enemy, bulletCount, delayBetweenBullet, shootingProjectileLogic.difficultyMultiplier));
         }
-
-        if (playerTransform == null || isShooting) return;
-
-        enemy.StartCoroutine(Shoot(bulletCount, delayBetweenBullet, difficultyMultiplier));
-    }
-
-    public override void Initialize(GameObject gameObject, BaseEnemy enemy)
-    {
-        base.Initialize(gameObject, enemy);
-        playerTransform = GameManager.Instance.GetPlayerGO().transform;
     }
 
     #region Shooting Functions
 
-    IEnumerator Shoot(int bulletCount, float delayBetweenBullet, float difficultyMultiplier)
+    IEnumerator Shoot(BaseEnemy enemy, int bulletCount, float delayBetweenBullet, float difficultyMultiplier)
     {
-        isShooting = true;
-
-        for (int i = 0; i < bulletCount; i++)
+        if (enemy.TryGetComponent(out ShootingProjectileLogic shootingProjectileLogic))
         {
-            // Spawn the bullet
-            EnemyBullet bullet = ProjectilesManager.Instance.Spawn(bulletPrefab, enemy.transform.position, Quaternion.identity);
+            shootingProjectileLogic.isShooting = true;
 
-            SetBulletStats(bullet, difficultyMultiplier);
+            for (int i = 0; i < bulletCount; i++)
+            {
+                // Spawn the bullet
+                EnemyBullet bullet = ProjectilesManager.Instance.Spawn(bulletPrefab, enemy.transform.position, Quaternion.identity);
 
-            // Wait before spawning the next bullet
-            if (delayBetweenBullet > 0f && i < bulletCount - 1)
-                yield return new WaitForSeconds(delayBetweenBullet);
+                SetBulletStats(bullet, enemy.PlayerTransform.position, difficultyMultiplier);
+
+                // Wait before spawning the next bullet
+                if (delayBetweenBullet > 0f && i < bulletCount - 1)
+                    yield return new WaitForSeconds(delayBetweenBullet);
+            }
+
+            shootingProjectileLogic.cooldownTimer = cooldownTime; // Reset timer
+            shootingProjectileLogic.isShooting = false;
+
+            enemy.StateMachine.ChangeState(enemy, enemy.IdleState);
         }
-
-        cooldownTimer = cooldownTime; // Reset timer
-        isShooting = false;
-
-        enemy.StateMachine.ChangeState(enemy.IdleState);
     }
 
-    private void SetBulletStats(EnemyBullet bullet, float difficultyMultiplier)
+    private void SetBulletStats(EnemyBullet bullet, Vector2 playerPosition, float difficultyMultiplier)
     {
-        Vector2 playerPosition = playerTransform.position;
         Vector2 moveDirection = math.normalize(playerPosition - new Vector2(bullet.transform.position.x, bullet.transform.position.y));
         bullet.Initialize(moveDirection, difficultyMultiplier);
     }
 
-    public void Initialize(float difficultyMultiplier)
+    public void Initialize(BaseEnemy enemy, float difficultyMultiplier)
     {
-        this.difficultyMultiplier = difficultyMultiplier;
+        if (enemy.TryGetComponent(out ShootingProjectileLogic shootingProjectileLogic))
+            shootingProjectileLogic.difficultyMultiplier = difficultyMultiplier;
     }
 
     #endregion

@@ -9,17 +9,11 @@ public class ExplodeSlime : BaseEnemy
         explodeLogic = GetComponent<ExplodeSlimeExplosionLogic>();
     }
 
-    public override void Initialize(float difficultyMultiplier)
+    public override void Initialize(Transform playerPos, float difficultyMultiplier)
     {
-        int enemyHP = (int)(BaseMaxHealth + difficultyMultiplier);
-        currentHealth = enemyHP;
-
-        int enemySpike = (int)(baseSpike + difficultyMultiplier);
-        spike = enemySpike;
+        base.Initialize(playerPos, difficultyMultiplier);
 
         explodeLogic.Initialize();
-
-        StateMachine.Initialize(IdleState);
     }
 
     public override void Die()
