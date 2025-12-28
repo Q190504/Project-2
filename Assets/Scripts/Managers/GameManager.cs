@@ -160,13 +160,21 @@ public class GameManager : MonoBehaviour
         if (gameState == GameState.Playing)
         {
             SetGameState(GameState.Upgrading);
-            //Time.timeScale = 0f; // Pause the game
         }
         else if (gameState == GameState.Upgrading)
         {
             SetGameState(GameState.Playing);
-            //Time.timeScale = 1f; // Resume the game
         }
+    }
+
+    public void SetGameStatePlaying()
+    {
+        SetGameState(GameState.Playing);
+    }
+
+    public void SetGameStateUpgrading()
+    {
+        SetGameState(GameState.Upgrading);
     }
 
     public GameObject GetPlayerGO()

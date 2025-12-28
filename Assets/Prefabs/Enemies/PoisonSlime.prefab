@@ -74,8 +74,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 90088079
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 8446554743841262902, guid: 854499f847f713e449fc6a2b83b9b9b7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -286,8 +286,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectTypeCanDamage: 1
   moveDirection: 3
+  needToFlipSprite: 1
   baseSpike: 5
   baseMaxHealth: 4
+  nodeSize: 0
+  mapWidth: 0
   hitEffectPrefab: {fileID: 8485009551413792585, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   showRangeDebug: 0
   debugSegments: 50

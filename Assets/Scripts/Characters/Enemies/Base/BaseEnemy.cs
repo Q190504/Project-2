@@ -4,6 +4,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
 {
     [SerializeField] protected InGameObjectType objectTypeCanDamage;
     [SerializeField] protected MoveDirectionType moveDirection;
+    [SerializeField] protected bool needToFlipSprite;
 
     [Header("Spike Damage")]
     [SerializeField] protected int baseSpike;
@@ -124,6 +125,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
         PlayerTransform = playerTransform;
 
         int enemyHP = (int)(BaseMaxHealth + difficultyMultiplier);
+        maxHealth = enemyHP;
         currentHealth = enemyHP;
 
         int enemySpike = (int)(baseSpike + difficultyMultiplier);
@@ -212,7 +214,10 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IEnemyMoveable, IT
         Vector2 moveDir = Utility.GetDirection(moveDirection, RB.linearVelocity);
         Animator.SetFloat("x", moveDir.x);
         Animator.SetFloat("y", moveDir.y);
-        SpriteRenderer.flipX = !IsFacingRight;
+        if (!needToFlipSprite)
+            SpriteRenderer.flipX = !IsFacingRight;
+        else
+            SpriteRenderer.flipX = IsFacingRight;
     }
 
     public enum AnimationTriggerType

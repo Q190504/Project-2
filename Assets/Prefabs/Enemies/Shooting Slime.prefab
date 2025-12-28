@@ -533,9 +533,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectTypeCanDamage: 1
   moveDirection: 3
+  needToFlipSpriteX: 0
   baseSpike: 7
   baseMaxHealth: 4
-  targetSpeed: 0
   nodeSize: 0
   mapWidth: 0
   hitEffectPrefab: {fileID: 8485009551413792585, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}

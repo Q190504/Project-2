@@ -4,12 +4,6 @@ public class EnemyPoisonCloud : PoisonCloud
 {
     [SerializeField] int baseDamagePerTick = 1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -36,5 +30,7 @@ public class EnemyPoisonCloud : PoisonCloud
     public void Initialize(float difficultyMultiplier)
     {
         this.damagePerTick = Mathf.FloorToInt(baseDamagePerTick * difficultyMultiplier);
+        transform.localScale = Vector2.one * cloudRadius;
+        existDurationTimer = existDuration;
     }
 }

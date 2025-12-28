@@ -84,6 +84,11 @@ public class SlimeBullet : BaseProjectile
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.CompareTag("Impassible") && isAbleToMove)
+        {
+            StopMoving();
+        }
+
         if (GameManager.Instance != null && GameManager.Instance.GetGameState() != GameState.Playing)
             return;
 
@@ -125,7 +130,7 @@ public class SlimeBullet : BaseProjectile
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Impassible") && !isAbleToMove)
+        if (collision.gameObject.CompareTag("Impassible") && isAbleToMove)
         {
             isAbleToMove = false;
             rb.linearVelocity = Vector2.zero;
@@ -167,6 +172,7 @@ public class SlimeBullet : BaseProjectile
     public void StopMoving()
     {
         isAbleToMove = false;
+        rb.linearVelocity = Vector2.zero;
         slowArea.gameObject.SetActive(true);
         ProjectilesManager.Instance.UnregisterSlimeBulletToReclaim(this);
     }

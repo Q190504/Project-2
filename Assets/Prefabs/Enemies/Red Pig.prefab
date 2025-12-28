@@ -260,14 +260,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectTypeCanDamage: 1
+  moveDirection: 0
+  needToFlipSpriteX: 0
   baseSpike: 10
   baseMaxHealth: 4
+  nodeSize: 0
+  mapWidth: 0
   hitEffectPrefab: {fileID: 8485009551413792585, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   showRangeDebug: 0
   debugSegments: 50
   EnemyIdleBase: {fileID: 11400000, guid: 0d73bd783c3c0774e904dd2ef9dd69fa, type: 2}
   EnemyChaseBase: {fileID: 11400000, guid: 4c83dec9509f1a349a89d39b5766cf8c, type: 2}
   EnemyAttackBase: {fileID: 0}
+  EnemySkill1Base: {fileID: 0}
+  EnemySkill2Base: {fileID: 0}
 --- !u!114 &8231837131160128499
 MonoBehaviour:
   m_ObjectHideFlags: 0

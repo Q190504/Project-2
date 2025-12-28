@@ -14,7 +14,6 @@ public class UpgradeManager : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private GameObject player;
     [SerializeField] private TwoFloatPublisherSO updateCountdownSO;
-    [SerializeField] private VoidPublisherSO togglePauseSO;
 
     public static UpgradeManager Instance
     {
@@ -96,7 +95,7 @@ public class UpgradeManager : MonoBehaviour
     public void OpenUpgradePanel()
     {
         // Pause game
-        GameManager.Instance.TogglePauseGameForUpgrading();
+        GameManager.Instance.SetGameStateUpgrading();
 
         if (playerUpgradeSlots != null)
         {
