@@ -21,7 +21,7 @@ public class EffectManager : MonoBehaviour
         owner = this.gameObject;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if(!GameManager.Instance.IsPlaying()) return;
 
