@@ -65,7 +65,7 @@ public class EnemyAttackShootSlimeBullet : EnemyAttackSOBase
     private void SetBulletStats(EnemyBullet bullet, Vector2 playerPosition, float difficultyMultiplier)
     {
         Vector2 moveDirection = math.normalize(playerPosition - new Vector2(bullet.transform.position.x, bullet.transform.position.y));
-        bullet.Initialize(moveDirection, difficultyMultiplier);
+        bullet.Initialize(moveDirection, difficultyMultiplier, targetObjectType);
     }
 
     public void Initialize(BaseEnemy enemy, float difficultyMultiplier)

@@ -81,11 +81,13 @@ public class EnemyBullet : BaseProjectile
         damage = 0;
     }
 
-    public void Initialize(Vector2 moveDirection, float difficultyMultiplier)
+    public void Initialize(Vector2 moveDirection, float difficultyMultiplier, InGameObjectType targetObjectType)
     {
         this.isAbleToMove = true;
         this.moveDirection = moveDirection;
         this.distanceTraveled = 0;
         this.damage = Mathf.RoundToInt(baseDamage * difficultyMultiplier);
+        if (!damageTargetObjectTypes.Contains(targetObjectType))
+            damageTargetObjectTypes.Add(targetObjectType);
     }
 }

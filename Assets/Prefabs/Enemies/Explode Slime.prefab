@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8177490194703282562
+--- !u!1 &4186434323656705384
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,46 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 705523461205629808}
-  - component: {fileID: 500732482656898999}
-  - component: {fileID: 7023963589711306991}
-  - component: {fileID: 669568224418123881}
-  - component: {fileID: 1807011699818004996}
-  - component: {fileID: 8607297087365386759}
-  - component: {fileID: 9215211190223834266}
-  - component: {fileID: 4501909051451570316}
-  - component: {fileID: 8784296988261273578}
-  - component: {fileID: 4199166321526234783}
-  - component: {fileID: 7894475139309685822}
+  - component: {fileID: 5412613873123136852}
+  - component: {fileID: 4710944594194577971}
+  - component: {fileID: 2835321628317249380}
   m_Layer: 7
-  m_Name: Explode Slime
-  m_TagString: Enemy
+  m_Name: Explode Slime Visual
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &705523461205629808
+--- !u!4 &5412613873123136852
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8177490194703282562}
+  m_GameObject: {fileID: 4186434323656705384}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.86, y: 4.94, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 705523461205629808}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &500732482656898999
+--- !u!212 &4710944594194577971
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8177490194703282562}
+  m_GameObject: {fileID: 4186434323656705384}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -96,14 +88,14 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &7023963589711306991
+--- !u!95 &2835321628317249380
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8177490194703282562}
+  m_GameObject: {fileID: 4186434323656705384}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 22100000, guid: d3b2f96591b7b1d4397b4b6fd57444cd, type: 2}
@@ -118,6 +110,46 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &8177490194703282562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 705523461205629808}
+  - component: {fileID: 669568224418123881}
+  - component: {fileID: 1807011699818004996}
+  - component: {fileID: 8607297087365386759}
+  - component: {fileID: 9215211190223834266}
+  - component: {fileID: 4501909051451570316}
+  - component: {fileID: 8784296988261273578}
+  - component: {fileID: 4199166321526234783}
+  - component: {fileID: 7894475139309685822}
+  m_Layer: 7
+  m_Name: Explode Slime
+  m_TagString: Enemy
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &705523461205629808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8177490194703282562}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.86, y: 4.94, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5412613873123136852}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &669568224418123881
 Rigidbody2D:
   serializedVersion: 5
@@ -255,14 +287,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectTypeCanDamage: 1
+  moveDirection: 0
   baseSpike: 4
   baseMaxHealth: 4
+  nodeSize: 0
+  mapWidth: 0
   hitEffectPrefab: {fileID: 8485009551413792585, guid: ac198653c05eb0740b3243dd53905e2a, type: 3}
   showRangeDebug: 0
   debugSegments: 50
   EnemyIdleBase: {fileID: 11400000, guid: 0d73bd783c3c0774e904dd2ef9dd69fa, type: 2}
   EnemyChaseBase: {fileID: 11400000, guid: 49958e5bf2894334a8ca92ca77cc7398, type: 2}
   EnemyAttackBase: {fileID: 0}
+  EnemySkill1Base: {fileID: 0}
+  EnemySkill2Base: {fileID: 0}
 --- !u!114 &4199166321526234783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,12 +313,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectPrefab: {fileID: -2307331869360449948, guid: fdc71766d2869ee41828bad90c2544cd, type: 3}
-  detectRadius: 2.2
+  detectRadius: 2.4
   explodeRadius: 2
   timeToExplode: 1.5
   explodeDamage: 30
   explodeAnimationClipName: Explode_Slime_Explode
   segments: 50
+  flashColor: {r: 1, g: 0.47484267, b: 0.47484267, a: 1}
+  minFlashInterval: 0.05
+  maxFlashInterval: 0.3
 --- !u!120 &7894475139309685822
 LineRenderer:
   serializedVersion: 2
@@ -375,7 +415,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0

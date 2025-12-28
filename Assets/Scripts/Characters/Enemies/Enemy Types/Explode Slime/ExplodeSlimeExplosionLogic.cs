@@ -14,7 +14,16 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
     private float explodeTimer;
     private InGameObjectType damageTargetObjectType;
 
-    private Animator animator;
+    [Header("Explode Warning Flash")]
+    [SerializeField] private Color flashColor = Color.red;
+    [SerializeField] private float minFlashInterval = 0.05f;
+    [SerializeField] private float maxFlashInterval = 0.3f;
+
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+    private float flashTimer;
+    private bool flashState;
+
     private ExplodeSlime explodeSlime;
     private LineRenderer explodeLine;
 
@@ -23,16 +32,10 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
         if (gameObject.TryGetComponent(out explodeSlime))
             damageTargetObjectType = explodeSlime.GetObjectTypeCanDamage();
 
-        animator = GetComponent<Animator>();
+        if (explodeLine == null)
+            explodeLine = CreateCircleRenderer(Color.red);
 
-        explodeLine = CreateCircleRenderer(Color.red);
         DrawCircle(explodeLine, explodeRadius);
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
     }
 
     // Update is called once per frame
@@ -51,7 +54,6 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
                 {
                     isExploding = true;
                     explodeTimer = timeToExplode;
-                    PlayExplodeAnimation();
                     return;
                 }
             }
@@ -59,6 +61,7 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
         else if (isExploding && explodeTimer > 0)
         {
             explodeTimer -= Time.deltaTime;
+            UpdateFlashEffect();
             if (explodeTimer <= 0 && explodeSlime.IsAlive())
                 Explode();
         }
@@ -80,30 +83,33 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
 
         VFXManager.Instance.SpawnVFX(effectPrefab, transform.position, Quaternion.identity, Vector3.one * explodeRadius);
 
+        if (spriteRenderer != null)
+            spriteRenderer.color = originalColor;
+
         explodeSlime.Die();
     }
 
     #region Circle for debug
 
-    void OnDrawGizmos()
-    {
-        DrawCircle(transform.position, explodeRadius, Color.red);
-        DrawCircle(transform.position, detectRadius, Color.blue);
-    }
+    //void OnDrawGizmos()
+    //{
+    //    DrawCircle(transform.position, explodeRadius, Color.red);
+    //    DrawCircle(transform.position, detectRadius, Color.blue);
+    //}
 
-    void DrawCircle(Vector3 center, float radius, Color color)
-    {
-        Gizmos.color = color;
-        Vector3 lastPoint = center + new Vector3(Mathf.Cos(0), Mathf.Sin(0), 0) * radius;
+    //void DrawCircle(Vector3 center, float radius, Color color)
+    //{
+    //    Gizmos.color = color;
+    //    Vector3 lastPoint = center + new Vector3(Mathf.Cos(0), Mathf.Sin(0), 0) * radius;
 
-        for (int i = 1; i <= segments; i++)
-        {
-            float angle = i * Mathf.PI * 2f / segments;
-            Vector3 nextPoint = center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-            Gizmos.DrawLine(lastPoint, nextPoint);
-            lastPoint = nextPoint;
-        }
-    }
+    //    for (int i = 1; i <= segments; i++)
+    //    {
+    //        float angle = i * Mathf.PI * 2f / segments;
+    //        Vector3 nextPoint = center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
+    //        Gizmos.DrawLine(lastPoint, nextPoint);
+    //        lastPoint = nextPoint;
+    //    }
+    //}
 
     #endregion
 
@@ -134,45 +140,46 @@ public class ExplodeSlimeExplosionLogic : MonoBehaviour
         for (int i = 0; i < segments; i++)
         {
             float angle = i * Mathf.PI * 2f / segments;
-            float x = Mathf.Cos(angle) * radius;
-            float y = Mathf.Sin(angle) * radius;
-            lr.SetPosition(i, new Vector3(x, y, 0));
+            Vector3 pos = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
+            lr.SetPosition(i, pos);
         }
     }
 
+
     #endregion
+
+    private void UpdateFlashEffect()
+    {
+        if (spriteRenderer == null) return;
+        // Flash speed increases as timer goes down
+        float t = 1f - (explodeTimer / timeToExplode);
+
+        // Flash the sprite
+        float flashInterval = Mathf.Lerp(maxFlashInterval, minFlashInterval, t);
+
+        flashTimer += Time.deltaTime;
+        if (flashTimer >= flashInterval)
+        {
+            flashTimer = 0f;
+            flashState = !flashState;
+            spriteRenderer.color = flashState ? flashColor : originalColor;
+        }
+    }
+
 
     public void Initialize()
     {
         isExploding = false;
         explodeTimer = 0;
+        flashState = false;
+        flashTimer = 0;
+        if (spriteRenderer != null)
+            spriteRenderer.color = originalColor;
+
+        spriteRenderer = explodeSlime.SpriteRenderer;
+        if (spriteRenderer != null)
+            originalColor = spriteRenderer.color;
     }
-
-    #region Explode Animation
-
-    private void PlayExplodeAnimation()
-    {
-        AnimationClip clip = GetClip(explodeAnimationClipName);
-        if (clip != null)
-        {
-            float speed = clip.length / timeToExplode;
-            animator.SetFloat("SpeedMultiplier", speed);
-            animator.SetTrigger("explode");
-        }
-    }
-
-    private AnimationClip GetClip(string clipName)
-    {
-        foreach (var clip in animator.runtimeAnimatorController.animationClips)
-        {
-            if (clip.name == clipName)
-                return clip;
-        }
-
-        return null;
-    }
-
-    #endregion
 
     public bool IsExploding()
     {
