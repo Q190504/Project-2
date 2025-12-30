@@ -74699,7 +74699,6 @@ MonoBehaviour:
   totalTime: 30
   player: {fileID: 1688281991}
   updateCountdownSO: {fileID: 11400000, guid: 82929148137a65b429d9260200f1493f, type: 2}
-  togglePauseSO: {fileID: 11400000, guid: f416fb96a28c45345884db545b184695, type: 2}
 --- !u!114 &1970843901
 MonoBehaviour:
   m_ObjectHideFlags: 0

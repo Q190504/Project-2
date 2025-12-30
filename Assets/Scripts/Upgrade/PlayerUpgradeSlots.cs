@@ -78,6 +78,7 @@ public class PlayerUpgradeSlots : MonoBehaviour
             {
                 weapon.LevelUp();
                 UpdateWeaponUISlot(weapon.GetWeaponType(), weapon.GetCurrentLevel());
+                togglePauseSO.RaiseEvent();
                 return;
             }
         }
@@ -140,6 +141,7 @@ public class PlayerUpgradeSlots : MonoBehaviour
             {
                 passive.LevelUp();
                 UpdatePassiveUISlot(passive.GetPassiveType(), passive.GetCurrentLevel());
+                togglePauseSO.RaiseEvent();
                 return;
             }
         }

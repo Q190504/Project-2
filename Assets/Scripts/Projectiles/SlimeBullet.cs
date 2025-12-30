@@ -174,7 +174,7 @@ public class SlimeBullet : BaseProjectile
         isAbleToMove = false;
         rb.linearVelocity = Vector2.zero;
         slowArea.gameObject.SetActive(true);
-        ProjectilesManager.Instance.UnregisterSlimeBulletToReclaim(this);
+        ProjectilesManager.Instance.RegisterSlimeBulletToReclaim(this);
     }
 
     public void Summon(int damage)
