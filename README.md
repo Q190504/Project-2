@@ -1,2 +1,2 @@
-# Project-1
-Repository for subject SE121 - Major Project 1
+# Project-2
+Repository for subject SE122 - Major Project 2
